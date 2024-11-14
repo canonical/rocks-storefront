@@ -7,9 +7,7 @@ from canonicalwebteam.store_api.exceptions import StoreApiResponseErrorList
 
 
 class TestPublisherViews(unittest.TestCase):
-    @patch(
-        "webapp.decorators.login_required",
-    )
+
     def setUp(self, mock_login_required):
         mock_login_required.return_value = lambda: True
         self.app = app

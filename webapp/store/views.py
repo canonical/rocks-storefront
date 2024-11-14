@@ -13,10 +13,6 @@ from flask import jsonify, redirect, render_template, request, make_response
 from pybadges import badge
 
 from webapp.config import DETAILS_VIEW_REGEX
-from webapp.decorators import (
-    redirect_uppercase_to_lowercase,
-    store_maintenance,
-)
 from webapp.helpers import discourse_api
 from webapp.store import logic
 from webapp.config import SEARCH_FIELDS
@@ -149,8 +145,6 @@ def get_package(entity_name, channel_request=None, fields=FIELDS):
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>')
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/docs')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_overview(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     if request.base_url.endswith("/docs"):
@@ -262,8 +256,6 @@ def details_overview(entity_name):
 @store.route(
     '/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/docs/<path:path>'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_docs(entity_name, path=None):
     channel_request = request.args.get("channel", default=None, type=str)
     extra_fields = [
@@ -359,8 +351,6 @@ def details_docs(entity_name, path=None):
     + DETAILS_VIEW_REGEX
     + '"):entity_name>/configurations/<path:path>'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_configuration(entity_name, path=None):
     channel_request = request.args.get("channel", default=None, type=str)
     extra_fields = [
@@ -403,8 +393,6 @@ def details_configuration(entity_name, path=None):
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/actions')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_actions(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     extra_fields = [
@@ -422,8 +410,6 @@ def details_actions(entity_name):
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/libraries')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_libraries(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     package = get_package(entity_name, channel_request, FIELDS)
@@ -455,8 +441,6 @@ def details_libraries(entity_name):
     + DETAILS_VIEW_REGEX
     + '"):entity_name>/libraries/<string:library_name>/source-code'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_library(entity_name, library_name):
     channel_request = request.args.get("channel", default=None, type=str)
     package = get_package(entity_name, channel_request, FIELDS)
@@ -502,8 +486,6 @@ def details_library(entity_name, library_name):
     + DETAILS_VIEW_REGEX
     + '"):entity_name>/libraries/<string:library_name>/download'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def download_library(entity_name, library_name):
     lib_parts = library_name.split(".")
 
@@ -537,8 +519,6 @@ def download_library(entity_name, library_name):
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/integrations')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_integrations(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     extra_fields = [
@@ -556,8 +536,6 @@ def details_integrations(entity_name):
 @store.route(
     '/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/integrations.json'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_integrations_data(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     extra_fields = [
@@ -601,8 +579,6 @@ def add_required_fields(metadata_relations, relations):
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/resources')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_resources(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     package = get_package(entity_name, channel_request, FIELDS)
@@ -624,8 +600,6 @@ def details_resources(entity_name):
     + DETAILS_VIEW_REGEX
     + '"):entity_name>/resources/<string:resource_name>'
 )
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_resource(entity_name, resource_name):
     channel_request = request.args.get("channel", default=None, type=str)
     package = get_package(entity_name, channel_request, FIELDS)
@@ -674,8 +648,6 @@ def details_resource(entity_name, resource_name):
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/integrate')
-@store_maintenance
-@redirect_uppercase_to_lowercase
 def details_integrate(entity_name):
     channel_request = request.args.get("channel", default=None, type=str)
     package = get_package(entity_name, channel_request, FIELDS)

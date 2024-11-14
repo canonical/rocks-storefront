@@ -13,7 +13,6 @@ from flask import (
 )
 from flask.json import jsonify
 from webapp.config import DETAILS_VIEW_REGEX
-from webapp.decorators import login_required, cached_redirect
 from webapp.publisher.logic import get_all_architectures, process_releases
 
 publisher = Blueprint(
@@ -26,7 +25,6 @@ publisher_api = CharmPublisher(talisker.requests.get_session())
 
 
 @publisher.route("/account/details")
-@login_required
 def get_account_details():
     return render_template("publisher/account-details.html")
 
@@ -37,7 +35,6 @@ def get_account_details():
     + '"):entity_name>/'
     + '<regex("listing|releases|publicise|collaboration|settings"):path>'
 )
-@login_required
 def get_publisher(entity_name, path):
     package = publisher_api.get_package_metadata(
         session["account-auth"], "charm", entity_name
@@ -53,7 +50,6 @@ def get_publisher(entity_name, path):
 @publisher.route(
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>',
 )
-@login_required
 def get_package(entity_name):
     package = publisher_api.get_package_metadata(
         session["account-auth"], "charm", entity_name
@@ -66,7 +62,6 @@ def get_package(entity_name):
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>',
     methods=["PATCH"],
 )
-@login_required
 def update_package(entity_name):
     payload = request.get_json()
 
@@ -97,7 +92,6 @@ def update_package(entity_name):
 
 @publisher.route("/charms")
 @publisher.route("/bundles")
-@login_required
 def list_page():
     publisher_charms = publisher_api.get_account_packages(
         session["account-auth"], "charm", include_collaborations=True
@@ -123,14 +117,11 @@ def list_page():
 
 
 @publisher.route("/accept-invite")
-@login_required
-@cached_redirect
 def accept_invite():
     return render_template("publisher/accept-invite.html")
 
 
 @publisher.route("/accept-invite", methods=["POST"])
-@login_required
 def accept_post_invite():
     res = {}
 
@@ -164,7 +155,6 @@ def accept_post_invite():
 
 
 @publisher.route("/reject-invite", methods=["POST"])
-@login_required
 def reject_post_invite():
     res = {}
 
@@ -203,7 +193,6 @@ def reject_post_invite():
     + DETAILS_VIEW_REGEX
     + '"):entity_name>/collaborators',
 )
-@login_required
 def get_collaborators(entity_name):
     res = {}
 
@@ -229,7 +218,6 @@ def get_collaborators(entity_name):
 @publisher.route(
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/invites',
 )
-@login_required
 def get_pending_invites(entity_name):
     res = {}
 
@@ -256,7 +244,6 @@ def get_pending_invites(entity_name):
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/invites',
     methods=["POST"],
 )
-@login_required
 def invite_collaborators(entity_name):
     res = {}
 
@@ -286,7 +273,6 @@ def invite_collaborators(entity_name):
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/invites',
     methods=["DELETE"],
 )
-@login_required
 def revoke_invite(entity_name):
     res = {}
 
@@ -316,7 +302,6 @@ def revoke_invite(entity_name):
 
 
 @publisher.route("/register-name")
-@login_required
 def register_name():
     entity_name = request.args.get("entity_name", default="", type=str)
 
@@ -351,7 +336,6 @@ def register_name():
 
 
 @publisher.route("/register-name", methods=["POST"])
-@login_required
 def post_register_name():
     data = {
         "name": request.form["name"],
@@ -407,7 +391,6 @@ def post_register_name():
 
 
 @publisher.route("/register-name-dispute")
-@login_required
 def register_name_dispute():
     entity_name = request.args.get("entity-name", type=str)
 
@@ -420,7 +403,6 @@ def register_name_dispute():
 
 
 @publisher.route("/register-name-dispute/thank-you")
-@login_required
 def register_name_dispute_thank_you():
     entity_name = request.args.get("entity-name", type=str)
 
@@ -434,7 +416,6 @@ def register_name_dispute_thank_you():
 
 
 @publisher.route("/packages/<package_name>", methods=["DELETE"])
-@login_required
 def delete_package(package_name):
     resp = publisher_api.unregister_package_name(
         session["account-auth"], package_name
@@ -448,7 +429,6 @@ def delete_package(package_name):
 
 
 @publisher.route("/<charm_name>/create-track", methods=["POST"])
-@login_required
 def post_create_track(charm_name):
     track_name = request.form.get("track-name")
     version_pattern = request.form.get("version-pattern")
@@ -482,7 +462,6 @@ def post_create_track(charm_name):
 @publisher.route(
     '/api/packages/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>/releases',
 )
-@login_required
 def get_releases(entity_name: str):
     res = {}
 
