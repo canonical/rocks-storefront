@@ -33,7 +33,6 @@ jest.mock("@canonical/store-components", () => ({
 }));
 
 jest.mock("../../Banner", () => () => <div>Banner</div>);
-jest.mock("../../Topics", () => () => <div>Topics</div>);
 
 const renderPackages = () => {
   const queryClient = new QueryClient();
@@ -51,11 +50,10 @@ describe("Packages component", () => {
     jest.clearAllMocks();
   });
 
-  test("renders Banner and Topics components", async () => {
+  test("renders Banner components", async () => {
     renderPackages();
     await waitFor(() => {
       expect(screen.getByText("Banner")).toBeInTheDocument();
-      expect(screen.getByText("Topics")).toBeInTheDocument();
     });
   });
 

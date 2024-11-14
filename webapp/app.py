@@ -12,7 +12,6 @@ from webapp.extensions import csrf
 from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.login.views import login
-from webapp.topics.views import topics
 from webapp.publisher.views import publisher
 from webapp.store.views import store
 from webapp.integrations.views import integrations
@@ -73,7 +72,6 @@ app.register_blueprint(store_packages)
 app.register_blueprint(publisher)
 app.register_blueprint(store)
 app.register_blueprint(login)
-app.register_blueprint(topics)
 app.register_blueprint(integrations)
 app.register_blueprint(search)
 
