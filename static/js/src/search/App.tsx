@@ -47,19 +47,16 @@ function App() {
           {search ? (
             <h1 className="p-heading--2">Search results for "{search}"</h1>
           ) : (
-            <h1>Search Charmhub</h1>
+            <h1>Search Rocks</h1>
           )}
-          <form
-            className="p-search-box u-no-margin--bottom"
-            action="/all-search"
-          >
+          <form className="p-search-box u-no-margin--bottom">
             <input
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               type="search"
               className="p-search-box__input"
               name="q"
-              placeholder="Search Charmhub"
+              placeholder="Search Rocks"
               required
             />
             <button type="reset" className="p-search-box__reset">
