@@ -1,12 +1,13 @@
-domain: charmhub.io
+domain: rockcraft.io
 
-image: prod-comms.ps5.docker-registry.canonical.com/charmhub.io
+image: prod-comms.ps5.docker-registry.canonical.com/rockcraft.io
+
 
 env:
   - name: MAINTENANCE
     configMapKeyRef:
       key: maintenance
-      name: charmhub
+      name: rockcraft
 
   - name: ENVIRONMENT
     configMapKeyRef:
@@ -24,7 +25,7 @@ env:
   - name: GITHUB_TOKEN
     secretKeyRef:
       key: github-api-token
-      name: charmhub-io
+      name: rockcraft-io
 
 extraHosts:
   - domain: jujucharms.com
@@ -34,8 +35,8 @@ extraHosts:
 production:
   replicas: 5
   nginxConfigurationSnippet: |
-    if ($host != 'charmhub.io' ) {
-      rewrite ^ https://charmhub.io$request_uri? permanent;
+    if ($host != 'rockcraft.io' ) {
+      rewrite ^ https://rockcraft.io$request_uri? permanent;
     }
     more_set_headers "Link: <https://assets.ubuntu.com>; rel=preconnect; crossorigin, <https://assets.ubuntu.com>; rel=preconnect, <https://res.cloudinary.com>; rel=preconnect";
 
@@ -43,8 +44,8 @@ production:
 staging:
   replicas: 3
   nginxConfigurationSnippet: |
-    if ($host != 'staging.charmhub.io' ) {
-      rewrite ^ https://staging.charmhub.io$request_uri? permanent;
+    if ($host != 'staging.rockcraft.io' ) {
+      rewrite ^ https://staging.rockcraft.io$request_uri? permanent;
     }
     more_set_headers "X-Robots-Tag: noindex";
     more_set_headers "Link: <https://assets.ubuntu.com>; rel=preconnect; crossorigin, <https://assets.ubuntu.com>; rel=preconnect, <https://res.cloudinary.com>; rel=preconnect";
