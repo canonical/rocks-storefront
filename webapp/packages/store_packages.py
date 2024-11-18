@@ -1,5 +1,4 @@
 import talisker
-from webapp.decorators import login_required
 from flask import (
     Blueprint,
     request,
@@ -43,7 +42,6 @@ def get_store_packages():
 
 
 @store_packages.route("/<any(charms, bundles):package_type>")
-@login_required
 def package(package_type):
     """
     Retrieves and returns package information based on the current app

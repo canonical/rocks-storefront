@@ -53,35 +53,6 @@ function initNavDropdowns(containerClass: string): void {
   });
 }
 
-// Login
-const navAccountContainer = document.querySelector(".js-nav-account");
-
-if (navAccountContainer) {
-  fetch("/account.json")
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.account) {
-        const notAuthenticatedMenu = navAccountContainer.querySelector(
-          ".js-nav-account--notauthenticated"
-        ) as HTMLElement;
-        const authenticatedMenu = navAccountContainer.querySelector(
-          ".js-nav-account--authenticated"
-        ) as HTMLElement;
-        const displayName = navAccountContainer.querySelector(
-          ".js-account--name"
-        ) as HTMLElement;
-
-        navAccountContainer.classList.add(
-          "p-navigation__item--dropdown-toggle"
-        );
-        notAuthenticatedMenu.classList.add("u-hide");
-        authenticatedMenu.classList.remove("u-hide");
-        displayName.innerHTML = data.account["display-name"];
-        initNavDropdowns(".js-nav-account");
-      }
-    });
-}
-
 initNavDropdowns(".p-navigation__item--dropdown-toggle");
 
 export {

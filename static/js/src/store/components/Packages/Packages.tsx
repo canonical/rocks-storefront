@@ -16,7 +16,6 @@ import {
 } from "@canonical/store-components";
 
 import Banner from "../Banner";
-import Topics from "../Topics";
 
 import platforms from "../../data/platforms";
 import packageTypes from "../../data/package-types";
@@ -52,8 +51,6 @@ function Packages() {
   const { data, status, refetch, isFetching } = useQuery("data", getData);
   console.log(data);
   console.log(typeof data);
-
-  const topicsQuery = searchParams ? searchParams.get("categories") : null;
 
   const searchRef = useRef<HTMLInputElement | null>(null);
   const searchSummaryRef = useRef<HTMLDivElement>(null);
@@ -144,7 +141,6 @@ function Packages() {
             </div>
           </Col>
           <Col size={9}>
-            <Topics topicsQuery={topicsQuery} />
             {data?.packages && data?.packages.length > 0 && (
               <div className="u-fixed-width" ref={searchSummaryRef}>
                 {searchParams.get("q") ? (

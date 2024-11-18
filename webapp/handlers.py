@@ -13,7 +13,7 @@ from canonicalwebteam.store_api.exceptions import (
 
 from canonicalwebteam import image_template
 
-from webapp import authentication, helpers
+from webapp import helpers
 
 CSP = {
     "default-src": ["'self'"],
@@ -68,10 +68,8 @@ def charmhub_utility_processor():
     to the default context for processing templates. All these items
     can be used in all templates
     """
-    if authentication.is_authenticated(session):
-        account = session["account"]
-    else:
-        account = None
+
+    account = None
     return {
         "schedule_banner": helpers.schedule_banner,
         "account": account,

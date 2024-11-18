@@ -39,7 +39,6 @@ dotrun test
 
 [Talisker](https://talisker.readthedocs.io/en/latest/) provides a bunch of useful status checks and metrics about the running application. Some of this information is sensitive and so to access it you need to run the site with your IP address mentioned in the `TALISKER_NETWORKS` variable.
 
-Now visit http://127.0.0.1:8045/_status to see the endpoints provided by Talisker. Useful ones include:
+Now visit http://127.0.0.1:8052/_status to see the endpoints provided by Talisker. Useful ones include:
 
-- http://127.0.0.1:8045/_status/check - A basic check that the site is running
-- http://127.0.0.1:8045/_status/metrics - The prometheus metrics for the application
+- http://127.0.0.1:8052/_status/check - A basic check that the site is running

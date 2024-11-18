@@ -18,9 +18,6 @@ $color-navigation-background: #252525;
 @include vf-u-text-muted;
 @import "charmhub_p-header";
 @include charmhub-p-header;
-@import "charmhub_p-series-tag";
-@include charmhub-p-series-tag;
-
 // CUSTOM STYLES FOR EMBEDDED CARD
 
 .p-strip.has-suru {
