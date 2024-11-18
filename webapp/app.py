@@ -13,7 +13,6 @@ from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.publisher.views import publisher
 from webapp.store.views import store
-from webapp.integrations.views import integrations
 from webapp.search.views import search
 from webapp.search.logic import cache
 from webapp.helpers import markdown_to_html
@@ -68,7 +67,6 @@ csrf.init_app(app)
 app.register_blueprint(store_packages)
 app.register_blueprint(publisher)
 app.register_blueprint(store)
-app.register_blueprint(integrations)
 app.register_blueprint(search)
 
 
