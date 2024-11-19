@@ -14,7 +14,7 @@ function Banner({ searchRef, searchSummaryRef }: Props) {
     <Strip type="dark">
       <Row>
         <Col size={6} className="col-start-large-4">
-          <h1 className="p-heading--2">The Charm Collection</h1>
+          <h1 className="p-heading--2">The Rocks Collection</h1>
           <form
             className="p-search-box"
             onSubmit={(e) => {
@@ -34,14 +34,14 @@ function Banner({ searchRef, searchSummaryRef }: Props) {
             }}
           >
             <label className="u-off-screen" htmlFor="search">
-              Search Charmhub
+              Search Rocks
             </label>
             <input
               type="search"
               id="search"
               className="p-search-box__input"
               name="q"
-              placeholder="Search Charmhub"
+              placeholder="Search Rocks"
               defaultValue={searchParams.get("q") || ""}
               ref={searchRef}
             />
