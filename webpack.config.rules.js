@@ -23,10 +23,7 @@ module.exports = [
   },
   // loaders are evaluated from bottom to top (right to left)
   // so first transpile via babel, then expose as global
-  {
-    test: require.resolve(__dirname + "/static/js/src/public/docs/index.js"),
-    use: ["expose-loader?exposes=charmhub.docs", "babel-loader"],
-  },
+
   {
     test: require.resolve(__dirname + "/static/js/src/base/base.js"),
     use: ["expose-loader?exposes=charmhub.base", "babel-loader"],
