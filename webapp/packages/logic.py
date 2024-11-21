@@ -1,3 +1,4 @@
+import json
 import re
 
 import yaml
@@ -141,12 +142,9 @@ def get_bundle_charms(charm_apps):
 
 def parse_package_for_card(
     package: Dict[str, Any],
-    store_api: Any,
-    publisher_api: Any,
-    libraries: bool = False,
 ) -> Package:
     """
-    Parses a package (charm, or bundle) and returns the formatted package
+    Parses a package and returns the formatted package
     based on the given card schema.
 
     :param: package (Dict[str, Any]): The package to be parsed.
@@ -157,8 +155,7 @@ def parse_package_for_card(
         so we won't have to check for the package type before parsing.
 
     """
-    store = store_api(talisker.requests.get_session())
-    publisher_api = publisher_api(talisker.requests.get_session())
+
     resp = {
         "package": {
             "description": "",
@@ -167,63 +164,32 @@ def parse_package_for_card(
             "name": "",
             "platforms": [],
             "type": "",
-            "channel": {
-                "name": "",
-                "risk": "",
-                "track": "",
-            },
+            "website": "",
+            "tracks": [],
+            "track_guardrails": [],
+            "status": "",
+            "private": False,
+            "contact": "",
         },
         "publisher": {"display_name": "", "name": "", "validation": ""},
-        "categories": [],
         # hardcoded temporarily until we have this data from the API
         "ratings": {"value": "0", "count": "0"},
     }
 
-    result = package.get("result", {})
-    publisher = result.get("publisher", {})
-    channel = package.get("default-release", {}).get("channel", {})
-    risk = channel.get("risk", "")
-    track = channel.get("track", "")
-    if libraries:
-        resp["package"]["libraries"] = publisher_api.get_charm_libraries(
-            package["name"]
-        ).get("libraries", [])
+    publisher = package.get("publisher", {})
     resp["package"]["type"] = package.get("type", "")
     resp["package"]["name"] = package.get("name", "")
-    resp["package"]["description"] = result.get("summary", "")
-    resp["package"]["display_name"] = result.get(
-        "title", format_slug(package.get("name", ""))
+    resp["package"]["description"] = package["summary"] or package["description"]
+    resp["package"]["display_name"] = package.get(
+        "display_name", format_slug(package.get("name", ""))
     )
-    resp["package"]["channel"]["risk"] = risk
-    resp["package"]["channel"]["track"] = track
-    resp["package"]["channel"]["name"] = f"{track}/{risk}"
     resp["publisher"]["display_name"] = publisher.get("display-name", "")
     resp["publisher"]["validation"] = publisher.get("validation", "")
-    resp["categories"] = result.get("categories", [])
-    resp["package"]["icon_url"] = get_icon(result.get("media", []))
-
-    platforms = result.get("deployable-on", [])
-    if platforms:
-        resp["package"]["platforms"] = platforms
-    else:
-        resp["package"]["platforms"] = ["vm"]
-
-    if resp["package"]["type"] == "bundle":
-        name = package["name"]
-        default_release = store.get_item_details(
-            name, fields=["default-release"]
-        )
-        bundle_yaml = default_release["default-release"]["revision"][
-            "bundle-yaml"
-        ]
-
-        bundle_details = yaml.load(bundle_yaml, Loader=yaml.FullLoader)
-        bundle_charms = get_bundle_charms(
-            bundle_details.get(
-                "applications", bundle_details.get("services", [])
-            )
-        )
-        resp["package"]["charms"] = bundle_charms
+    resp["package"]["icon_url"] = get_icon(package.get("media", []))
+    resp["package"]["website"] = package.get("website", "")
+    resp["package"]["status"] = package.get("status", "")
+    resp["package"]["private"] = package.get("private", False)
+    resp["package"]["contact"] = package.get("contact", "")
 
     return resp
 
@@ -260,10 +226,6 @@ def paginate(
 
 
 def get_packages(
-    store,
-    publisher: Any,
-    libraries: bool,
-    fields: List[str],
     size: int = 10,
     query_params: Dict[str, Any] = {},
 ) -> List[Dict[str, Any]]:
@@ -272,19 +234,14 @@ def get_packages(
     parameters.The returned packages are paginated and parsed using the
     card schema.
 
-    :param: store: The store object.
-    :param: fields (List[str]): A list of fields to include in the
-            package data.
-    :param: size (int, optional): The number of packages to include
-            in each page. Defaults to 10.
-    :param: page (int, optional): The current page number. Defaults to 1.
-    :param: query (str, optional): The search query.
-    :param: filters (Dict, optional): The filter parameters. Defaults to {}.
-    :returns: a dictionary containing the list of parsed packages and
-            the total pages
     """
 
-    packages = fetch_packages(store, fields, query_params)
+    with open ("webapp/rocks.json", "r") as rocks:
+        packages = json.load(rocks)
+        rocks.close()
+    
+    for rock in packages:
+        rock["icon_url"] = "https://api.charmhub.io/api/v1/media/download/charm_3uPxmv77o1PrixpQFIf8o7SkOLsnMWmZ_icon_ad1a94cf9bb9f68614cb6c17e54e2fbd9dcc7fecc514dc6012b7f58fb5b87f8f.png"
 
     total_pages = -(len(packages) // -size)
 
@@ -295,17 +252,13 @@ def get_packages(
     parsed_packages = []
     for package in packages_per_page:
         parsed_packages.append(
-            parse_package_for_card(package, store, publisher, libraries)
+            parse_package_for_card(package)
         )
     res = parsed_packages
-
-    categories = get_store_categories(store)
-
     return {
-        "packages": res,
+        "packages": parsed_packages,
         "total_pages": total_pages,
         "total_items": total_items,
-        "categories": categories,
     }
 
 

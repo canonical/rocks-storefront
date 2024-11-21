@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { useLocation, useSearchParams } from "react-router-dom";
 import {
@@ -8,18 +8,9 @@ import {
   Pagination,
   Button,
 } from "@canonical/react-components";
-import {
-  CharmCard,
-  BundleCard,
-  Filters,
-  LoadingCard,
-} from "@canonical/store-components";
+import { CharmCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
-
-import platforms from "../../data/platforms";
-import packageTypes from "../../data/package-types";
-import { Category } from "../../types";
 import { Package, Publisher } from "../../../publisher-admin/types";
 
 function Packages() {
@@ -28,33 +19,26 @@ function Packages() {
   const getData = async () => {
     const response = await fetch(`/store.json${search}`);
     const data = await response.json();
+
     const packagesWithId = data.packages.map((item: string[]) => {
       return {
         ...item,
         id: crypto.randomUUID(),
       };
     });
-
     return {
       total_items: data.total_items,
       total_pages: data.total_pages,
       packages: packagesWithId,
-      categories: data.categories,
     };
   };
 
   const { search } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-
-  const [hideFilters, setHideFilters] = useState(true);
   const currentPage = searchParams.get("page") || "1";
   const { data, status, refetch, isFetching } = useQuery("data", getData);
-  console.log(data);
-  console.log(typeof data);
-
   const searchRef = useRef<HTMLInputElement | null>(null);
   const searchSummaryRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     refetch();
   }, [searchParams]);
@@ -62,85 +46,12 @@ function Packages() {
   const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
     (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + data?.packages.length;
-
   return (
     <>
       <Banner searchRef={searchRef} searchSummaryRef={searchSummaryRef} />
       <Strip>
         <Row>
-          <Col size={3}>
-            <Button
-              className="has-icon u-hide--large p-filter-panel__toggle"
-              onClick={() => {
-                setHideFilters(false);
-              }}
-            >
-              <i className="p-icon--arrow-right"></i>
-              <span>Filters</span>
-            </Button>
-            <div
-              className={`p-filter-panel-overlay u-hide--large ${
-                hideFilters ? "u-hide--small u-hide--medium" : ""
-              }`}
-              onClick={() => {
-                setHideFilters(true);
-              }}
-            ></div>
-
-            <div
-              className={`p-filter-panel ${
-                !hideFilters ? "p-filter-panel--expanded" : ""
-              }`}
-            >
-              <div className="p-filter-panel__header">
-                <Button
-                  className="has-icon u-hide--large u-no-margin--bottom u-no-padding--left"
-                  appearance="base"
-                  onClick={() => {
-                    setHideFilters(true);
-                  }}
-                >
-                  <i className="p-icon--chevron-down"></i>
-                  <span>Hide filters</span>
-                </Button>
-              </div>
-
-              <div className="p-filter-panel__inner">
-                <Filters
-                  categories={data?.categories || []}
-                  selectedCategories={
-                    searchParams.get("categories")?.split(",") || []
-                  }
-                  setSelectedCategories={(items: string[]) => {
-                    if (items.length > 0) {
-                      searchParams.set("categories", items.join(","));
-                    } else {
-                      searchParams.delete("categories");
-                    }
-
-                    searchParams.delete("page");
-                    setSearchParams(searchParams);
-                  }}
-                  platforms={platforms}
-                  selectedPlatform={searchParams.get("platforms") || "all"}
-                  setSelectedPlatform={(item: string) => {
-                    searchParams.set("platforms", item);
-                    searchParams.delete("page");
-                    setSearchParams(searchParams);
-                  }}
-                  packageTypes={packageTypes}
-                  selectedPackageType={searchParams.get("type") || "all"}
-                  setSelectedPackageType={(item: string) => {
-                    searchParams.set("type", item);
-                    searchParams.delete("page");
-                    setSearchParams(searchParams);
-                  }}
-                  disabled={isFetching}
-                />
-              </div>
-            </div>
-          </Col>
-          <Col size={9}>
+          <Col size={12}>
             {data?.packages && data?.packages.length > 0 && (
               <div className="u-fixed-width" ref={searchSummaryRef}>
                 {searchParams.get("q") ? (
@@ -184,10 +95,8 @@ function Packages() {
                 data.packages.length > 0 &&
                 data.packages.map(
                   (packageData: {
-                    categories: Category[];
                     package: Package;
                     publisher: Publisher;
-                    ratings: { count: string; value: string };
                     id: string;
                   }) => (
                     <Col
@@ -195,11 +104,7 @@ function Packages() {
                       style={{ marginBottom: "1.5rem" }}
                       key={packageData.id}
                     >
-                      {packageData.package.type === "bundle" ? (
-                        <BundleCard data={packageData} />
-                      ) : (
-                        <CharmCard data={packageData} />
-                      )}
+                      <CharmCard data={packageData} />
                     </Col>
                   )
                 )}

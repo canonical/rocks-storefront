@@ -1,0 +1,1186 @@
+[
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "0soxpc4gipubAgTcDCAQ5AMlCbnu1Ion",
+        "links": {},
+        "media": [],
+        "display_name": "grafana-agent",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-03T08:00:38.580890",
+                "display_name": "22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-09-03T08:40:58.845357",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "4eeyRdTL8bkSIRtGqOzE1EJz7mOsNqtv",
+        "links": {},
+        "media": [],
+        "display_name": "bowenfan-chisel",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "star"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T18:39:02.900239",
+                "display_name": "1.0-24.04",
+                "version-pattern": "*"
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T18:38:57.735112",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "4qGuq5uBy7p2oV1R4RUmYR5ArLSL2BM7",
+        "links": {},
+        "media": [],
+        "display_name": "starlark-rock-bowen",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "verified"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-14T10:05:17.803607",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "65s7Naq8crN9OrcaMQziLLpzsMP7Kv0V",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018005059",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T00:51:10.016574",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T00:51:08.158863",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "6M4DnEuOY4RXdo2opq5xMpCp74aEYTLf",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241017002554",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "star"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T00:25:58.597693",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T00:25:57.003796",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "9t6mvqPez6m3HqmT87LPIxI5zLDivphJ",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018011905",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "verified"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:19:10.203234",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:19:08.793405",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "ApJO5crbqtqhlKaRRA5sWOwuPvr3rN60",
+        "links": {},
+        "media": [],
+        "display_name": "grafana-agent2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T17:59:09.909864",
+                "display_name": "22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T17:41:37.399204",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "BDzKXN1tNTrAoOtWR8SV3M3wThgJZyM5",
+        "links": {},
+        "media": [],
+        "display_name": "rock-aramanau-test-auth-postgres",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-11T08:42:27.110489",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "Ez5AfcblFU9SVecIThdeYCuioTjbWxhD",
+        "links": {},
+        "media": [],
+        "display_name": "rock-1009",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-09T03:35:09.331993",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "GGU312dfxwrzRPjZxyD8hpcPuSaTD5vB",
+        "links": {},
+        "media": [],
+        "display_name": "hello-new-rock2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-03T07:21:27.787072",
+                "display_name": "20.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-09-02T14:40:24.973421",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "IYV2OyHBfdlwrGrIsEOqbeW7AhPHZmuT",
+        "links": {},
+        "media": [],
+        "display_name": "rock-aramanau-e2e-test",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-25T09:42:23.093896",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "J8mOt4uHwNKi1ZgxwHZZlfMHcKEKsrwr",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241017002312",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T00:24:58.802853",
+                "display_name": "v1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T00:23:17.047271",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "JWDdSwgYKakYLOlY4B6d7sS01HMa6DJe",
+        "links": {},
+        "media": [],
+        "display_name": "shanepelletier-test-rock-hello2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T16:03:18.197898",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "KSqXjR7ag53SQUcWiG5xO2hG8RVuBwIu",
+        "links": {},
+        "media": [],
+        "display_name": "superalpaca-test-0000002",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-09T02:01:05.858351",
+                "display_name": "0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-09T02:00:37.457846",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "OIM9uUdB6IA23c7mW0ZNfZhLJL7pJz3b",
+        "links": {},
+        "media": [],
+        "display_name": "shanepelletier-test-rockcraft-nonchiselled",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-04T19:32:19.085347",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "OpIALfdTVPbyDG89Nb5XT2UHrCrM5KJX",
+        "links": {},
+        "media": [],
+        "display_name": "ruha-test-rockcraft3",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-09-03T19:21:08.485355",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "OvywXeVyAHgOeGcNHkPMhPzL8GoXTHSf",
+        "links": {},
+        "media": [],
+        "display_name": "ruha-test-rockcraft",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-08-06T18:33:09.871135",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "PzEFSJZUs5aBDpAGTBDHFiAAKh3NbU1R",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018010253",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:02:56.869418",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "USuhyUIYWxLZokhlZF6gL7nV9RQulPFj",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018002023",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T00:20:29.518767",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T00:20:28.107591",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "WPrQ1muFmZGrd1XGaWuevWwSzu9KOHNx",
+        "links": {},
+        "media": [],
+        "display_name": "shanepelletier-test-rockcraft",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-04T19:06:39.607873",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "WmeywvX9tNxhKclgQCjBfpMraVnv7dGj",
+        "links": {},
+        "media": [],
+        "display_name": "dariuszd-autossh14",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-16T15:11:47.503274",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "WnTLGBSqDiF73ES0CipGYeD7XOUpp9QP",
+        "links": {},
+        "media": [],
+        "display_name": "shanepelletier-hello2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-09-03T19:23:08.395591",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "Xd9xedhufNj8YhsbUvNF8mRXVO9X8yoc",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018020720",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T02:07:28.082370",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T02:07:26.397436",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "Y21riuYgHFkAG7EIv2HnuT48AFzten5u",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018010301",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:03:08.001639",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:03:06.636293",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "dHIgic3TLaU5pIU09RinaEYo7miWCfRh",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241017234001",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T23:40:11.831840",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T23:40:08.904621",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "erXMAAaFZ0UpdgR3TADNrnVxEoc5BJd3",
+        "links": {},
+        "media": [],
+        "display_name": "hello-new-rock",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-08-30T14:02:08.742829",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "kCFesqjYxVJQebnix7yU7QA3WLIa8qKR",
+        "links": {},
+        "media": [],
+        "display_name": "shanepelletier-test-rock-hello",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T15:54:38.686289",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "kKyoh9YhAlVlkM56stqxOFSvVIWGLJpU",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018013130",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:31:39.524677",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:31:38.159226",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "klBi0WpetpvDjg8vs8JMdIHXPkEs4CyJ",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241017002239",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T00:22:43.641334",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "mmiD5pBOo8SYaTW3K3TQDU4IFCYE99rM",
+        "links": {},
+        "media": [],
+        "display_name": "rock-1009-2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-09T03:40:09.424582",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "nM0v2xP7RG3T7cAy3H3y6IAmgRwLyZQt",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241017042308",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T04:23:28.198929",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-17T04:23:26.738370",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "rCMz3ESIksZvlDzWelZ8QR58CLyhvrbs",
+        "links": {},
+        "media": [],
+        "display_name": "e2e-20241018012941",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:29:49.317603",
+                "display_name": "v0.1-22.04",
+                "version-pattern": null
+            },
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-18T01:29:47.874410",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "vD735dPpm0Kz3CmR34C3SJq2qh90UbsN",
+        "links": {},
+        "media": [],
+        "display_name": "mmm2",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-09T03:51:56.730727",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    },
+    {
+        "authority": null,
+        "contact": null,
+        "default-track": null,
+        "description": "A short description of the rock",
+        "id": "zyMmABPlI7dBcfSeJHYyklLBo98outsX",
+        "links": {},
+        "media": [],
+        "display_name": "test11592",
+        "private": false,
+        "publisher": {
+            "display-name": "superdistro-admin-staging",
+            "id": "1dzBCortsJ3gk1wGP6XjxHewouTYWfC1",
+            "name": "superdistro-admin-staging",
+            "validation": "unproven"
+        },
+        "status": "registered",
+        "store": "ubuntu",
+        "summary": null,
+        "title": null,
+        "track-guardrails": [],
+        "tracks": [
+            {
+                "automatic-phasing-percentage": null,
+                "created-at": "2024-10-16T04:12:36.468338",
+                "display_name": "latest",
+                "version-pattern": null
+            }
+        ],
+        "type": "rock",
+        "website": null
+    }
+]
