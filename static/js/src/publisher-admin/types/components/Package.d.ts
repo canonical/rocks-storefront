@@ -2,7 +2,7 @@ import type Publisher from "./Publisher";
 
 type Package = {
   authority: string | null;
-  contact: string;
+  contact: string | undefined;
   "default-track": string;
   description: string;
   id: string;
@@ -19,8 +19,8 @@ type Package = {
   publisher: Publisher;
   status: string;
   store: string;
-  summary: string;
-  title: string;
+  summary: string | null;
+  title: string | null;
   "track-guardrails": Array<string>;
   tracks: Array<{
     "automatic-phasing-percentage": string | null;
