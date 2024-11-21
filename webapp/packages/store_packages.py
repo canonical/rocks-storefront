@@ -1,3 +1,4 @@
+import json
 import talisker
 from flask import (
     Blueprint,
@@ -27,17 +28,8 @@ store_packages = Blueprint(
 @store_packages.route("/store.json")
 def get_store_packages():
     args = dict(request.args)
-    libraries = bool(args.pop("fields", ""))
-    res = make_response(
-        get_packages(
-            CharmStore,
-            CharmPublisher,
-            libraries,
-            FIELDS,
-            12,
-            args,
-        )
-    )
+    
+    res = make_response(get_packages(12, args))
     return res
 
 

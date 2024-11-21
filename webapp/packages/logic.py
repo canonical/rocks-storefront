@@ -1,3 +1,4 @@
+import json
 import re
 
 import yaml
@@ -235,9 +236,9 @@ def get_packages(
 
     """
 
-    with open ("webapp/rocks.json", "r") as f:
-        packages = json.load(f)
-        f.close()
+    with open ("webapp/rocks.json", "r") as rocks:
+        packages = json.load(rocks)
+        rocks.close()
     
     for rock in packages:
         rock["icon_url"] = "https://api.charmhub.io/api/v1/media/download/charm_3uPxmv77o1PrixpQFIf8o7SkOLsnMWmZ_icon_ad1a94cf9bb9f68614cb6c17e54e2fbd9dcc7fecc514dc6012b7f58fb5b87f8f.png"
