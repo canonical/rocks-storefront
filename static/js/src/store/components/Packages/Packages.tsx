@@ -11,7 +11,7 @@ import {
 import { CharmCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
-import { Package, Publisher } from "../../../publisher-admin/types";
+import { Package, Publisher } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;

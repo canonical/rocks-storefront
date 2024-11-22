@@ -8,6 +8,5 @@ module.exports = {
   "highlight-nav": "./static/js/src/libs/highlight-nav.js",
   "highlight-js": "./static/js/src/base/highlight.js",
   store: "./static/js/src/store/index.tsx",
-  publisher: "./static/js/src/publisher-admin/index.tsx",
   search: "./static/js/src/search/App.tsx",
 };

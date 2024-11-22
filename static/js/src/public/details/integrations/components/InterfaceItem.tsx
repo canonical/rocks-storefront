@@ -11,8 +11,7 @@ import { Row, Col, Spinner, Chip } from "@canonical/react-components";
 import { filterChipsSelector, filterState } from "../state";
 
 import { IntegrationCard } from "@canonical/store-components";
-import { Package } from "../../../../publisher-admin/types";
-
+import { Package } from "../../../../store/types";
 interface InterfaceItemProps {
   interfaceType: string;
   interfaceData: IInterfaceData;
