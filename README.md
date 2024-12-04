@@ -26,7 +26,7 @@ The simplest way to run the site locally is using [`dotrun`](https://github.com/
 dotrun
 ```
 
-Once the server has started, you can visit <http://127.0.0.1:8052> in your browser. You can stop the server using `<ctrl>+c`.
+Once the server has started, you can visit <http://127.0.0.1:8053> in your browser. You can stop the server using `<ctrl>+c`.
 
 For more detailed local development instructions, see [HACKING.md](HACKING.md).
 
