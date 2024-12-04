@@ -1,19 +1,13 @@
 import re
 
 import talisker.requests
-from canonicalwebteam.store_api.stores.charmstore import (
-    CharmStore,
-    CharmPublisher,
-)
-from canonicalwebteam.candid import CandidClient
 from dateutil import parser
-from flask import render_template, make_response, request, session, escape
+from flask import render_template, make_response, request, escape
 from webapp.extensions import csrf
 from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.store.views import store
 from webapp.search.views import search
-from webapp.search.logic import cache
 from webapp.helpers import markdown_to_html
 from canonicalwebteam.flask_base.app import FlaskBase
 from webapp.packages.store_packages import store_packages
@@ -21,7 +15,7 @@ from webapp.packages.store_packages import store_packages
 
 app = FlaskBase(
     __name__,
-    "charmhub.io",
+    "rockstore.io",
     template_404="404.html",
     template_500="500.html",
     favicon_url="https://assets.ubuntu.com/v1/5d4edefd-jaas-favicon.png",
@@ -34,12 +28,7 @@ app.name = APP_NAME
 
 set_handlers(app)
 
-app.store_api = CharmStore(session=talisker.requests.get_session())
-
-
 request_session = talisker.requests.get_session()
-candid = CandidClient(request_session)
-publisher_api = CharmPublisher(request_session)
 
 
 @app.template_filter("linkify")
@@ -60,7 +49,6 @@ def linkify(text):
     return url_pattern.sub(replace_with_link, str(escaped_text))
 
 
-cache.init_app(app)
 csrf.init_app(app)
 
 app.register_blueprint(store_packages)
@@ -108,30 +96,6 @@ def site_map_links():
         "sitemap/sitemap-links.xml",
         base_url=f"{request.scheme}://{request.host}",
         links=links,
-    )
-    response = make_response(xml_sitemap)
-    response.headers["Content-Type"] = "application/xml"
-
-    return response
-
-
-@app.route("/sitemap-operators.xml")
-def site_map_operators():
-    charms = app.store_api.find(
-        fields=["default-release.channel.released-at"]
-    ).get("results", [])
-
-    for charm in charms:
-        charm["date"] = (
-            parser.parse(charm["default-release"]["channel"]["released-at"])
-            .replace(tzinfo=None)
-            .strftime("%Y-%m-%d")
-        )
-
-    xml_sitemap = render_template(
-        "sitemap/sitemap-operators.xml",
-        base_url=f"{request.scheme}://{request.host}",
-        charms=charms,
     )
     response = make_response(xml_sitemap)
     response.headers["Content-Type"] = "application/xml"

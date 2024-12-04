@@ -1,20 +1,7 @@
 import os
 
-APP_NAME = "charmhub"
+APP_NAME = "rockstore"
 DETAILS_VIEW_REGEX = "[A-Za-z0-9-]*[A-Za-z][A-Za-z0-9-]*"
-
-CATEGORIES = [
-    {"slug": "ai-ml", "name": "AI/ML"},
-    {"slug": "big-data", "name": "Big Data"},
-    {"slug": "cloud", "name": "Cloud"},
-    {"slug": "containers", "name": "Containers"},
-    {"slug": "databases", "name": "Databases"},
-    {"slug": "logging-tracing", "name": "Logging and Tracing"},
-    {"slug": "monitoring", "name": "Monitoring"},
-    {"slug": "networking", "name": "Networking"},
-    {"slug": "security", "name": "Security"},
-    {"slug": "storage", "name": "Storage"},
-]
 
 SEARCH_FIELDS = [
     "result.categories",

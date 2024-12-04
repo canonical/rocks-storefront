@@ -29,12 +29,6 @@ module.exports = [
     use: ["expose-loader?exposes=charmhub.base", "babel-loader"],
   },
   {
-    test: require.resolve(
-      __dirname + "/static/js/src/public/store-details/index.js"
-    ),
-    use: ["expose-loader?exposes=charmhub.store", "babel-loader"],
-  },
-  {
     test: require.resolve(__dirname + "/static/js/src/public/details/index.ts"),
     use: ["expose-loader?exposes=charmhub.details", "babel-loader"],
   },
@@ -43,18 +37,6 @@ module.exports = [
       __dirname + "/static/js/src/public/details/overview/index.js"
     ),
     use: ["expose-loader?exposes=charmhub.details.overview", "babel-loader"],
-  },
-  {
-    test: require.resolve(
-      __dirname + "/static/js/src/public/details/docs/index.js"
-    ),
-    use: ["expose-loader?exposes=charmhub.details.docs", "babel-loader"],
-  },
-  {
-    test: require.resolve(
-      __dirname + "/static/js/src/public/details/resources/index.ts"
-    ),
-    use: ["expose-loader?exposes=charmhub.resources", "babel-loader"],
   },
   {
     test: /\.tsx?/,

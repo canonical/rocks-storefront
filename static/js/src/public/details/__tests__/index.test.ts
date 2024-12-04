@@ -1,12 +1,10 @@
 import { init } from "../index";
 import { HistoryState } from "../historyState";
 import { TableOfContents } from "../tableOfContents";
-import { channelMap } from "../channelMap";
 import { act, waitFor } from "@testing-library/react";
 
 jest.mock("../historyState");
 jest.mock("../tableOfContents");
-jest.mock("../channelMap");
 
 describe("index.ts", () => {
   beforeEach(() => {
@@ -40,19 +38,6 @@ describe("index.ts", () => {
     expect(TableOfContents).toHaveBeenCalledWith(
       mockDocsEl,
       expect.any(HistoryState)
-    );
-  });
-
-  test("should initialise channelMap with the channel map button", () => {
-    const mockChannelMapButton = document.querySelector(
-      "[data-js='channel-map']"
-    ) as HTMLElement;
-
-    init("test-package");
-
-    expect(channelMap).toHaveBeenCalledWith(
-      "test-package",
-      mockChannelMapButton
     );
   });
 
