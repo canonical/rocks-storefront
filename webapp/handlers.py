@@ -62,7 +62,7 @@ CSP = {
 }
 
 
-def charmhub_utility_processor():
+def rock_utility_processor():
     """
     This defines the set of properties and functions that will be added
     to the default context for processing templates. All these items
@@ -81,7 +81,7 @@ def charmhub_utility_processor():
 def set_handlers(app):
     @app.context_processor
     def utility_processor():
-        return charmhub_utility_processor()
+        return rock_utility_processor()
 
     # Error handlers
     # ===

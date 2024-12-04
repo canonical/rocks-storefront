@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import {
   Strip,
   Row,
@@ -11,13 +11,13 @@ import {
 import { CharmCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
-import { Package, Publisher } from "../../../publisher-admin/types";
+import { Package, Publisher } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;
 
   const getData = async () => {
-    const response = await fetch(`/store.json${search}`);
+    const response = await fetch(`/store.json`);
     const data = await response.json();
 
     const packagesWithId = data.packages.map((item: string[]) => {
@@ -33,7 +33,6 @@ function Packages() {
     };
   };
 
-  const { search } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const currentPage = searchParams.get("page") || "1";
   const { data, status, refetch, isFetching } = useQuery("data", getData);

@@ -11,10 +11,6 @@ import mistune
 from canonicalwebteam.discourse import DiscourseAPI
 
 session = requests.get_session()
-discourse_api = DiscourseAPI(
-    base_url="https://discourse.charmhub.io/",
-    session=session,
-)
 
 _yaml = YAML(typ="rt")
 _yaml_safe = YAML(typ="safe")

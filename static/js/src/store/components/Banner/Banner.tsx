@@ -7,7 +7,7 @@ type Props = {
   searchSummaryRef: RefObject<HTMLDivElement>;
 };
 
-function Banner({ searchRef, searchSummaryRef }: Props) {
+function Banner({ searchRef }: Props) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   return (
@@ -15,24 +15,7 @@ function Banner({ searchRef, searchSummaryRef }: Props) {
       <Row>
         <Col size={6} className="col-start-large-4">
           <h1 className="p-heading--2">The Rocks Collection</h1>
-          <form
-            className="p-search-box"
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              if (searchRef.current && searchRef.current.value) {
-                searchParams.delete("page");
-                searchParams.set("q", searchRef.current.value);
-                setSearchParams(searchParams);
-              }
-
-              if (searchSummaryRef && searchSummaryRef.current) {
-                searchSummaryRef.current.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }
-            }}
-          >
+          <form className="p-search-box" action="/all-search">
             <label className="u-off-screen" htmlFor="search">
               Search Rocks
             </label>

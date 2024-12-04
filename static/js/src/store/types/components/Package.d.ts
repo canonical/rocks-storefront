@@ -1,4 +1,4 @@
-import type Publisher from "./Publisher";
+import type Publisher from "../../publisher-admin/types/components/Publisher";
 
 type Package = {
   authority: string | null;
