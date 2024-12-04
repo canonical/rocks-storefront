@@ -1,19 +1,8 @@
 import { Col, Row } from "@canonical/react-components";
-import {
-  BundleCard,
-  CharmCard,
-  LoadingCard,
-} from "@canonical/store-components";
+import { CharmCard, LoadingCard } from "@canonical/store-components";
 import { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { ICharm } from "../shared/types";
-
-type DiscourseTopic = {
-  id: string;
-  url: string;
-  title: string;
-  post: { blurb: string };
-};
+import { Package, Publisher } from "../store/types";
 
 function App() {
   const search = new URLSearchParams(window.location.search).get("q");
@@ -22,10 +11,7 @@ function App() {
   const [term, setTerm] = useState(search || "");
 
   const [results, setResults] = useState({
-    charms: [],
-    bundles: [],
-    docs: [],
-    topics: [],
+    rocks: [],
   });
 
   useEffect(() => {
@@ -37,8 +23,7 @@ function App() {
         setLoading(false);
       });
   }, []);
-
-  const { charms, bundles, docs, topics } = results;
+  const { rocks } = results;
 
   return (
     <>
@@ -72,7 +57,7 @@ function App() {
         <div className="row">
           <section className="p-section">
             <h3>
-              <a href={`/?type=charm&q=${search}`}>Charms &rsaquo;</a>
+              <a href={`/?q=${search}`}>Rocks &rsaquo;</a>
             </h3>
             <Row>
               {loading ? (
@@ -81,108 +66,32 @@ function App() {
                     <LoadingCard />
                   </Col>
                 ))
-              ) : charms.length ? (
+              ) : rocks.length ? (
                 <>
                   <p>
-                    Showing the top {charms.length} results for "{search}"
+                    Showing the top {rocks.length} results for "{search}"
                   </p>
-                  {charms.map((charm: ICharm) => (
-                    <Col
-                      size={3}
-                      style={{ marginBottom: "1.5rem" }}
-                      key={charm?.package?.name}
-                    >
-                      <CharmCard data={charm} />
-                    </Col>
-                  ))}
+                  {rocks.map(
+                    (rock: {
+                      package: Package;
+                      publisher: Publisher;
+                      id: string;
+                    }) => (
+                      <Col
+                        size={3}
+                        style={{ marginBottom: "1.5rem" }}
+                        key={rock.package.name}
+                      >
+                        <p>{rock.package.name}</p>
+                        <CharmCard data={rock} />
+                      </Col>
+                    )
+                  )}
                 </>
               ) : (
-                <p>No charms matching this search</p>
+                <p>No rocks matching this search</p>
               )}
             </Row>
-          </section>
-          <section className="p-section">
-            <h3>
-              <a href={`/?type=bundle&q=${search}`}>Bundles &rsaquo;</a>
-            </h3>
-            <Row>
-              {loading ? (
-                [...Array(4)].map((_, i) => (
-                  <Col size={3} style={{ marginBottom: "1.5rem" }} key={i}>
-                    <LoadingCard />
-                  </Col>
-                ))
-              ) : bundles.length ? (
-                <>
-                  <p>
-                    Showing the top {bundles.length} results for "{search}"
-                  </p>
-                  {bundles.map((bundle: ICharm) => (
-                    <Col
-                      size={3}
-                      style={{ marginBottom: "1.5rem" }}
-                      key={bundle?.package?.name}
-                    >
-                      <BundleCard data={bundle} />
-                    </Col>
-                  ))}
-                </>
-              ) : (
-                <p>No bundles matching this search</p>
-              )}
-            </Row>
-          </section>
-          <section className="p-section">
-            <h3>
-              <a href={`https://juju.is/docs/search?q=${search}`}>
-                Documentation &rsaquo;
-              </a>
-            </h3>
-            <div>
-              {docs.length ? (
-                docs.map((doc: DiscourseTopic) => (
-                  <Col size={12} key={doc.id}>
-                    <h5>
-                      {doc.url ? (
-                        <a href={doc.url} target="_blank" rel="noreferrer">
-                          {doc.title}
-                        </a>
-                      ) : (
-                        doc.title
-                      )}
-                    </h5>
-                    <p>{doc?.post?.blurb}</p>
-                  </Col>
-                ))
-              ) : (
-                <p>No matching documentation pages</p>
-              )}
-            </div>
-          </section>
-          <section className="p-section">
-            <h3>
-              <a href={`https://discourse.charmhub.io/search?q=${search}`}>
-                Forum posts &rsaquo;
-              </a>
-            </h3>
-            {topics.length ? (
-              topics.map((topic: DiscourseTopic) => (
-                <Col size={12} key={topic.id}>
-                  <h5>
-                    <a
-                      href={`https://discourse.charmhub.io/t/${topic.id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {topic.title}
-                    </a>
-                  </h5>
-                  <p>{topic?.post?.blurb}</p>
-                </Col>
-              ))
-            ) : (
-              <p>No matching posts</p>
-            )}
           </section>
         </div>
       )}
