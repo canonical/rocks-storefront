@@ -88,6 +88,6 @@
     "stylelint": "16.2.1",
     "stylelint-config-standard-scss": "13.0.0",
     "stylelint-order": "6.0.4",
-    "undici": "6.19.2"
+    "undici": "6.21.1"
   }
 }
