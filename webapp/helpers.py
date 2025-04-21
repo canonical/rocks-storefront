@@ -8,7 +8,6 @@ from slugify import slugify
 from talisker import requests
 from datetime import datetime, timedelta
 import mistune
-from canonicalwebteam.discourse import DiscourseAPI
 
 session = requests.get_session()
 

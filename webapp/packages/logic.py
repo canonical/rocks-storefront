@@ -31,6 +31,7 @@ def get_icon(media):
         return icons[0]
     return ""
 
+
 def parse_package_for_card(
     package: Dict[str, Any],
 ) -> Package:
@@ -69,7 +70,9 @@ def parse_package_for_card(
     publisher = package.get("publisher", {})
     resp["package"]["type"] = package.get("type", "")
     resp["package"]["name"] = package.get("name", "")
-    resp["package"]["description"] = package["summary"] or package["description"]
+    resp["package"]["description"] = (
+        package["summary"] or package["description"]
+    )
     resp["package"]["display_name"] = package.get(
         "display_name", format_slug(package.get("name", ""))
     )
@@ -129,12 +132,18 @@ def get_packages(
 
     """
 
-    with open ("webapp/rocks.json", "r") as rocks:
+    with open("webapp/rocks.json", "r") as rocks:
         packages = json.load(rocks)
         rocks.close()
-    
+
     for rock in packages:
-        rock["icon_url"] = "https://api.charmhub.io/api/v1/media/download/charm_3uPxmv77o1PrixpQFIf8o7SkOLsnMWmZ_icon_ad1a94cf9bb9f68614cb6c17e54e2fbd9dcc7fecc514dc6012b7f58fb5b87f8f.png"
+        rock[
+            "icon_url"
+        ] = """
+            https://api.charmhub.io/api/v1/media/download/
+            charm_3uPxmv77o1PrixpQFIf8o7SkOLsnMWmZ_icon_ad1
+            a94cf9bb9f68614cb6c17e54e2fbd9dcc7fecc514dc6012b7f58fb5b87f8f.png
+        """
 
     total_pages = -(len(packages) // -size)
 
@@ -144,10 +153,7 @@ def get_packages(
     packages_per_page = paginate(packages, page, size, total_pages)
     parsed_packages = []
     for package in packages_per_page:
-        parsed_packages.append(
-            parse_package_for_card(package)
-        )
-    res = parsed_packages
+        parsed_packages.append(parse_package_for_card(package))
     return {
         "packages": parsed_packages,
         "total_pages": total_pages,

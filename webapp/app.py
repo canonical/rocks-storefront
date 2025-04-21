@@ -1,7 +1,6 @@
 import re
 
 import talisker.requests
-from dateutil import parser
 from flask import render_template, make_response, request, escape
 from webapp.extensions import csrf
 from webapp.config import APP_NAME

@@ -1,5 +1,4 @@
-from pprint import pprint
-from flask import Blueprint, json, request, current_app as app, render_template
+from flask import Blueprint, json, request, render_template
 
 from webapp.packages.logic import parse_package_for_card
 
@@ -22,6 +21,9 @@ def all_search_json():
 
     with open("webapp/rocks.json", "r") as rocks:
         rocks = json.load(rocks)
-        rocks = [parse_package_for_card(rock) for rock in rocks if term in rock["display_name"]][:limit]
+        rocks = [
+            parse_package_for_card(rock)
+            for rock in rocks
+            if term in rock["display_name"]
+        ][:limit]
         return {"rocks": rocks}
-
