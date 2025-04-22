@@ -37,6 +37,7 @@ def get_icons(package):
     media = package["result"]["media"]
     return [m["url"] for m in media if m["type"] == "icon"]
 
+
 def format_slug(slug):
     """Format slug name into a standard title format
     :param slug: The hypen spaced, lowercase slug to be formatted
