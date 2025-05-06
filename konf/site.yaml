@@ -17,7 +17,7 @@ extraHosts:
   - domain: jujucharms.com
   - domain: openoperatorcollection.io
 
-# Overrides for staging
+# Overrides for staging environment
 staging:
   replicas: 3
   nginxConfigurationSnippet: |
