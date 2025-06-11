@@ -64,6 +64,7 @@ venv/
 .dotrun.json
 .venv*/
 
+coverage/
 node_modules/
 bower_components/
 *.log

@@ -19,7 +19,7 @@ The application will be reporting errors to your `sentry.io` project from now on
 
 ## Testing
 
-Install the [`dotrun`](https://snapcraft.io/dotrun) snap.
+Install the [`dotrun`](https://snapcraft.io/dotrun) utility.
 
 ``` bash
 dotrun test
