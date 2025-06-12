@@ -29,7 +29,7 @@
   .p-filter-panel-overlay {
     @media only screen and (min-width: vanilla.$breakpoint-small) and (max-width: settings.$breakpoint-large) {
       background-color:
-        rgba(
+        rgb(
           17,
           17,
           17,
@@ -53,7 +53,7 @@
 
   .p-filter-panel__header {
     @media only screen and (max-width: settings.$breakpoint-large) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      border-bottom: 1px solid rgb(0, 0, 0, 0.1);
       padding: 0.5rem 1rem;
 
       i {

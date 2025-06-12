@@ -1,7 +1,7 @@
 @use "vanilla-framework" as vanilla;
 
 @mixin p-charmhub-multiselect {
-  $box-shadow-color: rgba(0, 0, 0, 0.12);
+  $box-shadow-color: rgb(0, 0, 0, 0.12);
 
   .p-multiselect__wrapper {
     margin-block: vanilla.$spv--small vanilla.$input-margin-bottom;
