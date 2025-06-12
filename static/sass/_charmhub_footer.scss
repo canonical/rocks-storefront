@@ -1,8 +1,11 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin charmhub-p-footer {
   .p-footer {
     @extend %vf-strip;
 
-    background-color: $brand-color;
+    background-color: settings.$brand-color;
     background-image:
       linear-gradient(
         to bottom left,
@@ -23,26 +26,26 @@
         rgba(255, 255, 255, 0.04) 49.9%,
         transparent 50%
       ),
-      linear-gradient(268deg, $brand-color 8%, #2c001e 100%);
+      linear-gradient(268deg, settings.$brand-color 8%, #2c001e 100%);
     background-position: top right, bottom left, bottom left;
     background-repeat: no-repeat;
     background-size: 16rem 15%, 60% 100%, 25% 100%, 100%;
-    color: $color-x-light;
+    color: vanilla.$color-x-light;
     padding-bottom: 2.5rem;
 
     &__link {
-      color: $color-x-light;
+      color: vanilla.$color-x-light;
 
       &:hover,
       &:visited {
-        color: $color-mid-light;
+        color: vanilla.$color-mid-light;
       }
     }
 
     .p-inline-list--middot {
       .p-inline-list__item {
         &::after {
-          color: $color-x-light;
+          color: vanilla.$color-x-light;
           right: -0.8rem;
         }
       }

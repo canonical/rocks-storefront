@@ -1,8 +1,10 @@
+@use "vanilla-framework" as vanilla;
+
 @mixin p-charmhub-multiselect {
   $box-shadow-color: rgba(0, 0, 0, 0.12);
 
   .p-multiselect__wrapper {
-    margin-block: $spv--small $input-margin-bottom;
+    margin-block: vanilla.$spv--small vanilla.$input-margin-bottom;
   }
 
   .p-multiselect__clear {
@@ -14,14 +16,14 @@
     @extend %vf-clearfix;
 
     align-items: flex-start;
-    border: 1px solid $colors--light-theme--border-high-contrast;
-    box-shadow: inset 0 1px 1px $color-input-shadow;
+    border: 1px solid vanilla.$colors--light-theme--border-high-contrast;
+    box-shadow: inset 0 1px 1px vanilla.$color-input-shadow;
     display: flex;
     flex-wrap: wrap;
     line-height: 1.5rem;
-    margin-block: $spv--small $input-margin-bottom;
+    margin-block: vanilla.$spv--small vanilla.$input-margin-bottom;
     min-width: 10em;
-    padding: 0 $spv--small;
+    padding: 0 vanilla.$spv--small;
     place-content: flex-start flex-start;
     position: relative;
     width: 100%;
@@ -33,24 +35,24 @@
     }
 
     &.is-focused {
-      outline: $bar-thickness solid $color-focus;
-      outline-offset: -$bar-thickness;
+      outline: vanilla.$bar-thickness solid vanilla.$color-focus;
+      outline-offset: -(vanilla.$bar-thickness);
     }
 
     .p-multiselect__item {
-      border: 1px solid $color-mid-light;
+      border: 1px solid vanilla.$color-mid-light;
       border-radius: 2em;
       display: block;
       font-size: 0.875rem;
       margin-block-start: 0.3rem;
-      margin-inline-end: $spv--small;
-      padding: 0 $spv--small;
+      margin-inline-end: vanilla.$spv--small;
+      padding: 0 vanilla.$spv--small;
 
       .p-multiselect__item-remove {
         cursor: pointer;
         height: 0.75em;
         margin-block-end: 0.125rem;
-        margin-inline-start: $spv--small;
+        margin-inline-start: vanilla.$spv--small;
         width: 0.75em;
       }
     }
@@ -70,7 +72,7 @@
     .p-multiselect__options {
       @extend %vf-has-box-shadow;
 
-      background: $color-x-light;
+      background: vanilla.$color-x-light;
       left: 0;
       list-style-type: none;
       margin-inline-start: 0;
@@ -84,25 +86,25 @@
       z-index: 1;
 
       &::before {
-        color: $color-mid-light;
+        color: vanilla.$color-mid-light;
         content: "No matches";
-        font-size: $sp-medium;
+        font-size: vanilla.$sp-medium;
         left: 0;
-        padding: $spv--small;
+        padding: vanilla.$spv--small;
         position: absolute;
         top: 0;
       }
     }
 
     .p-multiselect__option {
-      background: $color-x-light;
+      background: vanilla.$color-x-light;
       cursor: pointer;
-      padding: $spv--small;
+      padding: vanilla.$spv--small;
       position: relative;
 
       &.is-highlighted,
       &:hover {
-        background: $color-light;
+        background: vanilla.$color-light;
       }
     }
   }

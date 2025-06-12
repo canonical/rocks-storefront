@@ -1,9 +1,12 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin charmhub-p-header {
   .p-charm-header__container {
     align-items: center;
     display: flex;
 
-    @media screen and (max-width: $breakpoint-small - 1) {
+    @media screen and (max-width: vanilla.$breakpoint-small - 1) {
       align-items: flex-start;
       flex-direction: column;
     }
@@ -14,16 +17,16 @@
       display: inline-block;
       margin-block-end: 1rem;
 
-      @media screen and (min-width: $breakpoint-small) {
+      @media screen and (min-width: vanilla.$breakpoint-small) {
         margin-block-end: 0;
-        padding-inline-start: $spv--small;
+        padding-inline-start: vanilla.$spv--small;
       }
 
       code {
         background-color: transparent;
         box-shadow: none;
 
-        @media screen and (max-width: $breakpoint-large - 1) {
+        @media screen and (max-width: settings.$breakpoint-large - 1) {
           margin-block-end: 1rem;
           margin-inline-start: 0;
         }
@@ -31,15 +34,15 @@
     }
 
     &__action {
-      margin-block-start: $spv--small;
-      padding-inline-start: $spv--small;
+      margin-block-start: vanilla.$spv--small;
+      padding-inline-start: vanilla.$spv--small;
     }
 
     .p-button--base {
       margin-block-end: 0;
       width: fit-content;
 
-      @media screen and (max-width: $breakpoint-large - 1) {
+      @media screen and (max-width: settings.$breakpoint-large - 1) {
         margin-block-end: 0.5rem;
       }
     }
@@ -72,7 +75,7 @@
       .p-media-object__title {
         @extend %vf-heading-2;
 
-        padding-bottom: $spv--x-small;
+        padding-bottom: vanilla.$spv--x-small;
       }
     }
   }

@@ -1,10 +1,15 @@
+@use "sass:map";
+
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin l-charmhub-fluid-breakout {
   .l-fluid-breakout {
     .l-fluid-breakout__aside {
       .p-muted-heading,
       .p-side-navigation__list {
-        @media (max-width: $breakpoint-large - 1px) {
-          padding-inline-start: map-get($grid-margin-widths, small);
+        @media (max-width: settings.$breakpoint-large - 1px) {
+          padding-inline-start: map.get(vanilla.$grid-margin-widths, small);
         }
       }
 
@@ -12,7 +17,7 @@
         position: fixed;
         transform: translateX(-100%);
 
-        @media (min-width: $breakpoint-large) {
+        @media (min-width: settings.$breakpoint-large) {
           position: static;
           transform: translateX(0);
         }
@@ -20,12 +25,12 @@
 
       .p-side-navigation:target .p-side-navigation__drawer,
       .p-side-navigation.is-expanded .p-side-navigation__drawer {
-        @media (max-width: $breakpoint-large - 1px) {
+        @media (max-width: settings.$breakpoint-large - 1px) {
           position: fixed;
           transform: translateX(0);
         }
 
-        @media (min-width: $breakpoint-x-small) {
+        @media (min-width: vanilla.$breakpoint-x-small) {
           max-width: 20rem;
         }
       }
@@ -33,7 +38,7 @@
       .p-side-navigation__overlay {
         display: block;
 
-        @media (min-width: $breakpoint-large) {
+        @media (min-width: settings.$breakpoint-large) {
           display: none;
         }
       }
@@ -43,7 +48,7 @@
         margin-block-end: 0.5rem;
         position: static;
 
-        @media (min-width: $breakpoint-large) {
+        @media (min-width: settings.$breakpoint-large) {
           display: none;
         }
       }
@@ -51,26 +56,26 @@
       .p-side-navigation__toggle--in-drawer {
         display: inline-block;
 
-        @media (min-width: $breakpoint-large) {
+        @media (min-width: settings.$breakpoint-large) {
           display: none;
         }
       }
 
       label.p-checkbox {
-        @media (min-width: $breakpoint-large) {
+        @media (min-width: settings.$breakpoint-large) {
           margin-block-end: 0;
         }
       }
     }
 
     .l-fluid-breakout__toolbar-items {
-      @media (max-width: $breakpoint-large - 1px) {
+      @media (max-width: settings.$breakpoint-large - 1px) {
         grid-template-columns: minmax(0, 1fr);
         width: auto;
       }
 
       .l-fluid-breakout__toolbar-item:first-child {
-        @media (max-width: $breakpoint-large - 1px) {
+        @media (max-width: settings.$breakpoint-large - 1px) {
           grid-row-start: 2;
         }
       }
@@ -86,19 +91,19 @@
 
           .p-button,
           .p-form {
-            @media (max-width: $breakpoint-large - 1) {
+            @media (max-width: settings.$breakpoint-large - 1) {
               width: 50%;
             }
           }
 
           .p-form__group {
-            @media screen and (min-width: $breakpoint-small) and (max-width: $breakpoint-large - 1px) {
+            @media screen and (min-width: vanilla.$breakpoint-small) and (max-width: settings.$breakpoint-large - 1px) {
               width: 100%;
             }
           }
         }
 
-        @media (max-width: $breakpoint-large - 1px) {
+        @media (max-width: settings.$breakpoint-large - 1px) {
           display: block;
         }
       }

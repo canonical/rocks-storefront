@@ -1,3 +1,5 @@
+@use "vanilla-framework" as vanilla;
+
 @mixin p-charmhub-accordion {
   .p-accordion {
     .p-accordion__tab {
@@ -7,7 +9,7 @@
       }
 
       .p-accordion__tab-description {
-        color: $color-mid-dark;
+        color: vanilla.$color-mid-dark;
         font-size: 0.875rem;
       }
     }
@@ -19,7 +21,7 @@
         .p-list__item {
           font-style: italic;
           font-weight: 300;
-          padding-left: $spv--large;
+          padding-left: vanilla.$spv--large;
 
           &::after {
             border: none;
@@ -27,7 +29,7 @@
 
           .p-list__item {
             font-style: normal;
-            padding-left: 2 * $spv--large;
+            padding-left: 2 * vanilla.$spv--large;
           }
         }
       }

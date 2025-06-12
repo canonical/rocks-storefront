@@ -1,10 +1,12 @@
 @use "sass:math";
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
 
 @mixin p-charmhub-media-object {
   .p-media-object.has-separator {
     margin-block-end: 4.75rem;
 
-    @media screen and (max-width: $breakpoint-large - 1) {
+    @media screen and (max-width: settings.$breakpoint-large - 1) {
       margin-block-end: 2.5rem;
     }
 
@@ -15,7 +17,7 @@
     }
 
     .p-media-object__details {
-      border-left: 1px solid $color-mid-light;
+      border-left: 1px solid vanilla.$color-mid-light;
       display: flex;
       max-width: 10rem;
       padding-inline-start: 1rem;
@@ -33,19 +35,19 @@
       $icon-size: 3.75rem;
 
       height: fit-content;
-      margin-right: $spv--medium;
-      margin-top: $spv--large;
+      margin-right: vanilla.$spv--medium;
+      margin-top: vanilla.$spv--large;
 
-      @media only screen and (max-width: $breakpoint-large - 1) {
+      @media only screen and (max-width: settings.$breakpoint-large - 1) {
         margin-right: 0;
-        margin-top: $spv--medium;
+        margin-top: vanilla.$spv--medium;
       }
 
-      @media only screen and (max-width: $breakpoint-small) {
+      @media only screen and (max-width: vanilla.$breakpoint-small) {
         width: 4.5rem;
       }
 
-      @media only screen and (min-width: $breakpoint-small) {
+      @media only screen and (min-width: vanilla.$breakpoint-small) {
         .p-bundle-icons__image {
           border-radius: math.div($icon-size, 2);
           height: $icon-size;

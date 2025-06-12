@@ -1,3 +1,6 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-grid {
   .col-x-small-1 {
     @media (width <= 450px) {
@@ -6,19 +9,19 @@
   }
 
   .col-x-large-3 {
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: settings.$breakpoint-large) {
       grid-column-end: span 3;
     }
   }
 
   .col-x-large-4 {
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: settings.$breakpoint-large) {
       grid-column-end: span 4;
     }
   }
 
   .col-x-large-6 {
-    @media screen and (min-width: $breakpoint-large) {
+    @media screen and (min-width: settings.$breakpoint-large) {
       grid-column-end: span 6;
     }
   }

@@ -4,20 +4,24 @@ $color-accent: $color-brand;
 $color-navigation-background: #252525;
 
 // vanilla patterns
-@import "vanilla-framework";
-@include vf-base;
-@include vf-p-grid;
-@include vf-p-headings;
-@include vf-p-lists;
-@include vf-p-media-object;
-@include vf-p-strip;
-@include vf-p-tooltips;
-@include vf-u-align;
-@include vf-u-floats;
-@include vf-u-margin-collapse;
-@include vf-u-text-muted;
-@import "charmhub_p-header";
-@include charmhub-p-header;
+@use "vanilla-framework" as vanilla;
+
+@use "charmhub_p-header" as header;
+
+@include vanilla.vf-base;
+@include vanilla.vf-p-grid;
+@include vanilla.vf-p-headings;
+@include vanilla.vf-p-lists;
+@include vanilla.vf-p-media-object;
+@include vanilla.vf-p-strip;
+@include vanilla.vf-p-tooltips;
+@include vanilla.vf-u-align;
+@include vanilla.vf-u-floats;
+@include vanilla.vf-u-margin-collapse;
+@include vanilla.vf-u-text-muted;
+
+@include header.charmhub-p-header;
+
 // CUSTOM STYLES FOR EMBEDDED CARD
 
 .p-strip.has-suru {
@@ -34,12 +38,12 @@ $color-navigation-background: #252525;
       rgba(229, 229, 229, 0.3) 49.9%,
       transparent 50%
     ),
-    linear-gradient(0deg, $color-light, $color-light);
+    linear-gradient(0deg, vanilla.$color-light, vanilla.$color-light);
   background-position: top right, bottom right;
   background-repeat: no-repeat;
   background-size: 75% 100%, 35% 100%, 100% auto;
 
-  @media screen and (min-width: $breakpoint-small) {
+  @media screen and (min-width: vanilla.$breakpoint-small) {
     background-size: 45% 100%, 25% 250%;
   }
 }

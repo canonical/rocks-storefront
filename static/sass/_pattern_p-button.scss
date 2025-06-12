@@ -1,17 +1,19 @@
+@use "vanilla-framework" as vanilla;
+
 @mixin p-charmhub-button {
   .p-button--outline {
     @extend %vf-button-base;
 
-    border-color: $color-x-light;
-    color: $color-x-light;
+    border-color: vanilla.$color-x-light;
+    color: vanilla.$color-x-light;
 
     &:visited {
-      color: $color-x-light;
+      color: vanilla.$color-x-light;
     }
 
     &:hover,
     &:active:hover {
-      background-color: rgba($color-mid-x-light, 0.2);
+      background-color: rgba(vanilla.$color-mid-x-light, 0.2);
     }
   }
 
@@ -21,7 +23,7 @@
   }
 
   .pagination__link--previous {
-    @media screen and (min-width: $breakpoint-small) {
+    @media screen and (min-width: vanilla.$breakpoint-small) {
       margin-block-end: 0;
     }
   }
