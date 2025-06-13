@@ -1,3 +1,5 @@
+@use "vanilla-framework" as vanilla;
+
 @mixin p-charmhub-button-group {
   .p-button-group {
     align-content: center;
@@ -5,15 +7,15 @@
     display: flex;
 
     button:hover {
-      border-color: $color-mid-light;
+      border-color: vanilla.$color-mid-light;
     }
 
     a:visited {
-      color: $color-dark;
+      color: vanilla.$color-dark;
     }
 
     a:hover {
-      @include vf-animation(#{background-color, border-color}, fast, in);
+      @include vanilla.vf-animation(#{background-color, border-color}, fast, in);
 
       background-color: #f2f2f2;
       text-decoration: none;
@@ -28,7 +30,7 @@
     }
 
     &__buttons {
-      border: 1px solid $color-mid-dark;
+      border: 1px solid vanilla.$color-mid-dark;
       border-radius: 0.125rem;
       display: flex;
       margin-bottom: 1rem;
@@ -43,8 +45,8 @@
     &__button {
       align-items: center;
       border: none;
-      border-right: 1px solid $color-mid-dark;
-      color: $color-dark;
+      border-right: 1px solid vanilla.$color-mid-dark;
+      color: vanilla.$color-dark;
       display: flex;
       flex: 1;
       height: 100%;
@@ -59,7 +61,7 @@
       }
 
       &.is-selected {
-        background: $color-mid-x-light;
+        background: vanilla.$color-mid-x-light;
       }
 
       &:last-child {

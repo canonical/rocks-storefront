@@ -66,6 +66,7 @@ describe("navigation-events footer", () => {
     jest.resetModules();
     mockDataLayer.length = 0;
   });
+
   test("should add GA footer navigation events", async () => {
     setupMockDOM(`
       <footer>
@@ -100,6 +101,7 @@ describe("navigation-events content", () => {
     jest.resetModules();
     mockDataLayer.length = 0;
   });
+
   test("should add GA content events for content elements", async () => {
     setupMockDOM(`
       <div id="main-content">

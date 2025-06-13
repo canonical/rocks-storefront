@@ -13,6 +13,7 @@ env:
       key: environment
       name: environment
 
+# TODO: update with proper domains
 extraHosts:
   - domain: jujucharms.com
   - domain: openoperatorcollection.io

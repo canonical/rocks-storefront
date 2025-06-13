@@ -4,7 +4,6 @@ import { Strip, Row, Col } from "@canonical/react-components";
 
 type Props = {
   searchRef: RefObject<HTMLInputElement>;
-  searchSummaryRef: RefObject<HTMLDivElement>;
 };
 
 function Banner({ searchRef }: Props) {
@@ -38,7 +37,17 @@ function Banner({ searchRef }: Props) {
             >
               <i className="p-icon--close">Close</i>
             </button>
-            <button type="submit" className="p-search-box__button">
+            <button
+              type="submit"
+              className="p-search-box__button"
+              onClick={() => {
+                if (searchRef.current) {
+                  const newSearch = new URLSearchParams();
+                  newSearch.set("q", searchRef.current.value);
+                  setSearchParams(newSearch);
+                }
+              }}
+            >
               <i className="p-icon--search">Search</i>
             </button>
           </form>

@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { useSearchParams } from "react-router-dom";
 import Banner from "../Banner";
@@ -8,12 +8,9 @@ jest.mock("react-router-dom", () => ({
   useSearchParams: jest.fn(),
 }));
 
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
 describe("Banner Component", () => {
   let mockSetSearchParams: jest.Mock;
   let mockSearchRef: React.RefObject<HTMLInputElement>;
-  let mockSearchSummaryRef: React.RefObject<HTMLDivElement>;
 
   beforeEach(() => {
     mockSetSearchParams = jest.fn();
@@ -25,19 +22,10 @@ describe("Banner Component", () => {
     mockSearchRef = {
       current: document.createElement("input"),
     };
-
-    mockSearchSummaryRef = {
-      current: document.createElement("div"),
-    };
   });
 
   test("should render the Banner component", () => {
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
+    render(<Banner searchRef={mockSearchRef} />);
 
     expect(
       screen.getByRole("heading", { name: /The Rocks Collection/i })
@@ -49,36 +37,22 @@ describe("Banner Component", () => {
     expect(screen.getByRole("button", { name: /Close/i })).toBeInTheDocument();
   });
 
-  test("should update search params and scroll on form submission", () => {
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
+  test("should update search params", async () => {
+    render(<Banner searchRef={mockSearchRef} />);
 
-    if (mockSearchRef.current) {
-      mockSearchRef.current.value = "kubernetes";
-    }
+    const input = screen.getByLabelText("Search Rocks");
+    fireEvent.change(input, { target: { value: "kubernetes" } });
+    fireEvent.click(screen.getByRole("button", { name: /Search/i }));
 
-    fireEvent.submit(screen.getByRole("button", { name: /Search/i }));
-
-    expect(mockSetSearchParams).toHaveBeenCalledWith(
-      new URLSearchParams({ q: "kubernetes" })
-    );
-
-    expect(mockSearchSummaryRef.current?.scrollIntoView).toHaveBeenCalledWith({
-      behavior: "smooth",
+    await waitFor(() => {
+      expect(mockSetSearchParams).toHaveBeenCalledWith(
+        new URLSearchParams({ q: "kubernetes" })
+      );
     });
   });
 
   test("should clear search params on reset button click", () => {
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
+    render(<Banner searchRef={mockSearchRef} />);
 
     fireEvent.click(screen.getByRole("button", { name: /Close/i }));
 
@@ -86,12 +60,7 @@ describe("Banner Component", () => {
   });
 
   test("should not update search params when input is empty", () => {
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
+    render(<Banner searchRef={mockSearchRef} />);
 
     if (mockSearchRef.current) {
       mockSearchRef.current.value = "";
@@ -109,35 +78,11 @@ describe("Banner Component", () => {
       mockSetSearchParams,
     ]);
 
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
+    render(<Banner searchRef={mockSearchRef} />);
 
     const searchInput = screen.getByPlaceholderText(
       "Search Rocks"
     ) as HTMLInputElement;
     expect(searchInput.value).toBe("test");
-  });
-
-  test("should call scrollIntoView on form submission", () => {
-    render(
-      <Banner
-        searchRef={mockSearchRef}
-        searchSummaryRef={mockSearchSummaryRef}
-      />
-    );
-
-    if (mockSearchSummaryRef.current) {
-      mockSearchSummaryRef.current.scrollIntoView = jest.fn();
-    }
-
-    fireEvent.submit(screen.getByRole("button", { name: /Search/i }));
-
-    expect(mockSearchSummaryRef.current?.scrollIntoView).toHaveBeenCalledWith({
-      behavior: "smooth",
-    });
   });
 });

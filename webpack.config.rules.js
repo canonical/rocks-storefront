@@ -15,7 +15,20 @@ module.exports = [
   },
   {
     test: /\.s[ac]ss$/i,
-    use: ["style-loader", "css-loader", "sass-loader"],
+    use: [
+      "style-loader",
+      "css-loader",
+      {
+        loader: "sass-loader",
+        // to be removed once vanilla-framework updates to dart sass 3.0.0
+        options: {
+          sassOptions: {
+            quietDeps: true,
+            silenceDeprecations: ["import", "global-builtin", "mixed-decls"],
+          },
+        },
+      },
+    ],
   },
   {
     test: /\.css$/i,
@@ -23,7 +36,6 @@ module.exports = [
   },
   // loaders are evaluated from bottom to top (right to left)
   // so first transpile via babel, then expose as global
-
   {
     test: require.resolve(__dirname + "/static/js/src/base/base.js"),
     use: ["expose-loader?exposes=charmhub.base", "babel-loader"],
