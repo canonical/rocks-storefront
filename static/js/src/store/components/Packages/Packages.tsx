@@ -47,7 +47,7 @@ function Packages() {
     (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + data?.packages.length;
   return (
     <>
-      <Banner searchRef={searchRef} searchSummaryRef={searchSummaryRef} />
+      <Banner searchRef={searchRef} />
       <Strip>
         <Row>
           <Col size={12}>
