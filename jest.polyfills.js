@@ -9,15 +9,19 @@
  */
 
 const { TextDecoder, TextEncoder, ReadableStream } = require("node:util");
+const { MessagePort, MessageChannel } = require("node:worker_threads");
 
 // eslint-disable-next-line no-undef
 Object.defineProperties(globalThis, {
   TextDecoder: { value: TextDecoder },
   TextEncoder: { value: TextEncoder },
   ReadableStream: { value: ReadableStream },
+  MessagePort: { value: MessagePort },
+  MessageChannel: { value: MessageChannel },
 });
 
 const { Blob, File } = require("node:buffer");
+
 const { fetch, Headers, FormData, Request, Response } = require("undici");
 
 // eslint-disable-next-line no-undef

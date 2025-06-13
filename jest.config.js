@@ -11,4 +11,5 @@ module.exports = {
     "\\.(scss|sass|css)$": "identity-obj-proxy",
   },
   setupFiles: ["./jest.polyfills.js"],
+  setupFilesAfterEnv: ["./jest.setup.js"],
 };

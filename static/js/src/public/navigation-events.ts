@@ -2,6 +2,7 @@ const currentOrigin = window.location.href;
 // @ts-expect-error: dataLayer is defined in the global scope
 const { dataLayer } = window;
 
+// TODO: update URLs
 // Main navigation
 addGANavEvents("#navigation", "charmhub.io-nav-1");
 // Footer events
