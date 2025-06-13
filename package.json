@@ -18,7 +18,7 @@
     "test": "yarn run lint-scss && yarn run lint-js && yarn run test-js && yarn run lint-python && yarn run test-python",
     "test-python": "python3 -m unittest discover tests",
     "test-js": "jest",
-    "check-prettier": "prettier -c '**/*.js'"
+    "check-prettier": "prettier -c '**/*{.js,.jsx,.ts,.tsx}'"
   },
   "dependencies": {
     "@canonical/cookie-policy": "3.6.5",
