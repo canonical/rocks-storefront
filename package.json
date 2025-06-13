@@ -23,7 +23,7 @@
   "dependencies": {
     "@canonical/cookie-policy": "3.6.5",
     "@canonical/global-nav": "3.6.4",
-    "@canonical/react-components": "2.7.0",
+    "@canonical/react-components": "2.7.1",
     "@canonical/store-components": "0.53.0",
     "autoprefixer": "10.4.21",
     "date-fns": "4.1.0",
@@ -37,7 +37,7 @@
     "react-markdown": "10.1.0",
     "react-query": "3.39.3",
     "react-router-dom": "7.6.2",
-    "vanilla-framework": "4.20.0"
+    "vanilla-framework": "4.24.1"
   },
   "devDependencies": {
     "@babel/core": "7.27.4",
