@@ -2,6 +2,7 @@ name: Test coverage
 on:
   schedule:
     - cron: "0 22 * * 5"
+  pull_request:
 
 jobs:
   test:
