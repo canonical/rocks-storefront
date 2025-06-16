@@ -123,10 +123,11 @@ jobs:
         run: yarn install
 
       - name: Produce TICS report
-        shell: bash
-        run: |
-          set -x
-          export TICSAUTHTOKEN=${{ secrets.TICSAUTHTOKEN }}
-          curl --silent --show-error "https://canonical.tiobe.com/tiobeweb/TICS/api/public/v1/fapi/installtics/Script?cfg=default&platform=linux&url=https://canonical.tiobe.com/tiobeweb/TICS/" > install_tics.sh
-          . ./install_tics.sh
-          TICSQServer -project rocks-storefront -tmpdir /tmp/tics -branchdir .
+        uses: tiobe/tics-github-action@v3
+        with:
+          mode: qserver
+          project: rocks-storefront
+          branchdir: .
+          viewerUrl: https://canonical.tiobe.com/tiobeweb/TICS/api/cfg?name=default
+          ticsAuthToken: ${{ secrets.TICSAUTHTOKEN }}
+          installTics: true
