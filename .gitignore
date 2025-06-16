@@ -58,7 +58,7 @@ virtual/
 venv/
 
 # in gh-pages we don't ignore css files so we get styling for the coverage report
-*.css
+# *.css
 
 # dotrun snap files
 .dotrun.json
