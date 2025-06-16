@@ -110,7 +110,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: rocks-storefront-coverage
-          path: coverage
+          path: cover
 
       - name: Install Python requirements
         run: |
