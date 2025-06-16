@@ -68,7 +68,8 @@ node_modules/
 bower_components/
 *.log
 
-coverage/
+# in gh-pages we don't ignore so that we can publish it
+# coverage/
 build/
 dist/
 *.charm
