@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
 # change environment=Production for refs/head/main when it's set up
       - name: Determine environment
