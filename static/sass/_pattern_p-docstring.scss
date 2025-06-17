@@ -1,3 +1,8 @@
+@use "sass:string";
+@use "sass:map";
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-docstring {
   %vf-pseudo-border--top-light {
     @extend %vf-pseudo-border--top;
@@ -5,45 +10,45 @@
     position: relative;
 
     &::after {
-      background-color: $colors--light-theme--border-low-contrast;
+      background-color: vanilla.$colors--light-theme--border-low-contrast;
     }
   }
 
   %bottom-section-padding--default {
-    padding-bottom: $spv--strip-regular * 0.5;
+    padding-bottom: vanilla.$spv--strip-regular * 0.5;
 
-    @media (min-width: $breakpoint-large) {
-      padding-bottom: $spv--strip-regular;
+    @media (min-width: settings.$breakpoint-large) {
+      padding-bottom: vanilla.$spv--strip-regular;
     }
   }
 
   %bottom-section-padding--shallow {
-    @media only screen and (max-width: $breakpoint-large) {
-      padding-bottom: $spv--large;
+    @media only screen and (max-width: settings.$breakpoint-large) {
+      padding-bottom: vanilla.$spv--large;
     }
 
-    @media only screen and (min-width: $breakpoint-large) {
-      padding-bottom: $spv--large;
+    @media only screen and (min-width: settings.$breakpoint-large) {
+      padding-bottom: vanilla.$spv--large;
     }
   }
 
   %bottom-section-padding--x-shallow {
-    @media only screen and (max-width: $breakpoint-large) {
-      padding-bottom: $spv--small;
+    @media only screen and (max-width: settings.$breakpoint-large) {
+      padding-bottom: vanilla.$spv--small;
     }
 
-    @media only screen and (min-width: $breakpoint-large) {
-      padding-bottom: $spv--small;
+    @media only screen and (min-width: settings.$breakpoint-large) {
+      padding-bottom: vanilla.$spv--small;
     }
   }
 
   %top-section-padding--x-shallow {
-    @media only screen and (max-width: $breakpoint-large) {
-      padding-top: $spv--small;
+    @media only screen and (max-width: settings.$breakpoint-large) {
+      padding-top: vanilla.$spv--small;
     }
 
-    @media only screen and (min-width: $breakpoint-large) {
-      padding-top: $spv--small;
+    @media only screen and (min-width: settings.$breakpoint-large) {
+      padding-top: vanilla.$spv--small;
     }
   }
 
@@ -52,8 +57,8 @@
   }
 
   %p-code {
-    font-family: unquote($font-monospace);
-    font-weight: $font-weight-regular-text;
+    font-family: string.unquote(vanilla.$font-monospace);
+    font-weight: vanilla.$font-weight-regular-text;
   }
 
   .p-docstring__intro {
@@ -86,7 +91,7 @@
       & + & {
         @extend %vf-pseudo-border--top; // do not add padding on nested blocks
 
-        margin-top: $spv--x-large;
+        margin-top: vanilla.$spv--x-large;
       }
 
       &:last-child {
@@ -109,18 +114,18 @@
   .p-docstring-block__heading {
     @extend %p-code;
 
-    @media (max-width: $breakpoint-heading-threshold) {
+    @media (max-width: vanilla.$breakpoint-heading-threshold) {
       margin-bottom: -$nudge-h4-mono;
       padding-top: $nudge-h4-mono;
     }
 
-    @media (min-width: $breakpoint-heading-threshold) {
+    @media (min-width: vanilla.$breakpoint-heading-threshold) {
       margin-bottom: -$nudge-h4-mono--large;
       padding-top: $nudge-h4-mono--large;
     }
 
-    @if $increase-font-size-on-larger-screens {
-      @media (min-width: $breakpoint-x-large) {
+    @if vanilla.$increase-font-size-on-larger-screens {
+      @media (min-width: vanilla.$breakpoint-x-large) {
         margin-bottom: -$nudge-h4-mono--large;
         padding-top: $nudge-h4-mono--large;
       }
@@ -128,8 +133,8 @@
   }
 
   .p-docstring-block__heading + .p-docstring-block__short-description {
-    @media (min-width: $breakpoint-heading-threshold) {
-      margin-top: -$sp-unit;
+    @media (min-width: vanilla.$breakpoint-heading-threshold) {
+      margin-top: -(vanilla.$sp-unit);
     }
   }
 
@@ -148,17 +153,17 @@
   .p-text--dense {
     @extend %default-text;
 
-    margin-bottom: 2 * $sp-unit - map-get($nudges, nudge--p);
+    margin-bottom: 2 * vanilla.$sp-unit - map.get(vanilla.$nudges, p);
     margin-top: 0;
 
-    @media (min-width: $breakpoint-large) {
-      margin-bottom: 2 * $sp-unit - map-get($nudges, nudge--p);
+    @media (min-width: settings.$breakpoint-large) {
+      margin-bottom: 2 * vanilla.$sp-unit - map.get(vanilla.$nudges, p);
     }
   }
 
   .p-text--dense + .p-text--dense {
-    @media (max-width: $breakpoint-large - 1) {
-      margin-top: -2 * $sp-unit;
+    @media (max-width: settings.$breakpoint-large - 1) {
+      margin-top: -2 * vanilla.$sp-unit;
     }
   }
 }

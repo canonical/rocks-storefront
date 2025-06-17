@@ -178,7 +178,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install dependencies
         if: ${{ steps.filter.outputs.js == 'true' || steps.filter.outputs.ts == 'true' || steps.filter.outputs.jsx == 'true' || steps.filter.outputs.tsx == 'true' }}

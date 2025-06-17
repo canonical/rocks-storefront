@@ -1,7 +1,6 @@
 import { Strip, Row, Col } from "@canonical/react-components";
 
 function Banner() {
-
   return (
     <Strip type="dark">
       <Row>

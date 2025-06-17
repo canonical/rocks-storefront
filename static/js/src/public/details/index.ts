@@ -1,7 +1,7 @@
 import { HistoryState } from "./historyState";
 import { TableOfContents } from "./tableOfContents";
 
-const init = (packageName: string) => {
+const init = () => {
   const historyState = new HistoryState();
 
   const configurationEl = document.querySelector<HTMLElement>(

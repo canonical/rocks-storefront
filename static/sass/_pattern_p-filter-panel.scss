@@ -1,7 +1,10 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-filter-panel {
   .p-filter-panel {
-    @media only screen and (max-width: $breakpoint-large) {
-      background: $color-x-light;
+    @media only screen and (max-width: settings.$breakpoint-large) {
+      background: vanilla.$color-x-light;
       height: 100vh;
       left: 0;
       position: fixed;
@@ -12,21 +15,21 @@
       z-index: 100;
     }
 
-    @media only screen and (min-width: $breakpoint-small) {
+    @media only screen and (min-width: vanilla.$breakpoint-small) {
       max-width: 320px;
     }
   }
 
   .p-filter-panel--expanded {
-    @media only screen and (max-width: $breakpoint-large) {
+    @media only screen and (max-width: settings.$breakpoint-large) {
       transform: translateX(0);
     }
   }
 
   .p-filter-panel-overlay {
-    @media only screen and (min-width: $breakpoint-small) and (max-width: $breakpoint-large) {
+    @media only screen and (min-width: vanilla.$breakpoint-small) and (max-width: settings.$breakpoint-large) {
       background-color:
-        rgba(
+        rgb(
           17,
           17,
           17,
@@ -42,15 +45,15 @@
   }
 
   .p-filter-panel__toggle {
-    @media only screen and (max-width: $breakpoint-large) {
+    @media only screen and (max-width: settings.$breakpoint-large) {
       text-align: left;
       width: 50%;
     }
   }
 
   .p-filter-panel__header {
-    @media only screen and (max-width: $breakpoint-large) {
-      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    @media only screen and (max-width: settings.$breakpoint-large) {
+      border-bottom: 1px solid rgb(0, 0, 0, 0.1);
       padding: 0.5rem 1rem;
 
       i {
@@ -60,7 +63,7 @@
   }
 
   .p-filter-panel__inner {
-    @media only screen and (max-width: $breakpoint-large) {
+    @media only screen and (max-width: settings.$breakpoint-large) {
       padding: 1rem;
     }
   }

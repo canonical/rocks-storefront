@@ -62,13 +62,15 @@ venv/
 
 # dotrun snap files
 .dotrun.json
-.venv/
+.venv*/
 
 node_modules/
 bower_components/
 *.log
 
+coverage/
 build/
 dist/
 *.charm
 *.rock
+.coverage

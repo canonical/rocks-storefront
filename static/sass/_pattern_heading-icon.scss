@@ -1,3 +1,6 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-heading-icon {
   .p-heading-icon--x-small {
     @extend .p-heading-icon--small;
@@ -8,7 +11,7 @@
       margin-inline-end: 0.5rem;
       width: 1.5rem;
 
-      @media screen and (max-width: $breakpoint-large - 1) {
+      @media screen and (max-width: settings.$breakpoint-large - 1) {
         margin-block-start: 0;
       }
     }

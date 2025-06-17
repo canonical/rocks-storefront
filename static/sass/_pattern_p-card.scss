@@ -1,3 +1,5 @@
+@use "vanilla-framework" as vanilla;
+
 @mixin p-charmhub-card {
   .p-card--bundle {
     @extend %vf-card;
@@ -5,7 +7,7 @@
     padding: 1rem 0 0;
 
     .p-card__title {
-      padding-bottom: $spv--small;
+      padding-bottom: vanilla.$spv--small;
 
       .p-card__title-text {
         display: inline;
@@ -14,13 +16,13 @@
 
     .p-card__subtitle {
       .series-tags {
-        margin-top: $spv--large;
+        margin-top: vanilla.$spv--large;
       }
     }
 
     .p-card__content {
-      padding-bottom: $spv--large;
-      padding-top: $spv--large;
+      padding-bottom: vanilla.$spv--large;
+      padding-top: vanilla.$spv--large;
     }
   }
 
@@ -39,9 +41,9 @@
     background-image:
       linear-gradient(
         to bottom right,
-        $color-mid-x-light calc(50% - 2rem),
-        $color-light 50%,
-        $color-mid-x-light calc(50% + 2rem)
+        vanilla.$color-mid-x-light calc(50% - 2rem),
+        vanilla.$color-light 50%,
+        vanilla.$color-mid-x-light calc(50% + 2rem)
       );
     background-size: 300% 300%;
     clip-path: url("#animation-mask");
@@ -51,14 +53,14 @@
     @extend %vf-has-box-shadow;
     @extend %vf-has-round-corners;
 
-    background-color: $color-x-light;
-    color: $color-dark !important;
+    background-color: vanilla.$color-x-light;
+    color: vanilla.$color-dark !important;
     display: grid;
     grid-template-rows: 9rem 4.5rem 2.5rem;
 
     // Force obey parent's border-radius
     height: 16rem;
-    margin-bottom: $spv--x-large;
+    margin-bottom: vanilla.$spv--x-large;
     width: 100%;
 
     &:hover {
@@ -71,7 +73,7 @@
 
     .p-card__header {
       border: none;
-      padding: $spv--large;
+      padding: vanilla.$spv--large;
 
       .p-card__title {
         max-height: 4rem;
@@ -97,7 +99,7 @@
     .p-card__content {
       margin-bottom: 0;
       overflow: hidden;
-      padding: 0 $spv--large 0 $spv--large;
+      padding: 0 vanilla.$spv--large 0 vanilla.$spv--large;
       position: relative;
 
       p {
@@ -113,18 +115,18 @@
 
     .p-card__footer {
       align-items: center;
-      background-color: $color-light;
-      color: $color-mid-dark;
+      background-color: vanilla.$color-light;
+      color: vanilla.$color-mid-dark;
       display: flex;
       font-size: 0.875rem;
       justify-content: space-between;
       min-width: 10rem;
-      padding: $spv--x-small $spv--large;
+      padding: vanilla.$spv--x-small vanilla.$spv--large;
 
       .p-item--left {
         flex: 1;
         overflow: hidden;
-        padding-inline-end: $spv--x-small;
+        padding-inline-end: vanilla.$spv--x-small;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
@@ -133,10 +135,10 @@
         white-space: nowrap;
 
         .p-icon--revisions {
-          height: $spv--medium;
-          margin-inline-end: $spv--small;
+          height: vanilla.$spv--medium;
+          margin-inline-end: vanilla.$spv--small;
           vertical-align: -1px;
-          width: $spv--medium;
+          width: vanilla.$spv--medium;
         }
       }
     }
@@ -157,7 +159,7 @@
         background-repeat: no-repeat;
         background-size: 75% 50%, 25% 100%, auto;
         clip-path: polygon(0 0, 100% 0%, 100% calc(100% - 0.75rem), 0% 100%);
-        color: $color-light;
+        color: vanilla.$color-light;
         margin-block-end: 1.25rem;
         padding-block-end: 0;
 
@@ -186,7 +188,7 @@
     }
 
     &:visited {
-      color: $color-dark;
+      color: vanilla.$color-dark;
     }
   }
 

@@ -1,17 +1,20 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-list {
   .p-list--key-value {
     margin: 0;
     padding: 0;
 
     .p-list__item {
-      column-gap: $spv--large;
+      column-gap: vanilla.$spv--large;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      padding-block: $spv--small $spv--small;
+      padding-block: vanilla.$spv--small vanilla.$spv--small;
       position: relative;
 
       &:not(:last-child)::after {
-        border-bottom: 1px solid $color-mid-light;
+        border-bottom: 1px solid vanilla.$color-mid-light;
         bottom: 0;
         content: "";
         height: 1px;
@@ -25,33 +28,33 @@
       }
 
       &:last-child {
-        margin-block-end: $spv--large;
+        margin-block-end: vanilla.$spv--large;
       }
 
       .p-list__key {
-        color: $color-mid-dark;
+        color: vanilla.$color-mid-dark;
       }
     }
   }
 
   .p-list {
-    // Overide the default vanilla $color-accent for ticked icon
+    // Overide the default vanilla.$color-accent for ticked icon
     .p-list__item.is-ticked {
-      @include vf-icon-success($color-dark);
+      @include vanilla.vf-icon-success(vanilla.$color-dark);
     }
   }
 
   // Overide the default vanilla padding for p-list--divided
   .p-list--divided.has-padding {
     .p-list__item {
-      padding-block: $spv--small $spv--small;
+      padding-block: vanilla.$spv--small vanilla.$spv--small;
     }
   }
 
   .p-list--divided.has-separator-centered {
     .p-list__item {
       &:not(:first-of-type) {
-        margin-block-start: $spv--medium;
+        margin-block-start: vanilla.$spv--medium;
       }
     }
   }
@@ -88,19 +91,19 @@
   }
 
   .p-inline-list.has-vertical-separator {
-    @media screen and (min-width: $breakpoint-small) and (width <= 1055px) {
-      margin-inline-start: -$spv--large;
+    @media screen and (min-width: vanilla.$breakpoint-small) and (width <= 1055px) {
+      margin-inline-start: -(vanilla.$spv--large);
     }
 
-    @media screen and (max-width: $breakpoint-large - 1) {
-      margin-block-end: $spv--x-small;
+    @media screen and (max-width: settings.$breakpoint-large - 1) {
+      margin-block-end: vanilla.$spv--x-small;
     }
 
     .p-inline-list__item:not(:last-child) {
       position: relative;
 
       &::after {
-        background-color: $color-mid-light;
+        background-color: vanilla.$color-mid-light;
         content: "";
         height: 100%;
         position: absolute;
@@ -115,7 +118,7 @@
     @extend %vf-list;
 
     list-style: decimal;
-    margin-left: $spv--large;
+    margin-left: vanilla.$spv--large;
 
     li {
       margin-bottom: 2.65rem;
@@ -125,7 +128,7 @@
     &.is-h4 {
       @extend %vf-heading-4;
 
-      @media screen and (max-width: $breakpoint-large - 1) {
+      @media screen and (max-width: settings.$breakpoint-large - 1) {
         margin-left: 1.5rem;
       }
 
@@ -139,7 +142,7 @@
     .p-inline-list__item:first-child {
       width: 70%;
 
-      @media screen and (min-width: $breakpoint-small) and (width <= 985px) {
+      @media screen and (min-width: vanilla.$breakpoint-small) and (width <= 985px) {
         width: 60%;
       }
     }

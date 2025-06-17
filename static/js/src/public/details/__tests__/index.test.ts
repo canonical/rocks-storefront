@@ -28,7 +28,7 @@ describe("index.ts", () => {
       "[data-js='docs']"
     ) as HTMLElement;
 
-    init("test-package");
+    init();
 
     expect(TableOfContents).toHaveBeenCalledTimes(2);
     expect(TableOfContents).toHaveBeenCalledWith(
@@ -45,7 +45,7 @@ describe("index.ts", () => {
     const actionButton = document.querySelector("[role='tab']") as HTMLElement;
     const panel = document.querySelector("#panel1") as HTMLElement;
 
-    init("test-package");
+    init();
 
     act(() => {
       actionButton.click();
@@ -75,7 +75,7 @@ describe("index.ts", () => {
         }
       );
 
-    init("test-package");
+    init();
 
     expect(mockActionsElement.addEventListener).toHaveBeenCalledWith(
       "click",
@@ -84,7 +84,7 @@ describe("index.ts", () => {
   });
 
   test("should initialise HistoryState correctly", () => {
-    init("test-package");
+    init();
     expect(HistoryState).toHaveBeenCalled();
   });
 });

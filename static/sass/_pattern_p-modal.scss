@@ -1,3 +1,6 @@
+@use "vanilla-framework" as vanilla;
+@use "settings" as settings;
+
 @mixin p-charmhub-modal {
   @media (width >= 975px) {
     #contact-modal.p-modal .p-modal__dialog {
@@ -8,7 +11,7 @@
 
   .p-modal--topology {
     .p-modal__dialog {
-      @media screen and (max-width: $breakpoint-large - 1) {
+      @media screen and (max-width: settings.$breakpoint-large - 1) {
         bottom: unset;
         height: fit-content;
         top: unset;
@@ -20,7 +23,7 @@
       max-height: 750px;
       padding: 4rem;
 
-      @media screen and (max-width: $breakpoint-large - 1) {
+      @media screen and (max-width: settings.$breakpoint-large - 1) {
         padding: 1rem;
       }
     }
@@ -32,7 +35,7 @@
     }
 
     .p-modal__dialog {
-      @media screen and (min-width: $breakpoint-large) {
+      @media screen and (min-width: settings.$breakpoint-large) {
         padding-inline: 2rem 1rem;
       }
     }
