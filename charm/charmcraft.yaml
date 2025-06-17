@@ -15,6 +15,7 @@ summary: The charm for rockstore.io
 description: |
   This is the charmed rockstore.io. This charm deploys the rockstore.io
   storefront. It is a web application that allows users to view rocks.
+  Test
 
 extensions:
   - flask-framework
