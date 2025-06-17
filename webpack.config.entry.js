@@ -5,5 +5,4 @@ module.exports = {
   details: "./static/js/src/public/details/index.ts",
   details_overview: "./static/js/src/public/details/overview/index.js",
   store: "./static/js/src/store/index.tsx",
-  search: "./static/js/src/search/App.tsx",
 };
