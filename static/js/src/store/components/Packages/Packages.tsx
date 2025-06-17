@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
 import { Strip, Row, Col, Pagination } from "@canonical/react-components";
 import { CharmCard, LoadingCard } from "@canonical/store-components";
 
@@ -12,12 +14,11 @@ function Packages() {
     const response = await fetch(`/store.json`);
     const data = await response.json();
 
-    const packagesWithId = data.packages.map((item: string[]) => {
-      return {
-        ...item,
-        id: crypto.randomUUID(),
-      };
-    });
+    const packagesWithId = data.packages.map((item: string[]) => ({
+      ...item,
+      id: crypto.randomUUID(),
+    }));
+
     return {
       total_items: data.total_items,
       total_pages: data.total_pages,
@@ -25,12 +26,19 @@ function Packages() {
     };
   };
 
-  const currentPage = "1";
-  const { data, status, isFetching } = useQuery("data", getData);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = searchParams.get("page") || "1";
+
+  const { data, status, refetch, isFetching } = useQuery("data", getData);
+
+  useEffect(() => {
+    refetch();
+  }, [searchParams]);
 
   const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
-    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + data?.packages.length;
+    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + (data?.packages.length || 0);
+
   return (
     <>
       <Banner />
@@ -45,6 +53,7 @@ function Packages() {
                 </p>
               </div>
             )}
+
             <Row>
               {isFetching &&
                 [...Array(ITEMS_PER_PAGE)].map((_item, index) => (
@@ -81,7 +90,10 @@ function Packages() {
               <Pagination
                 itemsPerPage={ITEMS_PER_PAGE}
                 totalItems={data.total_items}
-                paginate={() => {}}
+                paginate={(pageNumber) => {
+                  searchParams.set("page", pageNumber.toString());
+                  setSearchParams(searchParams);
+                }}
                 currentPage={parseInt(currentPage)}
                 centered
                 scrollToTop
