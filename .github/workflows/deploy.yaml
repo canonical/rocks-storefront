@@ -16,9 +16,6 @@ on:
 #         - Production
   pull_request:
 
-env:
-  CHARM_NAME: charmhub-io
-
 jobs:
   setup:
     name: Setup
@@ -40,17 +37,19 @@ jobs:
             echo "environment=${{ github.event.inputs.environment }}" >> "$GITHUB_OUTPUT"
           elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
             echo "environment=Staging" >> "$GITHUB_OUTPUT"
-            echo "target_ref=refs/heads/main" >> "$GITHUB_OUTPUT"
+            echo "target_ref=refs/remotes/origin/main" >> "$GITHUB_OUTPUT"
           else
             echo "environment=Staging" >> "$GITHUB_OUTPUT"
-            echo "target_ref=refs/heads/staging" >> "$GITHUB_OUTPUT"
+            echo "target_ref=refs/remotes/origin/staging" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Check for charm/ changes
         id: check
         run: |
+          ls -l .git/refs
           ls -l .git/refs/heads
           ls -l .git/refs/remotes/origin
+          echo "${GITHUB_REF}"
           git diff --name-only ${{ steps.set_env.outputs.target_ref }} ${{ github.sha }} | cat
           if [[ $(git diff --name-only ${{ steps.set_env.outputs.target_ref }} ${{ github.sha }} | grep '^charm/') ]]; then
             echo "charm_changed=true" >> "$GITHUB_OUTPUT"
