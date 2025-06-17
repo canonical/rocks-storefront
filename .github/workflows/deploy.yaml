@@ -32,7 +32,7 @@ jobs:
         with:
           fetch-depth: 0
 
-# change environment=Production for refs/head/main when it's set up 
+# change environment=Production for refs/head/main when it's set up
       - name: Determine environment
         id: set_env
         run: |
