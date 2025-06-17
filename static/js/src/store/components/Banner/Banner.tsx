@@ -7,7 +7,7 @@ function Banner() {
         <Col size={6}>
           <h1 className="p-heading--2">
             The Ubuntu-based
-            <br/>
+            <br />
             container images store
           </h1>
         </Col>

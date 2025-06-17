@@ -1,7 +1,6 @@
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { useSearchParams } from "react-router-dom";
 import Banner from "../Banner";
 
 jest.mock("react-router-dom", () => ({
@@ -10,11 +9,11 @@ jest.mock("react-router-dom", () => ({
 
 describe("Banner Component", () => {
   test("should render the Banner component", () => {
-    render(
-      <Banner />
-    );
+    render(<Banner />);
     expect(
-      screen.getByRole("heading", { name: /The Ubuntu-based container images store/i })
+      screen.getByRole("heading", {
+        name: /The Ubuntu-based container images store/i,
+      })
     ).toBeInTheDocument();
   });
 });

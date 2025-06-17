@@ -1,12 +1,5 @@
-import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
-import {
-  Strip,
-  Row,
-  Col,
-  Pagination,
-  Button,
-} from "@canonical/react-components";
+import { Strip, Row, Col, Pagination } from "@canonical/react-components";
 import { CharmCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
@@ -33,7 +26,7 @@ function Packages() {
   };
 
   const currentPage = "1";
-  const { data, status, refetch, isFetching } = useQuery("data", getData);
+  const { data, status, isFetching } = useQuery("data", getData);
 
   const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
@@ -88,8 +81,7 @@ function Packages() {
               <Pagination
                 itemsPerPage={ITEMS_PER_PAGE}
                 totalItems={data.total_items}
-                paginate={(pageNumber) => {
-                }}
+                paginate={() => {}}
                 currentPage={parseInt(currentPage)}
                 centered
                 scrollToTop
