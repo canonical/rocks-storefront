@@ -1,12 +1,12 @@
 <header id="navigation" class="p-navigation is-dark">
-  <div class="p-navigation__row">
+  <div class="p-navigation__row--25-75">
     <div class="p-navigation__banner">
       <div class="p-navigation__tagged-logo">
         <a class="p-navigation__link" href="/">
           <div class="p-navigation__logo-tag">
             <img class="p-navigation__logo-icon" src="https://assets.ubuntu.com/v1/82818827-CoF_white.svg" alt="Canonical Rocks" />
           </div>
-          <span class="p-navigation__logo-title">Canonical Rocks</span>
+          <span class="p-navigation__logo-title">Canonical Rockcraft</span>
         </a>
       </div>
       <ul class="p-navigation__items">
@@ -18,99 +18,31 @@
     </div>
     <nav class="p-navigation__nav">
       <ul class="p-navigation__items">
-        <li class="p-navigation__item">
-          <a class="p-navigation__link" href="/">How Rocks Work</a>
+        <li class="p-navigation__item{% if request.path == '/' %} is-selected{% endif %}">
+          <a class="p-navigation__link" href="/">Rock Store</a>
         </li>
-        <li class="p-navigation__item" id="community-link">
+        <li class="p-navigation__item--dropdown-toggle" id="community-link">
           <a class="p-navigation__link" href="#community-link-menu" aria-controls="community-link-menu">Community</a>
+          <ul class="p-navigation__dropdown" id="community-link-menu" aria-hidden="true">
+            <li>
+              <a href="https://discourse.ubuntu.com/c/project/rocks/117" class="p-navigation__dropdown-item">
+                Discourse forum
+              </a>
+            </li>
+            <li>
+              <a href="https://matrix.to/#/#rocks:ubuntu.com" class="p-navigation__dropdown-item">
+                Matrix chat
+              </a>
+            </li>
+          </ul>
         </li>
         <li class="p-navigation__item" id="docs-link">
-          <a class="p-navigation__link" href="#docs-link-menu" aria-controls="docs-link-menu">Docs</a>
-        </li>
-        <li class="p-navigation__item">
-          <a class="p-navigation__link" href="/">Blog</a>
+          <a class="p-navigation__link" href="https://documentation.ubuntu.com/rockcraft/en/latest/#" aria-controls="docs-link-menu">Docs</a>
         </li>
       </ul>
       <ul class="p-navigation__items global-nav">
-          <li class="p-navigation__item">
-            <a href="#"
-               class="js-search-button p-navigation__link--search-toggle"
-               aria-label="Search"></a>
-          </li>
       </ul>
-      <div class="p-navigation__search">
-          <form action="/all-search" class="p-search-box is-light">
-            <input type="search"
-                   class="p-search-box__input"
-                   name="q"
-                   placeholder="Search Rocks"
-                   required=""
-                   aria-label="Search Rocks" />
-            <button type="reset" class="p-search-box__reset">
-              <i class="p-icon--close"></i>
-            </button>
-            <button type="submit" class="p-search-box__button">
-              <i class="p-icon--search"></i>
-            </button>
-          </form>
-        </div>
     </nav>
   </div>
-   <div class="p-navigation__search-overlay"></div>
+  <div class="p-navigation__search-overlay"></div>
 </header>
-<script>
-const searchButtons = document.querySelectorAll(".js-search-button");
-const searchOverlay = document.querySelector(".p-navigation__search-overlay");
-const navigation = document.querySelector("#navigation");
-
-function escKeyPressHandler(e) {
-  if (e.key === "Escape") {
-    closeSearch();
-  }
-}
-
-function closeSearch() {
-  searchButtons.forEach((searchButton) => {
-    searchButton.removeAttribute("aria-pressed");
-  });
-
-  navigation.classList.remove("has-search-open");
-
-  document.removeEventListener("keyup", escKeyPressHandler);
-}
-
-function openSearch(e) {
-  e.preventDefault();
-  const searchInput = navigation.querySelector(".p-search-box__input");
-  searchButtons.forEach((searchButton) => {
-    searchButton.setAttribute("aria-pressed", true);
-  });
-
-  navigation.classList.add("has-search-open");
-
-  searchInput.focus();
-  document.addEventListener("keyup", escKeyPressHandler);
-}
-
-function toggleSearch(e) {
-  e.preventDefault();
-  if (navigation.classList.contains("has-search-open")) {
-    closeSearch();
-  } else {
-    closeSearch();
-    openSearch(e);
-  }
-}
-
-
-function initNavigationSearch() {
-  searchButtons.forEach((searchButton) =>
-    searchButton.addEventListener("click", toggleSearch),
-  );
-
-  searchOverlay.addEventListener("click", toggleSearch);
-}
-
-initNavigationSearch()
-</script>
-

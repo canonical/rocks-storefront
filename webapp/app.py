@@ -6,7 +6,6 @@ from webapp.extensions import csrf
 from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.store.views import store
-from webapp.search.views import search
 from webapp.helpers import markdown_to_html
 from canonicalwebteam.flask_base.app import FlaskBase
 from webapp.packages.store_packages import store_packages
@@ -52,7 +51,6 @@ csrf.init_app(app)
 
 app.register_blueprint(store_packages)
 app.register_blueprint(store)
-app.register_blueprint(search)
 
 
 app.jinja_env.filters["markdown"] = markdown_to_html
