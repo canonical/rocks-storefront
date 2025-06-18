@@ -14,7 +14,6 @@ on:
         options:
           - Staging
 #         - Production
-  pull_request:
 
 jobs:
   setup:
@@ -30,7 +29,6 @@ jobs:
           fetch-depth: 0
 
 # change environment=Production for refs/head/main when it's set up
-# change target_ref=refs/heads/staging
       - name: Determine environment
         id: set_env
         run: |
@@ -41,7 +39,7 @@ jobs:
             echo "target_ref=refs/heads/main" >> "$GITHUB_OUTPUT"
           else
             echo "environment=Staging" >> "$GITHUB_OUTPUT"
-            echo "target_ref=refs/remotes/origin/staging" >> "$GITHUB_OUTPUT"
+            echo "target_ref=refs/heads/staging" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Check for charm/ changes
