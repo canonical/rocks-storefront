@@ -522,6 +522,10 @@ h3 {
   justify-content: center;
 }
 
+.is-underlined {
+  text-decoration: underline;
+}
+
 .release-channel{
   border:inherit;
   border-right: 1px solid var(--vf-color-border-low-contrast);
