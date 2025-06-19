@@ -1,5 +1,3 @@
-import json
-
 from flask import (
     Blueprint,
     request,
@@ -15,11 +13,13 @@ store = Blueprint(
     "store", __name__, template_folder="/templates", static_folder="/static"
 )
 
+
 @store.route("/store.json")
 def get_store_packages():
     args = dict(request.args)
     res = make_response(get_rocks(12, args))
     return res
+
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>')
 def details_overview(entity_name):

@@ -21,16 +21,16 @@ FIND_FIELDS = [
 ]
 
 DETAILS_FIELDS = [
-   "categories",
-   "contact",
-   "description",
-   "license",
-   "links",
-   "media",
-   "private",
-   "publisher",
-   "summary",
-   "title",
+    "categories",
+    "contact",
+    "description",
+    "license",
+    "links",
+    "media",
+    "private",
+    "publisher",
+    "summary",
+    "title",
     "website",
     "created-at",
     "download",
@@ -63,6 +63,7 @@ Package = TypedDict(
     },
 )
 
+
 def convert_date(date_to_convert):
     """
     Convert date to human readable format: Month Day Year
@@ -81,6 +82,7 @@ def convert_date(date_to_convert):
         return humanize.naturalday(date_parsed).title()
     else:
         return date_parsed.strftime("%d %b %Y")
+
 
 def format_relative_date(date_str: str) -> str:
     """
@@ -145,11 +147,13 @@ def format_slug(slug):
         .replace("Iot", "IoT")
     )
 
+
 def get_icon(media):
     icons = [m["url"] for m in media if m["type"] == "icon"]
     if len(icons) > 0:
         return icons[0]
     return ""
+
 
 def parse_package_for_card(
     package: Dict[str, Any],
@@ -190,7 +194,9 @@ def parse_package_for_card(
         metadata["summary"] or metadata["description"]
     )
     resp["package"]["display_name"] = format_slug(metadata.get("title", ""))
-    resp["package"]["icon_url"] = get_icon(metadata.get("links", {}).get("media", []))
+    resp["package"]["icon_url"] = get_icon(
+        metadata.get("links", {}).get("media", [])
+    )
     resp["package"]["website"] = metadata.get("website", "")
     resp["package"]["contact"] = metadata.get("contact", "")
 
@@ -199,6 +205,7 @@ def parse_package_for_card(
     resp["publisher"]["validation"] = publisher.get("validation", "")
 
     return resp
+
 
 def paginate(packages: List[Packages], page: int, size: int) -> List[Packages]:
     """
@@ -218,6 +225,7 @@ def paginate(packages: List[Packages], page: int, size: int) -> List[Packages]:
     end = min(start + size, total_items)
 
     return packages[start:end]
+
 
 def parse_rock_details(rock):
     parsed_rock = {
@@ -239,11 +247,12 @@ def parse_rock_details(rock):
             "upstream_details": {},
             "related_rocks": [],
             "downstream_artifacts": {},
-
         },
         "categories": rock["metadata"].get("categories", []),
         "publisher": {
-            "name": format_slug(rock["metadata"]["publisher"].get("display-name", "")),
+            "name": format_slug(
+                rock["metadata"]["publisher"].get("display-name", "")
+            ),
             "username": rock["metadata"]["publisher"].get("username", ""),
             "validation": rock["metadata"]["publisher"].get("validation", ""),
         },
@@ -264,7 +273,9 @@ def parse_rock_details(rock):
         parsed_channel = {
             "workload_version": normalized_version,
             "risk": channel_data.get("risk", ""),
-            "last_updated": format_relative_date(channel_data.get("released-at", "")),
+            "last_updated": format_relative_date(
+                channel_data.get("released-at", "")
+            ),
             "released_at": convert_date(channel_data.get("released-at", "")),
             "revision": revision_data["revision"],
             "version": revision_data.get("version", ""),
@@ -273,10 +284,12 @@ def parse_rock_details(rock):
         parsed_rock["channels"].append(parsed_channel)
         parsed_rock["latest_channel"] = max(
             parsed_rock["channels"],
-            key=lambda x: datetime.datetime.strptime(x["released_at"], "%d %b %Y"),
+            key=lambda x: datetime.datetime.strptime(
+                x["released_at"], "%d %b %Y"
+            ),
         )
-
     return parsed_rock
+
 
 def get_rocks(
     size: int = 10,
@@ -290,7 +303,7 @@ def get_rocks(
     """
 
     rocks2 = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
-    
+
     total_items = len(rocks2)
     total_pages = (total_items + size - 1) // size
     page = int(query_params.get("page", 1))
@@ -304,6 +317,7 @@ def get_rocks(
         "total_pages": total_pages,
         "total_items": total_items,
     }
+
 
 def get_rock(
     entity_name: str,
