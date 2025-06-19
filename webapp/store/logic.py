@@ -66,7 +66,8 @@ Package = TypedDict(
 
 def convert_date(date_to_convert):
     """
-    Convert a datetime string to a human-readable string (e.g. 'Today', 'Yesterday', or '12 Jan 2023').
+    Convert a datetime string to a human-readable string.
+    (e.g. 'Today', 'Yesterday', or '12 Jan 2023').
     """
     date_parsed = parser.parse(date_to_convert).replace(tzinfo=None)
     delta = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -78,7 +79,8 @@ def convert_date(date_to_convert):
 
 def format_relative_date(date_str: str) -> str:
     """
-    Return a relative time string from an ISO datetime string (e.g. '2 weeks ago', '25 Apr 2025').
+    Return a relative time string from an ISO datetime string.
+    (e.g. '2 weeks ago', '25 Apr 2025').
     """
     try:
         given_date = datetime.datetime.fromisoformat(date_str)
@@ -116,7 +118,8 @@ def get_icons(package):
 
 def format_slug(slug):
     """
-    Converts a slug (e.g. 'my-app-name') to a title-like string (e.g. 'My App Name').
+    Converts a slug to a title-like string.
+    (e.g. 'my-rock-name' to 'My Rock Name').
     """
     return (
         slug.title()

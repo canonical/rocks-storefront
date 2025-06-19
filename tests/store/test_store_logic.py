@@ -1,5 +1,5 @@
 import unittest
-import datetime
+from datetime import datetime, timedelta, timezone
 from webapp.store.logic import (
     convert_date,
     format_relative_date,
@@ -9,27 +9,34 @@ from webapp.store.logic import (
     paginate,
 )
 
+
 class TestStoreLogic(unittest.TestCase):
 
     def test_convert_date_today(self):
-        today = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        today = datetime.now(timezone.utc).isoformat()
         result = convert_date(today)
         self.assertIn(result, ["Today", "Yesterday"])
 
     def test_format_relative_date_today(self):
-        now = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         self.assertEqual(format_relative_date(now), "today")
 
     def test_format_relative_date_yesterday(self):
-        yesterday = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1)).isoformat()
+        yesterday = (
+            datetime.now(timezone.utc) - timedelta(days=1)
+        ).isoformat()
         self.assertEqual(format_relative_date(yesterday), "yesterday")
 
     def test_format_relative_date_weeks(self):
-        old_date = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=14)).isoformat()
+        old_date = (
+            datetime.now(timezone.utc) - timedelta(days=14)
+        ).isoformat()
         self.assertEqual(format_relative_date(old_date), "2 weeks ago")
 
     def test_format_relative_date_months(self):
-        old_date = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=60)).isoformat()
+        old_date = (
+            datetime.now(timezone.utc) - timedelta(days=60)
+        ).isoformat()
         self.assertEqual(format_relative_date(old_date), "2 months ago")
 
     def test_get_icon_with_icons(self):
@@ -37,7 +44,10 @@ class TestStoreLogic(unittest.TestCase):
         self.assertEqual(get_icon(media), "https://example.com/icon.png")
 
     def test_format_slug(self):
-        self.assertEqual(format_slug("hello-world_iot_and_some_random_text"), "Hello World IoT and Some Random Text")
+        self.assertEqual(
+            format_slug("hello-world_iot_and_some_random_text"),
+            "Hello World IoT and Some Random Text",
+        )
 
     def test_parse_package_for_card(self):
         package = {
@@ -49,19 +59,23 @@ class TestStoreLogic(unittest.TestCase):
                 "website": "https://example.com",
                 "contact": "test@example.com",
                 "links": {
-                    "media": [{"type": "icon", "url": "https://example.com/icon.png"}]
+                    "media": [
+                        {"type": "icon", "url": "https://example.com/icon.png"}
+                    ]
                 },
                 "publisher": {
                     "display-name": "Test Publisher",
                     "username": "testuser",
-                    "validation": "verified"
-                }
-            }
+                    "validation": "verified",
+                },
+            },
         }
         result = parse_package_for_card(package)
         self.assertEqual(result["package"]["name"], "test-package")
         self.assertEqual(result["package"]["display_name"], "Test Title")
-        self.assertEqual(result["package"]["icon_url"], "https://example.com/icon.png")
+        self.assertEqual(
+            result["package"]["icon_url"], "https://example.com/icon.png"
+        )
         self.assertEqual(result["publisher"]["name"], "testuser")
 
     def test_paginate_bounds(self):
@@ -76,6 +90,3 @@ class TestStoreLogic(unittest.TestCase):
         packages = [{"name": f"pkg{i}"} for i in range(5)]
         paged = paginate(packages, page=10, size=2)
         self.assertTrue(len(paged) <= 2)
-
-if __name__ == "__main__":
-    unittest.main()
