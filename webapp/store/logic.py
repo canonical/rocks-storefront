@@ -66,15 +66,7 @@ Package = TypedDict(
 
 def convert_date(date_to_convert):
     """
-    Convert date to human readable format: Month Day Year
-
-    If date is less than a day return: today or yesterday
-
-    Format of date to convert: 2019-01-12T16:48:41.821037+00:00
-    Output: Jan 12 2019
-
-    :param date_to_convert: Date to convert
-    :returns: Readable date
+    Convert a datetime string to a human-readable string (e.g. 'Today', 'Yesterday', or '12 Jan 2023').
     """
     date_parsed = parser.parse(date_to_convert).replace(tzinfo=None)
     delta = datetime.datetime.now() - datetime.timedelta(days=1)
@@ -86,21 +78,7 @@ def convert_date(date_to_convert):
 
 def format_relative_date(date_str: str) -> str:
     """
-    Converts an ISO 8601 date string to a human-readable relative format.
-
-    Examples:
-        - "today"
-        - "yesterday"
-        - "last 3 days"
-        - "last 2 weeks"
-        - "last 1 month"
-        - "25 Apr 2025" (for dates > ~3 months ago)
-
-    Args:
-        date_str (str): ISO 8601 datetime string (with timezone)
-
-    Returns:
-        str: Human-readable relative date
+    Return a relative time string from an ISO datetime string (e.g. '2 weeks ago', '25 Apr 2025').
     """
     try:
         given_date = datetime.datetime.fromisoformat(date_str)
@@ -129,16 +107,17 @@ def format_relative_date(date_str: str) -> str:
 
 
 def get_icons(package):
+    """
+    Extracts a list of icon URLs from the package metadata.
+    """
     media = package["result"]["media"]
     return [m["url"] for m in media if m["type"] == "icon"]
 
 
 def format_slug(slug):
-    """Format slug name into a standard title format
-    :param slug: The hypen spaced, lowercase slug to be formatted
-    :return: The formatted string
     """
-
+    Converts a slug (e.g. 'my-app-name') to a title-like string (e.g. 'My App Name').
+    """
     return (
         slug.title()
         .replace("-", " ")
@@ -159,18 +138,8 @@ def parse_package_for_card(
     package: Dict[str, Any],
 ) -> Package:
     """
-    Parses a package and returns the formatted package
-    based on the given card schema.
-
-    :param: package (Dict[str, Any]): The package to be parsed.
-    :returns: a dictionary containing the formatted package.
-
-    note:
-        - This function has to be refactored to be more generic,
-        so we won't have to check for the package type before parsing.
-
+    Parses a package dictionary into a simplified schema for card display.
     """
-
     resp = {
         "package": {
             "description": "",
@@ -209,9 +178,7 @@ def parse_package_for_card(
 
 def paginate(packages: List[Packages], page: int, size: int) -> List[Packages]:
     """
-    Paginates the list of packages safely based on page and size.
-
-    Returns only the correct slice of items for the given page.
+    Paginate the given packages list based on current page and size.
     """
     total_items = len(packages)
     total_pages = (total_items + size - 1) // size  # ceiling division
@@ -228,6 +195,9 @@ def paginate(packages: List[Packages], page: int, size: int) -> List[Packages]:
 
 
 def parse_rock_details(rock):
+    """
+    Parses detailed rock metadata into a structured format for internal use.
+    """
     parsed_rock = {
         "display_name": "",
         "name": rock.get("name", ""),
@@ -263,6 +233,7 @@ def parse_rock_details(rock):
     parsed_rock["icon_url"] = get_icon(rock["metadata"].get("media", []))
     parsed_rock["license"] = rock["metadata"].get("license", "")
 
+    # Build channel info
     for channel in rock.get("channel-map", []):
         channel_data = channel.get("channel", {})
         revision_data = channel.get("revision", {})
@@ -296,12 +267,8 @@ def get_rocks(
     query_params: Dict[str, Any] = {},
 ) -> List[Dict[str, Any]]:
     """
-    Retrieves a list of packages from the store based on the specified
-    parameters.The returned packages are paginated and parsed using the
-    card schema.
-
+    Fetches paginated and parsed rock packages using DeviceGW.
     """
-
     rocks2 = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
 
     total_items = len(rocks2)
@@ -324,13 +291,6 @@ def get_rock(
 ) -> Dict[str, Any]:
     """
     Retrieves a specific rock package by its name.
-
-    :param: entity_name (str): The name of the rock package to retrieve.
-    :returns: a dictionary containing the rock package details.
-
-    note:
-        - This function has to be refactored to be more generic,
-        so we won't have to check for the package type before parsing.
     """
     rock = device_gw.get_item_details(entity_name, fields=DETAILS_FIELDS)
     if not rock:
