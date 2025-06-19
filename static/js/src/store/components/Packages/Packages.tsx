@@ -11,7 +11,9 @@ function Packages() {
   const ITEMS_PER_PAGE = 12;
 
   const getData = async () => {
-    const response = await fetch(`/store.json`);
+    const response = await fetch(
+      `/store.json?page=${searchParams.get("page") || "1"}`
+    );
     const data = await response.json();
 
     const packagesWithId = data.packages.map((item: string[]) => ({

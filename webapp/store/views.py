@@ -1,9 +1,12 @@
-import json
-
-from flask import Blueprint
-from flask import render_template, make_response
+from flask import (
+    Blueprint,
+    request,
+    make_response,
+    render_template,
+)
 
 from webapp.config import DETAILS_VIEW_REGEX
+from webapp.store.logic import get_rocks, get_rock, parse_rock_details
 
 
 store = Blueprint(
@@ -11,36 +14,19 @@ store = Blueprint(
 )
 
 
-def get_package(entity_name):
-
-    with open("webapp/rocks.json") as f:
-        rocks = json.load(f)
-        for rock in rocks:
-            if rock["display_name"] == entity_name:
-                return rock
-    return rock
+@store.route("/store.json")
+def get_store_packages():
+    args = dict(request.args)
+    res = make_response(get_rocks(12, args))
+    return res
 
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>')
 def details_overview(entity_name):
-    package = get_package(entity_name)
-    package["display_name"] = entity_name.capitalize()
-    package["publisher"]["name"] = package["publisher"]["name"].capitalize()
-    package["metadata"] = {
-        "name": entity_name,
-        "base": "bare",
-        "build-base": "ubuntu@22.04",
-        "version": "0.1",
-        "summary": f"Rocked {entity_name}",
-        "description": f"Description for {entity_name}.",
-        "platforms": ["amd64"],
-        "result": {
-            "license": "Apache-2.0",
-        },
-    }
+    rock = parse_rock_details(get_rock(entity_name))
 
     context = {
-        "package": package,
+        "package": rock,
         "navigation": None,
         "last_update": None,
         "forum_url": None,

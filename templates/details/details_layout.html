@@ -5,13 +5,12 @@
 {% block meta_image_width %}200{% endblock %}
 {% block meta_image_height %}200{% endblock %}
 
-
 {% block structure_data_markup %}
 <script type="application/ld+json">
  {
      "@context": "http://schema.org",
      "@type": "SoftwareApplication",
-     "name": "{{ package.metadata.title }}",
+     "name": "{{ package.name }}",
      "image": "{{ self.meta_image() }}",
      "url": "https://rockcraft.io/{{ package.name }}",
      "publisher": {
