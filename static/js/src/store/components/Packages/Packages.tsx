@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { Strip, Row, Col, Pagination } from "@canonical/react-components";
@@ -9,11 +8,11 @@ import { Package, Publisher } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = searchParams.get("page") || "1";
 
   const getData = async () => {
-    const response = await fetch(
-      `/store.json?page=${searchParams.get("page") || "1"}`
-    );
+    const response = await fetch(`/store.json?page=${currentPage}`);
     const data = await response.json();
 
     const packagesWithId = data.packages.map((item: string[]) => ({
@@ -28,14 +27,7 @@ function Packages() {
     };
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = searchParams.get("page") || "1";
-
-  const { data, status, refetch, isFetching } = useQuery("data", getData);
-
-  useEffect(() => {
-    refetch();
-  }, [searchParams]);
+  const { data, status, isFetching } = useQuery(["data", currentPage], getData);
 
   const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =

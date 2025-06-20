@@ -272,16 +272,14 @@ def get_rocks(
     """
     Fetches paginated and parsed rock packages using DeviceGW.
     """
-    rocks2 = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
+    rocks = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
 
-    total_items = len(rocks2)
+    total_items = len(rocks)
     total_pages = (total_items + size - 1) // size
     page = int(query_params.get("page", 1))
-    rocks_per_page = paginate(rocks2, page, size)
-    parsed_rocks = []
+    rocks_per_page = paginate(rocks, page, size)
+    parsed_rocks = [parse_package_for_card(rock) for rock in rocks_per_page]
 
-    for rock in rocks_per_page:
-        parsed_rocks.append(parse_package_for_card(rock))
     return {
         "packages": parsed_rocks,
         "total_pages": total_pages,
@@ -296,7 +294,5 @@ def get_rock(
     Retrieves a specific rock package by its name.
     """
     rock = device_gw.get_item_details(entity_name, fields=DETAILS_FIELDS)
-    if not rock:
-        return {}
 
     return rock

@@ -33,13 +33,13 @@
 {% endif %}
 
 {% if package.metadata.license and not package.metadata.license == "unset" %}
-  <p class="p-heading--5 p-muted-heading p-text--small-caps">Rock License</p>
+  <h2 class="p-heading--5 p-muted-heading p-text--small-caps">Rock License</h2>
   <p><i class="p-icon--certification"></i>&nbsp;&nbsp;{{ package.metadata.license }}</p>
   <hr class="p-separator--shallow">
 {% endif %}
 
 {% if package.metadata.rock_details %}
-  <p class="p-heading--5 p-muted-heading p-text--small-caps">Rock details</p>
+  <h2 class="p-heading--5 p-muted-heading p-text--small-caps">Rock details</h2>
   <ul class="p-list">
     {% if package.metadata.status == "full" %}
     <li class="p-list__item u-no-margin--bottom">
@@ -81,7 +81,7 @@
     <hr class="p-separator--shallow" />
   {% endif %}
   {% if package.metadata["links"]["contact"] %}
-    <h2 class="p-heading--5 u-no-margin--bottom">Contact</h2>
+    <h3 class="p-heading--5 u-no-margin--bottom">Contact</h3>
     <ul class="p-list">
       {% for contact in package.metadata["links"]["contact"] %}
       <li><a href="{{ contact }}">{{ contact|replace('mailto:', '') }}</a></li>
@@ -90,7 +90,7 @@
     <hr class="p-separator--shallow" />
   {% endif %}
 {% endif %}
-<h4 class="p-heading--5 u-no-margin--bottom">Discuss this {{ package.type }}</h4>
+<h2 class="p-heading--5 u-no-margin--bottom">Discuss this Rock</h2>
 <p>Share your thoughts on this rock with the community on discourse.</p>
 <p><a class="p-button" href="https://discourse.ubuntu.com/c/project/rocks/117">Join the discussion</a></p>
 
