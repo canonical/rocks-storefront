@@ -23,7 +23,7 @@
   "dependencies": {
     "@canonical/cookie-policy": "3.6.5",
     "@canonical/global-nav": "3.6.4",
-    "@canonical/react-components": "2.7.1",
+    "@canonical/react-components": "2.7.4",
     "@canonical/store-components": "0.53.0",
     "autoprefixer": "10.4.21",
     "date-fns": "4.1.0",
