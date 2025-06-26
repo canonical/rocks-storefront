@@ -6,6 +6,7 @@ from dateutil import parser
 from canonicalwebteam.store_api.devicegw import DeviceGW
 
 from webapp.helpers import get_yaml_loader
+from webapp.extensions import cache
 
 ARCHITECTURES = ["amd64", "arm64", "ppc64el", "riscv64", "s390x"]
 FIND_FIELDS = [
@@ -155,7 +156,6 @@ def parse_package_for_card(
             "contact": "",
         },
         "publisher": {"display_name": "", "name": "", "validation": ""},
-        "ratings": {"value": "0", "count": "0"},
     }
 
     metadata = package.get("metadata", {})
@@ -184,7 +184,7 @@ def paginate(packages: List[Packages], page: int, size: int) -> List[Packages]:
     Paginate the given packages list based on current page and size.
     """
     total_items = len(packages)
-    total_pages = (total_items + size - 1) // size  # ceiling division
+    total_pages = (total_items + size - 1) // size
 
     if page > total_pages:
         page = total_pages
@@ -264,6 +264,13 @@ def parse_rock_details(rock):
         )
     return parsed_rock
 
+def fetch_rocks():
+    cached_rocks = cache.get("cached_rocks")
+    if cached_rocks is not None:
+        return cached_rocks
+    rocks = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
+    cached_rocks = cache.set("cached_rocks", rocks)
+    return rocks
 
 def get_rocks(
     size: int = 10,
@@ -272,8 +279,7 @@ def get_rocks(
     """
     Fetches paginated and parsed rock packages using DeviceGW.
     """
-    rocks = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
-
+    rocks = fetch_rocks()
     total_items = len(rocks)
     total_pages = (total_items + size - 1) // size
     page = int(query_params.get("page", 1))
