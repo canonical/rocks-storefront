@@ -264,6 +264,7 @@ def parse_rock_details(rock):
         )
     return parsed_rock
 
+
 def fetch_rocks():
     cached_rocks = cache.get("cached_rocks")
     if cached_rocks is not None:
@@ -271,6 +272,7 @@ def fetch_rocks():
     rocks = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
     cached_rocks = cache.set("cached_rocks", rocks)
     return rocks
+
 
 def get_rocks(
     size: int = 10,
