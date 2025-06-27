@@ -2,20 +2,19 @@ name: rockstore-io
 
 type: charm
 
-bases:
-  - build-on:
-    - name: ubuntu
-      channel: "22.04"
-    run-on:
-    - name: ubuntu
-      channel: "22.04"
+base: ubuntu@22.04
+platforms:
+  amd64:
 
-summary: The charm for rockstore.io
-
+title: Rocks store
+summary: Charm for the Rocks Store
 description: |
-  This is the charmed rockstore.io. This charm deploys the rockstore.io
+  This is the charmed Rocks Store. This charm deploys the rocks
   storefront. It is a web application that allows users to view rocks.
-  Test -> Delete after
+links:
+  contact: luke.wesley-holley@canonical.com
+  website:
+  - https://rocks.ubuntu.com
 
 extensions:
   - flask-framework
