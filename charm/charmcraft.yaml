@@ -7,9 +7,9 @@ platforms:
   amd64:
 
 title: Rocks store
-summary: The charm for rockstore.io
+summary: Charm for the Rocks Store
 description: |
-  This is the charmed rockstore.io. This charm deploys the rockstore.io
+  This is the charmed Rocks Store. This charm deploys the rocks
   storefront. It is a web application that allows users to view rocks.
 links:
   contact: luke.wesley-holley@canonical.com
