@@ -2,14 +2,12 @@ import re
 
 import talisker.requests
 from flask import render_template, make_response, request, escape
-from webapp.extensions import csrf
+from webapp.extensions import csrf, cache
 from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.store.views import store
-from webapp.search.views import search
 from webapp.helpers import markdown_to_html
 from canonicalwebteam.flask_base.app import FlaskBase
-from webapp.packages.store_packages import store_packages
 
 
 app = FlaskBase(
@@ -24,7 +22,8 @@ app = FlaskBase(
 
 
 app.name = APP_NAME
-
+app.config["CACHE_TYPE"] = "simple"
+cache.init_app(app)
 set_handlers(app)
 
 request_session = talisker.requests.get_session()
@@ -50,9 +49,7 @@ def linkify(text):
 
 csrf.init_app(app)
 
-app.register_blueprint(store_packages)
 app.register_blueprint(store)
-app.register_blueprint(search)
 
 
 app.jinja_env.filters["markdown"] = markdown_to_html

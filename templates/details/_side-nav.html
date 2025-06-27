@@ -8,7 +8,7 @@
         {% set active = docs_version == version['path'] %}
         <option value="{{ version_paths[version['path']] }}"{% if active %} selected{% endif %}>Version {{ version['version'] }}</option>
       {% endfor %}
-    <select>
+    </select>
   {% endif %}
   <nav data-js="navigation" class="p-side-navigation--raw-html" id="default">
     <a href="#default" class="p-side-navigation__toggle js-drawer-toggle" aria-controls="default">
@@ -31,77 +31,67 @@
   </nav>
   <hr class="p-separator--shallow" />
 {% endif %}
-{% if package.metadata.result.summary %}
-  <h4 class="p-heading--5 u-no-margin--bottom">About</h4>
-  <p data-js="summary" data-summary="{{ package.metadata.result.summary }}">
-    <span data-js="summary-content" style="overflow-wrap: break-word;">{{ package.metadata.result.summary }}</span>
-    <a href="/{{ package.metadata.name }}" class="is-always-color-link u-hide" data-js="summary-read-more">Read more</a>
-  </p>
-  <hr class="p-separator--shallow" />
-{% endif %}
 
-{% if package.metadata.result.license %}
-  <p><span class="u-text--muted">License</span><br />{{ package.metadata.result.license }}</p>
+{% if package.metadata.license and not package.metadata.license == "unset" %}
+  <h2 class="p-heading--5 p-muted-heading p-text--small-caps">Rock License</h2>
+  <p><i class="p-icon--certification"></i>&nbsp;&nbsp;{{ package.metadata.license }}</p>
   <hr class="p-separator--shallow">
 {% endif %}
 
-{% if package.metadata.result.website or package.metadata.result.repository or package.metadata.result.contact or package.metadata.result["bugs-url"] %}
-  <h4 class="p-heading--5 u-no-margin--bottom">Relevant links</h4>
+{% if package.metadata.rock_details %}
+  <h2 class="p-heading--5 p-muted-heading p-text--small-caps">Rock details</h2>
   <ul class="p-list">
-    {% if package.metadata.result.website %}
-      <li class="p-list__item u-no-margin--bottom">
-        <a href="{{ package.metadata.result.website }}"><i class="p-icon--home"></i>&nbsp;&nbsp;Homepage</a>
+    {% if package.metadata.status == "full" %}
+    <li class="p-list__item u-no-margin--bottom">
+      <p><i class="p-icon--plans"></i>&nbsp;&nbsp;Full rock</p>
+    </li>
+    {% endif %}
+    {% if package.metadata.status == "chisel" %}
+    <li class="p-list__item u-no-margin--bottom">
+      <p><i class="p-icon--plans"></i>&nbsp;&nbsp;Chiseled rock</p>
+    </li>
+    {% endif %}
+
+    {% if package.metadata.rock_details.repo_url %}
+      <li class="p-list__item">
+        <a href="{{ package.metadata.rock_details.repo_url }}"><i class="p-icon--repository"></i>&nbsp;&nbsp;Rock repository</a>
       </li>
     {% endif %}
-    {% if package.metadata.result.repository %}
+
+    {% if package.metadata.rock_details.docs_url %}
       <li class="p-list__item">
-        <a href="{{ package.metadata.result.repository }}"><i class="p-icon--repository"></i>&nbsp;&nbsp;Repository</a>
+        <a href="{{ package.metadata.rock_details.docs_url }}"><i class="p-icon--repository"></i>&nbsp;&nbsp;Rock documentation</a>
       </li>
     {% endif %}
-    {% if package["store_front"]["metadata"]["issues"] %}
-      <li class="p-list__item">
-        <a href="{{ package["metadata"]["issues"][0] }}"><i class="p-icon--bug"></i>&nbsp;&nbsp;Submit a bug</a>
-      </li>
-    {% elif package.metadata.result["bugs-url"] %}
-      <li class="p-list__item">
-        <a href="{{ package.metadata.result["bugs-url"] }}"><i class="p-icon--bug"></i>&nbsp;&nbsp;Submit a bug</a>
-      </li>
-    {% endif %}
-    {% if package.metadata.result.contact %}
-      <li class="p-list__item">
-        <a href="{{ package.metadata.result.contact }}"><i class="p-icon--contact"></i>&nbsp;&nbsp;Contact</a>
-      </li>
+
+    {% if package.metadata.rock_details.SBOM_url %}
+      <a href="{{package.metadata.rock_details.SBOM_url}}" class="p-button"><i class="p-icon--begin-download"></i>&nbsp;&nbsp;SBOM</a>
     {% endif %}
   </ul>
-  <hr class="p-separator--shallow" />
 {% endif %}
-<!-- Once `links` is fully ready we can remove the `request.args` check -->
-{% if package.metadata.result["links"] and request.args.get("show_metadata_links") %}
-  {% if package.metadata.result["links"]["website"] %}
+
+{% if package.metadata["links"] %}
+  {% if package.metadata["links"]["website"] %}
   <h2 class="p-heading--5 u-no-margin--bottom">Websites</h2>
     <ul class="p-list">
-      {% for contact in package.metadata.result["links"]["website"] %}
+      {% for website in package.metadata["links"]["website"] %}
       <li><a href="{{ website }}">{{ website }}</a></li>
       {% endfor %}
     </ul>
     <hr class="p-separator--shallow" />
   {% endif %}
-  {% if package.metadata.result["links"]["contact"] %}
-    <h2 class="p-heading--5 u-no-margin--bottom">Contact</h2>
+  {% if package.metadata["links"]["contact"] %}
+    <h3 class="p-heading--5 u-no-margin--bottom">Contact</h3>
     <ul class="p-list">
-      {% for contact in package.metadata.result["links"]["contact"] %}
+      {% for contact in package.metadata["links"]["contact"] %}
       <li><a href="{{ contact }}">{{ contact|replace('mailto:', '') }}</a></li>
       {% endfor %}
     </ul>
     <hr class="p-separator--shallow" />
   {% endif %}
 {% endif %}
-{% if not navigation %}
-  <a class="p-button--positive u-no-margin--bottom" href="#">Add docs to a rock</a>
-  <hr class="p-separator--shallow" />
-{% endif %}
-<h4 class="p-heading--5 u-no-margin--bottom">Discuss this {{ package.type }}</h4>
+<h2 class="p-heading--5 u-no-margin--bottom">Discuss this Rock</h2>
 <p>Share your thoughts on this rock with the community on discourse.</p>
-<p><a class="p-button" href="#">Join the discussion</a></p>
+<p><a class="p-button" href="https://discourse.ubuntu.com/c/project/rocks/117">Join the discussion</a></p>
 
 <script src="{{ versioned_static('js/dist/docs-side-nav.js') }}"></script>

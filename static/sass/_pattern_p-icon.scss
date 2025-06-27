@@ -122,6 +122,25 @@
 
     background-image: url("https://assets.ubuntu.com/v1/da36d07a-topic.svg");
   }
+
+  .p-icon--certification {
+    @extend %icon;
+
+    background-image: url("https://assets.ubuntu.com/v1/14c1ae6f-certification.svg");
+  }
+
+  .p-icon--plans {
+    @extend %icon;
+
+    background-image: url("https://assets.ubuntu.com/v1/539132f7-plans.svg");
+  }
+
+  .p-icon--begin-download {
+    @extend %icon;
+
+    background-image: url("https://assets.ubuntu.com/v1/5a556121-begin-downloading.svg");
+  }
+
 }
 
 @mixin charmhub-p-icon-chat {

@@ -1,13 +1,6 @@
-import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import {
-  Strip,
-  Row,
-  Col,
-  Pagination,
-  Button,
-} from "@canonical/react-components";
+import { Strip, Row, Col, Pagination } from "@canonical/react-components";
 import { CharmCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
@@ -15,17 +8,18 @@ import { Package, Publisher } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = searchParams.get("page") || "1";
 
   const getData = async () => {
-    const response = await fetch(`/store.json`);
+    const response = await fetch(`/store.json?page=${currentPage}`);
     const data = await response.json();
 
-    const packagesWithId = data.packages.map((item: string[]) => {
-      return {
-        ...item,
-        id: crypto.randomUUID(),
-      };
-    });
+    const packagesWithId = data.packages.map((item: string[]) => ({
+      ...item,
+      id: crypto.randomUUID(),
+    }));
+
     return {
       total_items: data.total_items,
       total_pages: data.total_pages,
@@ -33,54 +27,27 @@ function Packages() {
     };
   };
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = searchParams.get("page") || "1";
-  const { data, status, refetch, isFetching } = useQuery("data", getData);
-  const searchRef = useRef<HTMLInputElement | null>(null);
-  const searchSummaryRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    refetch();
-  }, [searchParams]);
+  const { data, status, isFetching } = useQuery(["data", currentPage], getData);
 
   const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
-    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + data?.packages.length;
+    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + (data?.packages.length || 0);
+
   return (
     <>
-      <Banner searchRef={searchRef} />
+      <Banner />
       <Strip>
         <Row>
           <Col size={12}>
             {data?.packages && data?.packages.length > 0 && (
-              <div className="u-fixed-width" ref={searchSummaryRef}>
-                {searchParams.get("q") ? (
-                  <p>
-                    Showing {currentPage === "1" ? "1" : firstResultNumber} to{" "}
-                    {lastResultNumber} of {data?.total_items} results for{" "}
-                    <strong>"{searchParams.get("q")}"</strong>.{" "}
-                    <Button
-                      appearance="link"
-                      onClick={() => {
-                        searchParams.delete("q");
-                        searchParams.delete("page");
-                        setSearchParams(searchParams);
-
-                        if (searchRef.current) {
-                          searchRef.current.value = "";
-                        }
-                      }}
-                    >
-                      Clear search
-                    </Button>
-                  </p>
-                ) : (
-                  <p>
-                    Showing {currentPage === "1" ? "1" : firstResultNumber} to{" "}
-                    {lastResultNumber} of {data?.total_items} items
-                  </p>
-                )}
+              <div className="u-fixed-width">
+                <p>
+                  Showing {currentPage === "1" ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {data?.total_items} items
+                </p>
               </div>
             )}
+
             <Row>
               {isFetching &&
                 [...Array(ITEMS_PER_PAGE)].map((_item, index) => (
