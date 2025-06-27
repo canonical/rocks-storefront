@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - staging
+      - WD-22448-rocks-deployment
   workflow_dispatch:
     inputs:
       environment:
