@@ -1,3 +1,7 @@
+# This file is currently used by Demos (Jenkins)
+# It is not used in ProdStack 6 and greater
+# Do not remove it
+
 domain: rockstore.io
 
 image: prod-comms.ps5.docker-registry.canonical.com/rockstore.io
