@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-04.dtd">
-<coverage lines-valid="352" lines-covered="257" line-rate="0.7301000000000001" branches-valid="220" branches-covered="108" branch-rate="0.49090000000000006" timestamp="1750457314561" complexity="0" version="0.1">
+<coverage lines-valid="352" lines-covered="257" line-rate="0.7301000000000001" branches-valid="220" branches-covered="108" branch-rate="0.49090000000000006" timestamp="1751062032133" complexity="0" version="0.1">
   <sources>
     <source>/home/runner/work/rocks-storefront/rocks-storefront</source>
   </sources>
