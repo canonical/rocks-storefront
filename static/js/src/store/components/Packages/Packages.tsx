@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { Strip, Row, Col, Pagination } from "@canonical/react-components";
-import { CharmCard, LoadingCard } from "@canonical/store-components";
+import { RockCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
-import { Package, Publisher } from "../../types";
+import { Rock, Publisher } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;
@@ -60,17 +60,13 @@ function Packages() {
                 status === "success" &&
                 data.packages.length > 0 &&
                 data.packages.map(
-                  (packageData: {
-                    package: Package;
-                    publisher: Publisher;
-                    id: string;
-                  }) => (
+                  (packageData: Rock) => (
                     <Col
                       size={3}
                       style={{ marginBottom: "1.5rem" }}
                       key={packageData.id}
                     >
-                      <CharmCard data={packageData} />
+                      <RockCard data={packageData} />
                     </Col>
                   )
                 )}
