@@ -1,5 +1,3 @@
-import type Publisher from "../../publisher-admin/types/components/Publisher";
-
 type Rock = {
   package: {
     description: string;
