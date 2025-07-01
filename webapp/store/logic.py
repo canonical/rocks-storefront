@@ -168,7 +168,9 @@ def parse_package_for_card(
     resp["package"]["description"] = (
         metadata["summary"] or metadata["description"]
     )
-    resp["package"]["display_name"] = format_slug(package.get("name", metadata.get("title")))
+    resp["package"]["display_name"] = format_slug(
+        package.get("name", metadata.get("title"))
+    )
     resp["package"]["icon_url"] = get_icon(
         metadata.get("links", {}).get("media", [])
     )
