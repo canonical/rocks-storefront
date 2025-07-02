@@ -24,7 +24,7 @@
     "@canonical/cookie-policy": "3.6.5",
     "@canonical/global-nav": "3.6.4",
     "@canonical/react-components": "2.7.4",
-    "@canonical/store-components": "0.54.1",
+    "@canonical/store-components": "0.54.2",
     "autoprefixer": "10.4.21",
     "date-fns": "4.1.0",
     "formik": "^2.4.5",

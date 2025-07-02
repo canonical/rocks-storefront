@@ -153,9 +153,9 @@ def parse_package_for_card(
             "platforms": [],
             "website": "",
             "contact": "",
-            "support": "LTS",
-            "cves": 1,
-            "last_updated": "3 days ago",
+            "support": "",
+            "cves": "",
+            "last_updated": "",
         },
         "publisher": {"display_name": "", "name": "", "validation": ""},
     }
