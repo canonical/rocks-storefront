@@ -146,7 +146,6 @@ def parse_package_for_card(
     """
     resp = {
         "package": {
-            "description": "",
             "summary": "",
             "display_name": "",
             "icon_url": "",
@@ -154,6 +153,9 @@ def parse_package_for_card(
             "platforms": [],
             "website": "",
             "contact": "",
+            "support": "",
+            "cves": "",
+            "last_updated": "",
         },
         "publisher": {"display_name": "", "name": "", "validation": ""},
     }
@@ -162,10 +164,10 @@ def parse_package_for_card(
     publisher = metadata.get("publisher", {})
 
     resp["package"]["name"] = package.get("name", "")
-    resp["package"]["description"] = (
-        metadata["summary"] or metadata["description"]
+    resp["package"]["summary"] = metadata["summary"] or metadata["description"]
+    resp["package"]["display_name"] = format_slug(
+        package.get("name", metadata.get("title"))
     )
-    resp["package"]["display_name"] = format_slug(metadata.get("title", ""))
     resp["package"]["icon_url"] = get_icon(
         metadata.get("links", {}).get("media", [])
     )

@@ -55,7 +55,7 @@ class TestStoreLogic(unittest.TestCase):
             "metadata": {
                 "summary": "A test summary",
                 "description": "A test description",
-                "title": "test-title",
+                "title": "test-package",
                 "website": "https://example.com",
                 "contact": "test@example.com",
                 "links": {
@@ -72,7 +72,7 @@ class TestStoreLogic(unittest.TestCase):
         }
         result = parse_package_for_card(package)
         self.assertEqual(result["package"]["name"], "test-package")
-        self.assertEqual(result["package"]["display_name"], "Test Title")
+        self.assertEqual(result["package"]["display_name"], "Test Package")
         self.assertEqual(
             result["package"]["icon_url"], "https://example.com/icon.png"
         )

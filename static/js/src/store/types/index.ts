@@ -1,4 +1,4 @@
 import Publisher from "../../store/types/components/Publisher";
-import Package from "../../store/types/components/Package";
+import Rock from "../../store/types/components/Rock";
 
-export type { Package, Publisher };
+export type { Rock, Publisher };

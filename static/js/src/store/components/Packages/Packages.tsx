@@ -1,10 +1,10 @@
 import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { Strip, Row, Col, Pagination } from "@canonical/react-components";
-import { CharmCard, LoadingCard } from "@canonical/store-components";
+import { RockCard, LoadingCard } from "@canonical/store-components";
 
 import Banner from "../Banner";
-import { Package, Publisher } from "../../types";
+import { Rock } from "../../types";
 
 function Packages() {
   const ITEMS_PER_PAGE = 12;
@@ -38,7 +38,7 @@ function Packages() {
       <Banner />
       <Strip>
         <Row>
-          <Col size={12}>
+          <Col size={9} className="col-start-large-4">
             {data?.packages && data?.packages.length > 0 && (
               <div className="u-fixed-width">
                 <p>
@@ -59,21 +59,15 @@ function Packages() {
               {!isFetching &&
                 status === "success" &&
                 data.packages.length > 0 &&
-                data.packages.map(
-                  (packageData: {
-                    package: Package;
-                    publisher: Publisher;
-                    id: string;
-                  }) => (
-                    <Col
-                      size={3}
-                      style={{ marginBottom: "1.5rem" }}
-                      key={packageData.id}
-                    >
-                      <CharmCard data={packageData} />
-                    </Col>
-                  )
-                )}
+                data.packages.map((packageData: Rock) => (
+                  <Col
+                    size={3}
+                    style={{ marginBottom: "1.5rem" }}
+                    key={packageData.id}
+                  >
+                    <RockCard data={packageData} />
+                  </Col>
+                ))}
 
               {status === "success" && data.packages.length === 0 && (
                 <h1 className="p-heading--2">No packages match this filter</h1>
