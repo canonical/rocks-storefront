@@ -18,12 +18,15 @@
     "isolatedModules": true,
     "noEmit": false,
     "sourceMap": true,
-    "strictPropertyInitialization": false
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
   },
-  "include": ["./static/js/"],
+  "include": ["./static/js/", "static/ssg/src/webcomponents"],
   "paths": [
     {
       "*": ["types/*.d.ts"]
     }
-  ]
+  ],
+  "references": [{ "path": "./static/ssg/tsconfig.node.json" }]
 }

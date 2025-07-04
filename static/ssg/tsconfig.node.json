@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "composite": true,
+    "module": "esnext",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "declarationDir": "./dist",
+  },
+  "include": [
+    "./",
+    "src/webcomponents"
+  ],
+}

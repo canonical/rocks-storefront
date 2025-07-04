@@ -17,6 +17,7 @@ Thumbs.db
 *.bak
 *.pyc
 *-cache/
+.rollup.cache/
 
 # [data] Local data
 *.sqlite*
@@ -46,6 +47,7 @@ package-lock.json
 *.snap
 _site/
 *.*.map
+*.tsbuildinfo
 
 # [env] Local environment settings
 .docker-project

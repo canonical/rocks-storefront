@@ -6,6 +6,10 @@
       {
         "languages": ["python", "bash"]
       }
+    ],
+    [
+      "@babel/plugin-proposal-decorators",
+      { "version": "2023-11" }
     ]
   ],
   "presets": [

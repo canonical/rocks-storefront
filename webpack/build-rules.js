@@ -9,7 +9,7 @@ module.exports = [
     use: {
       loader: "babel-loader",
       options: {
-        presets: ["@babel/preset-react"],
+        presets: ["@babel/preset-env", "@babel/preset-react"],
       },
     },
   },
@@ -34,23 +34,8 @@ module.exports = [
     test: /\.css$/i,
     use: ["style-loader", "css-loader"],
   },
-  // loaders are evaluated from bottom to top (right to left)
-  // so first transpile via babel, then expose as global
   {
-    test: require.resolve(__dirname + "/static/js/src/base/base.js"),
-    use: ["expose-loader?exposes=charmhub.base", "babel-loader"],
-  },
-  {
-    test: require.resolve(__dirname + "/static/js/src/public/details/index.ts"),
-    use: ["expose-loader?exposes=charmhub.details", "babel-loader"],
-  },
-  {
-    test: require.resolve(
-      __dirname + "/static/js/src/public/details/overview/index.js"
-    ),
-    use: ["expose-loader?exposes=charmhub.details.overview", "babel-loader"],
-  },
-  {
+    // loaders run from right to left and bottom to top
     test: /\.tsx?/,
     use: ["ts-loader"],
   },
