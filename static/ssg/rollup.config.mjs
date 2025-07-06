@@ -16,6 +16,7 @@ export default {
     nodeResolve({
       extensions: [".mjs", ".js", ".json", ".node", ".ts"],
       preferBuiltins: true,
+      exportConditions: ["node"],
     }),
     commonjs(),
     typescript({

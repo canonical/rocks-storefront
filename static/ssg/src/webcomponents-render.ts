@@ -1,4 +1,4 @@
-import * as fs from "fs";
+//import * as fs from "fs";
 import * as path from "path";
 
 // Needed to set up all the shims for rendering on the server
@@ -17,9 +17,11 @@ async function renderComponentToFile(resourcePath: string): Promise<void> {
   );
   const htmlStr = await renderHtml(resourcePath);
 
+  console.log(htmlStr);
+  /*
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, htmlStr);
-
+  */
   console.log(`Rendered ${outPath}`);
 }
 
@@ -51,7 +53,7 @@ async function renderHtml(resourcePath: string): Promise<string> {
 }
 
 async function renderAll() {
-  const webcomponentsFiles = glob.sync("static/ssg/dist/webcomponents/*");
+  const webcomponentsFiles = await glob("**/webcomponents/*");
   const promisesArray: Promise<void>[] = [];
   console.log(webcomponentsFiles);
 
