@@ -1,4 +1,4 @@
-//import * as fs from "fs";
+import * as fs from "fs";
 import * as path from "path";
 
 import { glob } from "glob";
@@ -6,34 +6,25 @@ import { html, render } from "@lit-labs/ssr";
 import { collectResult } from "@lit-labs/ssr/lib/render-result.js";
 
 async function renderComponentToFile(resourcePath: string): Promise<void> {
-  const filename = getFileName(resourcePath);
+  const filename = path.basename(resourcePath, ".js");
   const outPath = path.join(
     process.cwd(),
+    "../..", // go to project root
     "templates/webcomponents/",
-    filename
+    `${filename}.html`
   );
-  const htmlStr = await renderHtml(resourcePath);
+  const htmlStr = await renderHtml(filename);
 
-  console.log(htmlStr);
-  /*
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, htmlStr);
-  */
+
   console.log(`Rendered ${outPath}`);
 }
 
-function getFileName(resourcePath: string): string {
-  let filename = path.basename(resourcePath);
-  const extensionIndex = filename.lastIndexOf(".");
-  if (extensionIndex > 0) {
-    filename = filename.substring(0, extensionIndex) + ".html";
-  }
-  return filename;
-}
+async function renderHtml(filename: string): Promise<string> {
+  // dynamic imports need to have a constant relative path
+  await import(`../dist/webcomponents/${filename}.js`);
 
-async function renderHtml(resourcePath: string): Promise<string> {
-  //const webcomponent = await import(`${resourcePath}`);
-  console.log(resourcePath);
   // read @customElement to define html template
   // const elementName = getElementName
   // read properties and print them in order to receive a jinja template value
@@ -43,16 +34,12 @@ async function renderHtml(resourcePath: string): Promise<string> {
   </my-element>`;
 
   const result = render(htmlTemplate);
-  const debug = await collectResult(result);
-  console.log(debug);
-
-  return "";
+  return await collectResult(result);
 }
 
 async function renderAll() {
-  const webcomponentsFiles = await glob("**/webcomponents/*");
+  const webcomponentsFiles = await glob("**/dist/webcomponents/*.js");
   const promisesArray: Promise<void>[] = [];
-  console.log(webcomponentsFiles);
 
   for (const file of webcomponentsFiles) {
     const absolutePath = path.resolve(process.cwd(), file);

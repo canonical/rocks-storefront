@@ -76,3 +76,6 @@ dist/
 *.charm
 *.rock
 .coverage
+
+# web components
+templates/webcomponents
