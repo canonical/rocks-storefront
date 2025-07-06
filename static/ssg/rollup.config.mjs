@@ -7,18 +7,20 @@ import dynamicImportVars from "@rollup/plugin-dynamic-import-vars";
 export default {
   input: "src/webcomponents-render.ts",
   output: {
-    file: "dist/webcomponents-render.js",
+    dir: "dist/",
     format: "esm",
     sourcemap: true,
   },
   plugins: [
+    progress(),
     nodeResolve({
       extensions: [".mjs", ".js", ".json", ".node", ".ts"],
+      preferBuiltins: true,
     }),
-    progress(),
     commonjs(),
     typescript({
       tsconfig: "./tsconfig.node.json",
+      outputToFilesystem: false,
     }),
     dynamicImportVars(),
   ],

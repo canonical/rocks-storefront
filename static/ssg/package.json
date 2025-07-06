@@ -2,10 +2,10 @@
   "name": "ssg",
   "version": "1.0.0",
   "type": "module",
-  "main": "webcomponents-render.js",
+  "main": "dist/webcomponents-render.js",
   "scripts": {
     "build": "rollup --config rollup.config.mjs",
-    "render": "NODE_DEBUG=module node dist/webcomponents-render.js"
+    "render": "node dist/webcomponents-render.js"
   },
   "author": "Canonical Webteam",
   "license": "LGPL-3.0-or-later",

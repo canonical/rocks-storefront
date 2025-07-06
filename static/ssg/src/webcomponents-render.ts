@@ -1,29 +1,12 @@
-// Must be the first import so that the shims are imported
-import * as shim from "@lit-labs/ssr-dom-shim";
-
-Object.assign(globalThis, shim);
-
-console.log("HTMLElement shimmed?", typeof globalThis.HTMLElement);
-
 import * as fs from "fs";
 import * as path from "path";
+
+// Needed to set up all the shims for rendering on the server
+import "@lit-labs/ssr/lib/install-global-dom-shim";
+
 import { glob } from "glob";
-import { html } from "lit";
-import { render } from "@lit-labs/ssr";
+import { html, render } from "@lit-labs/ssr";
 import { collectResult } from "@lit-labs/ssr/lib/render-result.js";
-
-// needed to get the HTMLElement and other objects in NodeJS environment
-/*
-import * as exports from "@lit-labs/ssr-dom-shim";
-Object.entries(exports).forEach(
-  ([name, exported]) => (global[name] = exported)
-);
-*/
-console.log("SHIMS!");
-//console.log(typeof globalThis.HTMLElement);
-
-//import * as mod from "./webcomponents/my-element";
-//console.log(mod);
 
 async function renderComponentToFile(resourcePath: string): Promise<void> {
   const filename = getFileName(resourcePath);
@@ -55,18 +38,22 @@ async function renderHtml(resourcePath: string): Promise<string> {
   // read @customElement to define html template
   // const elementName = getElementName
   // read properties and print them in order to receive a jinja template value
+
   const htmlTemplate = html`<my-element name="{{ name }}">
     <p>Test</p>
   </my-element>`;
+
   const result = render(htmlTemplate);
   const debug = await collectResult(result);
   console.log(debug);
-  return debug;
+
+  return "";
 }
 
 async function renderAll() {
   const webcomponentsFiles = glob.sync("static/ssg/dist/webcomponents/*");
   const promisesArray: Promise<void>[] = [];
+  console.log(webcomponentsFiles);
 
   for (const file of webcomponentsFiles) {
     const absolutePath = path.resolve(process.cwd(), file);
@@ -79,6 +66,7 @@ async function renderAll() {
   }
 
   await Promise.all(promisesArray);
+  console.log("Rendered all web components");
 }
 
-await renderAll();
+renderAll();
