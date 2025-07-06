@@ -16,6 +16,8 @@ export default {
     nodeResolve({
       extensions: [".mjs", ".js", ".json", ".node", ".ts"],
       preferBuiltins: true,
+      // Very important!
+      // needed so that lit imports pick the correct SSR node module
       exportConditions: ["node"],
     }),
     commonjs(),

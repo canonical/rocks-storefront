@@ -1,9 +1,6 @@
 //import * as fs from "fs";
 import * as path from "path";
 
-// Needed to set up all the shims for rendering on the server
-import "@lit-labs/ssr/lib/install-global-dom-shim";
-
 import { glob } from "glob";
 import { html, render } from "@lit-labs/ssr";
 import { collectResult } from "@lit-labs/ssr/lib/render-result.js";
