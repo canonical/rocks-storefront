@@ -1069,10 +1069,10 @@
     prop-types "15.8.1"
     react-table "7.8.0"
 
-"@canonical/store-components@0.54.1":
-  version "0.54.1"
-  resolved "https://registry.yarnpkg.com/@canonical/store-components/-/store-components-0.54.1.tgz#542d14bd3596d1da27096c2d1443008528401730"
-  integrity sha512-GsZIFPyPqagwuylpaZT8L3jLFCLdthf9VFeeqWZQIjIRhgrkpW0bDrF/24f3lNVr23nrjiK8Jrf3+056DI+NDg==
+"@canonical/store-components@0.54.2":
+  version "0.54.2"
+  resolved "https://registry.yarnpkg.com/@canonical/store-components/-/store-components-0.54.2.tgz#d281835da2519530dda2b0b4faeaa6d10dac86ce"
+  integrity sha512-FzKAHNk1d0knvICPpOcis0fGnDU3ozJ4Fnx+X6iXX5K82ZKXB5bCYlcOPwKFmuSpbvjGkpM08WS2xBqHLgn1bw==
   dependencies:
     "@canonical/react-components" "1.9.0"
     "@types/jest" "27.5.2"
