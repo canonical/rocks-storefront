@@ -154,3 +154,11 @@ def get_csp_as_str(csp={}):
         csp_value = " ".join(values)
         csp_str += f"{key} {csp_value}; "
     return csp_str.strip()
+
+
+def is_date_format(string):
+    try:
+        datetime.strptime(string, "%d %b %Y")
+        return True
+    except ValueError:
+        return False
