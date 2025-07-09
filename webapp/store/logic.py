@@ -260,8 +260,10 @@ def parse_rock_details(rock):
         parsed_rock["channels"].append(parsed_channel)
         parsed_rock["latest_channel"] = max(
             parsed_rock["channels"],
-            key=lambda x: datetime.datetime.strptime(
-                x["released_at"], "%d %b %Y"
+            key=lambda x: (
+                x["released_at"]
+                if x["released_at"] in ["Yesterday", "Today"]
+                else datetime.datetime.strptime(x["released_at"], "%d %b %Y")
             ),
         )
     return parsed_rock
