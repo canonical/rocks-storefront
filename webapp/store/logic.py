@@ -5,7 +5,7 @@ from dateutil import parser
 
 from canonicalwebteam.store_api.devicegw import DeviceGW
 
-from webapp.helpers import get_yaml_loader
+from webapp.helpers import get_yaml_loader, is_date_format
 from webapp.extensions import cache
 
 ARCHITECTURES = ["amd64", "arm64", "ppc64el", "riscv64", "s390x"]
@@ -260,8 +260,10 @@ def parse_rock_details(rock):
         parsed_rock["channels"].append(parsed_channel)
         parsed_rock["latest_channel"] = max(
             parsed_rock["channels"],
-            key=lambda x: datetime.datetime.strptime(
-                x["released_at"], "%d %b %Y"
+            key=lambda x: (
+                datetime.datetime.strptime(x["released_at"], "%d %b %Y")
+                if is_date_format(x["released_at"])
+                else x["released_at"]
             ),
         )
     return parsed_rock
