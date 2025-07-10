@@ -1,0 +1,23 @@
+{% extends 'base_layout.html' %}
+
+{% block meta_title %}Web components{% endblock %}
+
+{% block content %}
+  <h1>Render web components passing data</h1>
+  <hr/>
+  {% include "webcomponents/accordion.html" %}
+  <hr/>
+  {% include "webcomponents/my-element.html" %}
+  <hr/>
+  {% include "webcomponents/counter.html" %}
+  <hr/>
+{% endblock %}
+
+{% block page_scripts %}
+  <script type="module" src="{{ versioned_static('ssg/dist/hydration-support.js') }}"></script>
+  {# Include all the components used by this page #}
+  <script type="module" src="{{ versioned_static('ssg/dist/webcomponents/accordion.js') }}"></script>
+  <script type="module" src="{{ versioned_static('ssg/dist/webcomponents/accordion-section.js') }}"></script>
+  <script type="module" src="{{ versioned_static('ssg/dist/webcomponents/my-element.js') }}"></script>
+  <script type="module" src="{{ versioned_static('ssg/dist/webcomponents/counter.js') }}"></script>
+{% endblock %}

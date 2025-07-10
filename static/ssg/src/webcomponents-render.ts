@@ -2,7 +2,8 @@ import * as fs from "fs";
 import * as path from "path";
 
 import { glob } from "glob";
-import { html, render } from "@lit-labs/ssr";
+import { render } from "@lit-labs/ssr";
+import { html, unsafeStatic } from "lit/static-html.js";
 import { collectResult } from "@lit-labs/ssr/lib/render-result.js";
 
 async function renderComponentToFile(resourcePath: string): Promise<void> {
@@ -22,19 +23,30 @@ async function renderComponentToFile(resourcePath: string): Promise<void> {
 }
 
 async function renderHtml(filename: string): Promise<string> {
+  // read TS file
+  const tsCode = fs.readFileSync(`src/webcomponents/${filename}.ts`, "utf-8");
   // dynamic imports need to have a constant relative path
   await import(`../dist/webcomponents/${filename}.js`);
 
   // read @customElement to define html template
-  // const elementName = getElementName
-  // read properties and print them in order to receive a jinja template value
+  const elementName = getElementName(tsCode, filename);
+  console.log(elementName);
 
-  const htmlTemplate = html`<my-element name="{{ name }}">
-    <p>Test</p>
-  </my-element>`;
+  // name="{{ name }}"
+  const htmlTemplate = html`<${unsafeStatic(elementName)}>
+    </${unsafeStatic(elementName)}>`;
 
   const result = render(htmlTemplate);
   return await collectResult(result);
+}
+
+function getElementName(code: string, filename: string): string {
+  const customElement = /^@customElement\("(.*)"\)/m;
+  const result = code.match(customElement);
+  if (result === null) {
+    throw Error(`There's no custom element in file: ${filename}`);
+  }
+  return result[1];
 }
 
 async function renderAll() {

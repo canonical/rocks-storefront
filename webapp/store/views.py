@@ -37,6 +37,21 @@ def details_overview(entity_name):
 
     return render_template("details/overview.html", **context)
 
+@store.route("/webcomponents")
+def webcomponents_test():
+    context = {
+        "accordion": {
+            "title": "I'm Alvaro",
+            "text": "This is a test",
+            "index": 4,
+        },
+        "counter": {},
+        "my_element": {
+            "username": "Alvaro",
+        },
+        "vanilla_button": {},
+    }
+    return render_template("webcomponents.html", **context )
 
 @store.route("/")
 def store_index():

@@ -4,7 +4,7 @@ import { customElement, property } from "lit/decorators.js";
 @customElement("my-element")
 export class MyElement extends LitElement {
   @property({ type: String })
-  username = "World";
+  username = "{{ my_element.username }}";
 
   render() {
     return html`<div>

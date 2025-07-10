@@ -78,4 +78,4 @@ dist/
 .coverage
 
 # web components
-templates/webcomponents
+templates/webcomponents/
