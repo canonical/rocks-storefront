@@ -3,47 +3,35 @@ import { useSearchParams } from "react-router-dom";
 import { Strip, Row, Col, Pagination } from "@canonical/react-components";
 import { RockCard, LoadingCard } from "@canonical/store-components";
 
-import Banner from "../Banner";
 import { Rock } from "../../types";
 
-function Packages() {
-  const ITEMS_PER_PAGE = 12;
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = searchParams.get("page") || "1";
+const ITEMS_PER_PAGE = 12;
 
-  const getData = async () => {
-    const response = await fetch(`/store.json?page=${currentPage}`);
-    const data = await response.json();
+interface IPackagesProps {
+  packages?: Rock[],
+  numOfTotalItems: number,
+  isFetching: boolean,
+  status: "success" | "idle" | "error" | "loading"
+  currentPage: number,
+  onPageChange: (pageNumber: number) => void
+}
 
-    const packagesWithId = data.packages.map((item: string[]) => ({
-      ...item,
-      id: crypto.randomUUID(),
-    }));
+function Packages({ packages, numOfTotalItems, isFetching, status, currentPage, onPageChange }: IPackagesProps) {
 
-    return {
-      total_items: data.total_items,
-      total_pages: data.total_pages,
-      packages: packagesWithId,
-    };
-  };
-
-  const { data, status, isFetching } = useQuery(["data", currentPage], getData);
-
-  const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
+  const firstResultNumber = (currentPage - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
-    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + (data?.packages.length || 0);
+    (currentPage - 1) * ITEMS_PER_PAGE + (packages?.length || 0);
 
+  const isPackageExist = packages && packages.length > 0
   return (
-    <>
-      <Banner />
       <Strip>
         <Row>
           <Col size={9} className="col-start-large-4">
-            {data?.packages && data?.packages.length > 0 && (
+          {isPackageExist && (
               <div className="u-fixed-width">
                 <p>
-                  Showing {currentPage === "1" ? "1" : firstResultNumber} to{" "}
-                  {lastResultNumber} of {data?.total_items} items
+                  Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {numOfTotalItems} items
                 </p>
               </div>
             )}
@@ -58,8 +46,8 @@ function Packages() {
 
               {!isFetching &&
                 status === "success" &&
-                data.packages.length > 0 &&
-                data.packages.map((packageData: Rock) => (
+              isPackageExist &&
+                packages.map((packageData: Rock) => (
                   <Col
                     size={3}
                     style={{ marginBottom: "1.5rem" }}
@@ -69,20 +57,17 @@ function Packages() {
                   </Col>
                 ))}
 
-              {status === "success" && data.packages.length === 0 && (
+              {status === "success" && packages?.length === 0 && (
                 <h1 className="p-heading--2">No packages match this filter</h1>
               )}
             </Row>
 
-            {status === "success" && data.packages.length > 0 && (
+          {status === "success" && isPackageExist && (
               <Pagination
                 itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={data.total_items}
-                paginate={(pageNumber) => {
-                  searchParams.set("page", pageNumber.toString());
-                  setSearchParams(searchParams);
-                }}
-                currentPage={parseInt(currentPage)}
+                totalItems={numOfTotalItems}
+                paginate={onPageChange}
+                currentPage={currentPage}
                 centered
                 scrollToTop
               />
@@ -90,7 +75,6 @@ function Packages() {
           </Col>
         </Row>
       </Strip>
-    </>
   );
 }
 
