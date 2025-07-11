@@ -27,10 +27,6 @@ def details_overview(entity_name):
 
     context = {
         "package": rock,
-        "navigation": None,
-        "last_update": None,
-        "forum_url": None,
-        "topic_path": None,
     }
 
     context["package_type"] = "rock"

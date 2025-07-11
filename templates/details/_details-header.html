@@ -20,7 +20,7 @@
             <div class="p-media-object__content u-no-margin--bottom">
                 <p class="u-no-margin--bottom">
                   {% if package.publisher.name %}
-                    By <a href="#" class="is-underlined">{{ package.publisher.name }}</a>
+                    By {{ package.publisher.name }}
                   {% endif %}
                   {% if package.publisher.validation == "verified" %}
                     <span class="p-tooltip--top-center" aria-describedby="verified-tooltip">

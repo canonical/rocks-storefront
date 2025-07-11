@@ -211,14 +211,8 @@ def parse_rock_details(rock):
         "icon_url": "",
         "metadata": {
             "license": rock["metadata"].get("license", ""),
-            "status": "chisel" if "chisel" in rock["name"] else "full",
             "links": rock["metadata"].get("links", {}),
             "private": rock["metadata"].get("private", False),
-            "rock_details": {
-                "repo_url": "",
-                "docs_url": "",
-                "SBOM_url": "",
-            },
             "upstream_details": {},
             "related_rocks": [],
             "downstream_artifacts": {},
