@@ -2,8 +2,9 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Packages from "../Packages";
+import Packages from "../../../components/Packages/Packages";
 import "@testing-library/jest-dom";
+import Store from "../Store";
 
 jest.mock("@canonical/store-components", () => ({
   CharmCard: ({ data }: { data: { name: string } }) => <div>{data.name}</div>,
@@ -39,7 +40,7 @@ const renderPackages = () => {
   render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
-        <Packages />
+        <Store />
       </MemoryRouter>
     </QueryClientProvider>
   );
