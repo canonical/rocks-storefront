@@ -3,63 +3,52 @@
 {% extends '/details/details_layout.html' %}
 
 {% block details_content %}
-  <div class="row p-details-tab__content">
-    <div class="col-3 p-details-tab__content__sidebar">
-      {% include '/details/_side-nav.html' %}
-    </div>
-    <div class="col-9 p-details-tab__content__body">
-      <div class="js-readme-content">
-        <h1 class="p-heading--1">{{ package.display_name }}</h1>
-        {% if package.description %}
-          <p>{{ package.description | safe }}</p>
-        {% else %}
-          <p>No description provided.</p>
-        {% endif %}
-
-        <table aria-label="Example of formatting in the table">
-          <thead>
-            <tr>
-              <th>Channel<br/>version</th>
-              <th>Channel<br/>risk</th>
-              <th>Revision</th>
-              <th>Workload version</th>
-              <th>Last updated</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <span>{{ package.latest_channel.version }}</span>
-                <button class="p-chip--positive is-inline">
-                  <span class="p-chip__value">{{ package.latest_channel.track }}</span>
-                </button>
-              </td>
-              <td>{{ package.latest_channel.risk }}</td>
-              <td>{{ package.latest_channel.revision }}</td>
-              <td>{{ package.latest_channel.workload_version }}</td>
-              <td>{{ package.latest_channel.last_updated }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        <button class="p-button">View all channels <i class="p-icon--chevron-right"></i></button>
-      </div>
-      {% if topic_path %}
-        <hr class="p-separator--medium" />
-        <div class="p-notification--information">
-          <div class="p-notification__content">
-            <p class="p-notification__message">
-              <a href="{{ forum_url }}{{ topic_path }}" class="p-link--external">Help improve this document in the forum</a> (<a href="" class="p-link--external">guidelines</a>). Last updated {{ last_update }}. 
-            </p>
-          </div>
-        </div>
+<div class="row p-details-tab__content">
+  <div class="col-3 p-details-tab__content__sidebar">
+    {% include '/details/_side-nav.html' %}
+  </div>
+  <div class="col-9 p-details-tab__content__body">
+    <div class="js-readme-content">
+      {% if package.summary %}
+        <p>{{ package.summary | safe }}</p>
       {% endif %}
+
+      <table aria-label="Example of formatting in the table">
+        <thead>
+          <tr>
+            <th>Channel version</th>
+            <th>Channel risk</th>
+            <th>Revision</th>
+            <th>Workload version</th>
+            <th>Last updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span>{{ package.latest_channel.version }}</span>
+              <button class="p-chip--positive is-inline">
+                <span class="p-chip__value">{{ package.latest_channel.track }}</span>
+              </button>
+            </td>
+            <td>{{ package.latest_channel.risk }}</td>
+            <td>{{ package.latest_channel.revision }}</td>
+            <td>{{ package.latest_channel.workload_version }}</td>
+            <td>{{ package.latest_channel.last_updated }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    {% if package.description %}
+      <p>{{ package.description | safe }}</p>
+    {% else %}
+      <p>No description provided.</p>
+    {% endif %}
   </div>
-  </div>
+</div>
 {% endblock %}
 
 {% block details_scripts %}
-  <script src="{{ versioned_static('js/dist/details_overview.js') }}" defer></script>
+<script src="{{ versioned_static('js/dist/details_overview.js') }}" defer></script>
 
 {% endblock %}
