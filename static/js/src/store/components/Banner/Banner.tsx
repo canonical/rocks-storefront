@@ -1,4 +1,5 @@
 import { Strip, Row, Col } from "@canonical/react-components";
+import SearchInput from "../SearchInput";
 
 function Banner() {
   return (
@@ -10,6 +11,7 @@ function Banner() {
             <br />
             container images store
           </h1>
+          <SearchInput />
         </Col>
       </Row>
     </Strip>
