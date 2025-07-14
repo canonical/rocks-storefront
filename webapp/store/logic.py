@@ -263,26 +263,26 @@ def parse_rock_details(rock):
     return parsed_rock
 
 
-def fetch_rocks():
-    cached_rocks = cache.get("cached_rocks")
+def fetch_rocks(query_string):
+    cached_rocks = cache.get(f"cached_rocks-{query_string}")
     if cached_rocks is not None:
         return cached_rocks
-    rocks = device_gw.find("%", fields=FIND_FIELDS).get("results", [])
-    cached_rocks = cache.set("cached_rocks", rocks)
+    rocks = device_gw.find("%" if query_string == "" else query_string, fields=FIND_FIELDS).get("results", [])
+    cached_rocks = cache.set(f"cached_rocks-{query_string}", rocks)
     return rocks
 
 
 def get_rocks(
     size: int = 10,
-    query_params: Dict[str, Any] = {},
+    query_string: str = '',
+    page: int = 0
 ) -> List[Dict[str, Any]]:
     """
     Fetches paginated and parsed rock packages using DeviceGW.
     """
-    rocks = fetch_rocks()
+    rocks = fetch_rocks(query_string)
     total_items = len(rocks)
     total_pages = (total_items + size - 1) // size
-    page = int(query_params.get("page", 1))
     rocks_per_page = paginate(rocks, page, size)
     parsed_rocks = [parse_package_for_card(rock) for rock in rocks_per_page]
 
