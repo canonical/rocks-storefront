@@ -31,13 +31,11 @@ function Store() {
         };
     };
 
-    const { data, status, isFetching } = useQuery(["data", currentPage], getData);
-
-    const searchRef = useRef<HTMLInputElement | null>(null);
+    const { data, status, isFetching } = useQuery(["data", currentPage, queryString], getData);
 
     return (
         <>
-            <Banner searchRef={searchRef} />
+            <Banner />
             <Packages 
                 isFetching={isFetching} 
                 numOfTotalItems={data?.totalItems} 
