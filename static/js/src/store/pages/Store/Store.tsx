@@ -21,7 +21,7 @@ function Store() {
 
         const packagesWithId = data.packages.map((item: string[]) => ({
             ...item,
-            id: "test",
+            id: crypto.randomUUID()
         }));
 
         return {
