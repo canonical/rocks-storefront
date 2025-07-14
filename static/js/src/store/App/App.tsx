@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Store from "../pages/Store";
 
-
 function App() {
   const queryClient = new QueryClient({
     defaultOptions: {
