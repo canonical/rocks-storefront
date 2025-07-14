@@ -19,7 +19,9 @@ def get_store_packages():
     args = dict(request.args)
     query_string = args.get("q", "")
     page = int(args.get("page", 1))
-    res = make_response(get_rocks(size=12, query_string=query_string, page=page))
+    res = make_response(
+        get_rocks(size=12, query_string=query_string, page=page)
+    )
     return res
 
 

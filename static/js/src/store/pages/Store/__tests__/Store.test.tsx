@@ -32,7 +32,7 @@ jest.mock("@canonical/store-components", () => ({
   LoadingCard: () => <div>Loading...</div>,
 }));
 
-jest.mock("../../Banner", () => () => <div>Banner</div>);
+jest.mock("../../../components/Banner", () => () => <div>Banner</div>);
 
 const renderPackages = () => {
   const queryClient = new QueryClient();

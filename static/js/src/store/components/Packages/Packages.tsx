@@ -1,5 +1,11 @@
 import { useSearchParams } from "react-router-dom";
-import { Strip, Row, Col, Pagination, Button } from "@canonical/react-components";
+import {
+  Strip,
+  Row,
+  Col,
+  Pagination,
+  Button,
+} from "@canonical/react-components";
 import { RockCard, LoadingCard } from "@canonical/store-components";
 
 import { Rock } from "../../types";
@@ -7,21 +13,27 @@ import { Rock } from "../../types";
 const ITEMS_PER_PAGE = 12;
 
 interface IPackagesProps {
-  packages?: Rock[],
-  numOfTotalItems: number,
-  isFetching: boolean,
-  status: "success" | "idle" | "error" | "loading"
-  currentPage: number,
-  onPageChange: (pageNumber: number) => void
+  packages?: Rock[];
+  numOfTotalItems: number;
+  isFetching: boolean;
+  status: "success" | "idle" | "error" | "loading";
+  currentPage: number;
+  onPageChange: (pageNumber: number) => void;
 }
 
-function Packages({ packages, numOfTotalItems, isFetching, status, currentPage, onPageChange }: IPackagesProps) {
-
+function Packages({
+  packages,
+  numOfTotalItems,
+  isFetching,
+  status,
+  currentPage,
+  onPageChange,
+}: IPackagesProps) {
   const firstResultNumber = (currentPage - 1) * ITEMS_PER_PAGE + 1;
   const lastResultNumber =
     (currentPage - 1) * ITEMS_PER_PAGE + (packages?.length || 0);
 
-  const isPackageExist = packages && packages.length > 0
+  const isPackageExist = packages && packages.length > 0;
   const [searchParams, setSearchParams] = useSearchParams();
 
   const onClear = (): void => {
@@ -36,21 +48,23 @@ function Packages({ packages, numOfTotalItems, isFetching, status, currentPage, 
         <Col size={9} className="col-start-large-4">
           {isPackageExist && (
             <div className="u-fixed-width">
-              {searchParams.get("q") ? <p>
-                Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
-                {lastResultNumber} of {numOfTotalItems} items for {" "}
-                <strong>"{searchParams.get("q")}"</strong>.{" "}
-                <Button appearance="link" onClick={onClear}>
-                  Clear search
-                </Button>
-              </p> : <p>
-                Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
-                {lastResultNumber} of {numOfTotalItems} items
-              </p>}
-
+              {searchParams.get("q") ? (
+                <p>
+                  Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {numOfTotalItems} items for{" "}
+                  <strong>"{searchParams.get("q")}"</strong>.{" "}
+                  <Button appearance="link" onClick={onClear}>
+                    Clear search
+                  </Button>
+                </p>
+              ) : (
+                <p>
+                  Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {numOfTotalItems} items
+                </p>
+              )}
             </div>
-          )
-          }
+          )}
 
           <Row>
             {isFetching &&
