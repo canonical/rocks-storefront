@@ -1,13 +1,7 @@
 import { Strip, Row, Col } from "@canonical/react-components";
 import SearchInput from "../SearchInput";
 
-import type { RefObject } from "react";
-
-type Props = {
-  searchRef?: RefObject<HTMLInputElement>;
-};
-
-function Banner({ searchRef }: Props) {
+function Banner() {
   return (
     <Strip type="dark">
       <Row>
@@ -17,9 +11,7 @@ function Banner({ searchRef }: Props) {
             <br />
             container images store
           </h1>
-          <SearchInput 
-            searchRef={searchRef}
-          />
+          <SearchInput />
         </Col>
       </Row>
     </Strip>

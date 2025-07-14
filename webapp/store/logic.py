@@ -264,12 +264,11 @@ def parse_rock_details(rock):
 
 
 def fetch_rocks(query_string):
-    cached_rocks = cache.get("cached_rocks")
+    cached_rocks = cache.get(f"cached_rocks-{query_string}")
     if cached_rocks is not None:
         return cached_rocks
-
     rocks = device_gw.find("%" if query_string == "" else query_string, fields=FIND_FIELDS).get("results", [])
-    cached_rocks = cache.set("cached_rocks", rocks)
+    cached_rocks = cache.set(f"cached_rocks-{query_string}", rocks)
     return rocks
 
 
