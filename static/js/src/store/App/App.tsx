@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-
-import Packages from "../Packages";
+import Store from "../pages/Store";
 
 function App() {
   const queryClient = new QueryClient({
@@ -17,7 +16,7 @@ function App() {
     <Router>
       <QueryClientProvider client={queryClient}>
         <Routes>
-          <Route path="/" element={<Packages />} />
+          <Route path="/" element={<Store />} />
         </Routes>
       </QueryClientProvider>
     </Router>

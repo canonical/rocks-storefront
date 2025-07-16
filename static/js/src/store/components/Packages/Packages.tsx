@@ -1,96 +1,110 @@
-import { useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import { Strip, Row, Col, Pagination } from "@canonical/react-components";
+import {
+  Strip,
+  Row,
+  Col,
+  Pagination,
+  Button,
+} from "@canonical/react-components";
 import { RockCard, LoadingCard } from "@canonical/store-components";
 
-import Banner from "../Banner";
 import { Rock } from "../../types";
 
-function Packages() {
-  const ITEMS_PER_PAGE = 12;
+const ITEMS_PER_PAGE = 12;
+
+interface IPackagesProps {
+  packages?: Rock[];
+  numOfTotalItems: number;
+  isFetching: boolean;
+  status: "success" | "idle" | "error" | "loading";
+  currentPage: number;
+  onPageChange: (pageNumber: number) => void;
+}
+
+function Packages({
+  packages,
+  numOfTotalItems,
+  isFetching,
+  status,
+  currentPage,
+  onPageChange,
+}: IPackagesProps) {
+  const firstResultNumber = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const lastResultNumber =
+    (currentPage - 1) * ITEMS_PER_PAGE + (packages?.length || 0);
+
+  const isPackageExist = packages && packages.length > 0;
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = searchParams.get("page") || "1";
 
-  const getData = async () => {
-    const response = await fetch(`/store.json?page=${currentPage}`);
-    const data = await response.json();
-
-    const packagesWithId = data.packages.map((item: string[]) => ({
-      ...item,
-      id: crypto.randomUUID(),
-    }));
-
-    return {
-      total_items: data.total_items,
-      total_pages: data.total_pages,
-      packages: packagesWithId,
-    };
+  const onClear = (): void => {
+    searchParams.delete("q");
+    searchParams.delete("page");
+    setSearchParams(searchParams);
   };
 
-  const { data, status, isFetching } = useQuery(["data", currentPage], getData);
-
-  const firstResultNumber = (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + 1;
-  const lastResultNumber =
-    (parseInt(currentPage) - 1) * ITEMS_PER_PAGE + (data?.packages.length || 0);
-
   return (
-    <>
-      <Banner />
-      <Strip>
-        <Row>
-          <Col size={9} className="col-start-large-4">
-            {data?.packages && data?.packages.length > 0 && (
-              <div className="u-fixed-width">
+    <Strip>
+      <Row>
+        <Col size={9} className="col-start-large-4">
+          {isPackageExist && (
+            <div className="u-fixed-width">
+              {searchParams.get("q") ? (
                 <p>
-                  Showing {currentPage === "1" ? "1" : firstResultNumber} to{" "}
-                  {lastResultNumber} of {data?.total_items} items
+                  Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {numOfTotalItems} items for{" "}
+                  <strong>"{searchParams.get("q")}"</strong>.{" "}
+                  <Button appearance="link" onClick={onClear}>
+                    Clear search
+                  </Button>
                 </p>
-              </div>
-            )}
-
-            <Row>
-              {isFetching &&
-                [...Array(ITEMS_PER_PAGE)].map((_item, index) => (
-                  <Col size={3} key={index}>
-                    <LoadingCard />
-                  </Col>
-                ))}
-
-              {!isFetching &&
-                status === "success" &&
-                data.packages.length > 0 &&
-                data.packages.map((packageData: Rock) => (
-                  <Col
-                    size={3}
-                    style={{ marginBottom: "1.5rem" }}
-                    key={packageData.id}
-                  >
-                    <RockCard data={packageData} />
-                  </Col>
-                ))}
-
-              {status === "success" && data.packages.length === 0 && (
-                <h1 className="p-heading--2">No packages match this filter</h1>
+              ) : (
+                <p>
+                  Showing {currentPage === 1 ? "1" : firstResultNumber} to{" "}
+                  {lastResultNumber} of {numOfTotalItems} items
+                </p>
               )}
-            </Row>
+            </div>
+          )}
 
-            {status === "success" && data.packages.length > 0 && (
-              <Pagination
-                itemsPerPage={ITEMS_PER_PAGE}
-                totalItems={data.total_items}
-                paginate={(pageNumber) => {
-                  searchParams.set("page", pageNumber.toString());
-                  setSearchParams(searchParams);
-                }}
-                currentPage={parseInt(currentPage)}
-                centered
-                scrollToTop
-              />
+          <Row>
+            {isFetching &&
+              [...Array(ITEMS_PER_PAGE)].map((_item, index) => (
+                <Col size={3} key={index}>
+                  <LoadingCard />
+                </Col>
+              ))}
+
+            {!isFetching &&
+              status === "success" &&
+              isPackageExist &&
+              packages.map((packageData: Rock) => (
+                <Col
+                  size={3}
+                  style={{ marginBottom: "1.5rem" }}
+                  key={packageData.id}
+                >
+                  <RockCard data={packageData} />
+                </Col>
+              ))}
+
+            {status === "success" && packages?.length === 0 && (
+              <h1 className="p-heading--2">No packages match this filter</h1>
             )}
-          </Col>
-        </Row>
-      </Strip>
-    </>
+          </Row>
+
+          {status === "success" && isPackageExist && (
+            <Pagination
+              itemsPerPage={ITEMS_PER_PAGE}
+              totalItems={numOfTotalItems}
+              paginate={onPageChange}
+              currentPage={currentPage}
+              centered
+              scrollToTop
+            />
+          )}
+        </Col>
+      </Row>
+    </Strip>
   );
 }
 

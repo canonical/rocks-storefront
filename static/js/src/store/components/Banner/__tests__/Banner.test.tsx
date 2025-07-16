@@ -3,8 +3,11 @@ import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Banner from "../Banner";
 
+const mockSetSearchParams = jest.fn();
+const mockSearchParams = new URLSearchParams();
+
 jest.mock("react-router-dom", () => ({
-  useSearchParams: jest.fn(),
+  useSearchParams: () => [mockSearchParams, mockSetSearchParams],
 }));
 
 describe("Banner Component", () => {

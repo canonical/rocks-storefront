@@ -2,8 +2,8 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Packages from "../Packages";
 import "@testing-library/jest-dom";
+import Store from "../Store";
 
 jest.mock("@canonical/store-components", () => ({
   CharmCard: ({ data }: { data: { name: string } }) => <div>{data.name}</div>,
@@ -32,14 +32,14 @@ jest.mock("@canonical/store-components", () => ({
   LoadingCard: () => <div>Loading...</div>,
 }));
 
-jest.mock("../../Banner", () => () => <div>Banner</div>);
+jest.mock("../../../components/Banner", () => () => <div>Banner</div>);
 
 const renderPackages = () => {
   const queryClient = new QueryClient();
   render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter>
-        <Packages />
+        <Store />
       </MemoryRouter>
     </QueryClientProvider>
   );
