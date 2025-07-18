@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for webapp/store/logic.py: 80%</title>
+    <title>Coverage for webapp/store/logic.py: 81%</title>
     <link rel="icon" sizes="32x32" href="favicon_32_cb_58284776.png">
     <link rel="stylesheet" href="style_cb_81f8c14c.css" type="text/css">
     <script src="coverage_html_cb_6fb7b396.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>webapp/store/logic.py</b>:
-            <span class="pc_cov">80%</span>
+            <span class="pc_cov">81%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,9 +54,9 @@
             </div>
         </aside>
         <h2>
-            <span class="text">110 statements &nbsp;</span>
+            <span class="text">109 statements &nbsp;</span>
             <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">88<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">22<span class="text"> missing</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">21<span class="text"> missing</span></button>
             <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="z_a3070bce93221b8b_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-11 22:07 +0000
+            created at 2025-07-18 22:07 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -345,26 +345,26 @@
     <p class="run"><span class="n"><a id="t263" href="#t263">263</a></span><span class="t">    <span class="key">return</span> <span class="nam">parsed_rock</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t264" href="#t264">264</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t265" href="#t265">265</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t"><span class="key">def</span> <span class="nam">fetch_rocks</span><span class="op">(</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">    <span class="nam">cached_rocks</span> <span class="op">=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"cached_rocks"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t266" href="#t266">266</a></span><span class="t"><span class="key">def</span> <span class="nam">fetch_rocks</span><span class="op">(</span><span class="nam">query_string</span><span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t267" href="#t267">267</a></span><span class="t">    <span class="nam">cached_rocks</span> <span class="op">=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="fst">f"</span><span class="fst">cached_rocks-</span><span class="op">{</span><span class="nam">query_string</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t268" href="#t268">268</a></span><span class="t">    <span class="key">if</span> <span class="nam">cached_rocks</span> <span class="key">is</span> <span class="key">not</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t269" href="#t269">269</a></span><span class="t">        <span class="key">return</span> <span class="nam">cached_rocks</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">    <span class="nam">rocks</span> <span class="op">=</span> <span class="nam">device_gw</span><span class="op">.</span><span class="nam">find</span><span class="op">(</span><span class="str">"%"</span><span class="op">,</span> <span class="nam">fields</span><span class="op">=</span><span class="nam">FIND_FIELDS</span><span class="op">)</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"results"</span><span class="op">,</span> <span class="op">[</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">    <span class="nam">cached_rocks</span> <span class="op">=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">set</span><span class="op">(</span><span class="str">"cached_rocks"</span><span class="op">,</span> <span class="nam">rocks</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">    <span class="key">return</span> <span class="nam">rocks</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t"><span class="key">def</span> <span class="nam">get_rocks</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">    <span class="nam">size</span><span class="op">:</span> <span class="nam">int</span> <span class="op">=</span> <span class="num">10</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t">    <span class="nam">query_params</span><span class="op">:</span> <span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t"><span class="op">)</span> <span class="op">-></span> <span class="nam">List</span><span class="op">[</span><span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t">    <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t"><span class="str">    Fetches paginated and parsed rock packages using DeviceGW.</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t">    <span class="nam">rocks</span> <span class="op">=</span> <span class="nam">fetch_rocks</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">    <span class="nam">total_items</span> <span class="op">=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">rocks</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t284" href="#t284">284</a></span><span class="t">    <span class="nam">total_pages</span> <span class="op">=</span> <span class="op">(</span><span class="nam">total_items</span> <span class="op">+</span> <span class="nam">size</span> <span class="op">-</span> <span class="num">1</span><span class="op">)</span> <span class="op">//</span> <span class="nam">size</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t285" href="#t285">285</a></span><span class="t">    <span class="nam">page</span> <span class="op">=</span> <span class="nam">int</span><span class="op">(</span><span class="nam">query_params</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"page"</span><span class="op">,</span> <span class="num">1</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t270" href="#t270">270</a></span><span class="t">    <span class="nam">rocks</span> <span class="op">=</span> <span class="nam">device_gw</span><span class="op">.</span><span class="nam">find</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t271" href="#t271">271</a></span><span class="t">        <span class="str">"%"</span> <span class="key">if</span> <span class="nam">query_string</span> <span class="op">==</span> <span class="str">""</span> <span class="key">else</span> <span class="nam">query_string</span><span class="op">,</span> <span class="nam">fields</span><span class="op">=</span><span class="nam">FIND_FIELDS</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t272" href="#t272">272</a></span><span class="t">    <span class="op">)</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="str">"results"</span><span class="op">,</span> <span class="op">[</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t273" href="#t273">273</a></span><span class="t">    <span class="nam">cached_rocks</span> <span class="op">=</span> <span class="nam">cache</span><span class="op">.</span><span class="nam">set</span><span class="op">(</span><span class="fst">f"</span><span class="fst">cached_rocks-</span><span class="op">{</span><span class="nam">query_string</span><span class="op">}</span><span class="fst">"</span><span class="op">,</span> <span class="nam">rocks</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t274" href="#t274">274</a></span><span class="t">    <span class="key">return</span> <span class="nam">rocks</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t275" href="#t275">275</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t276" href="#t276">276</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t277" href="#t277">277</a></span><span class="t"><span class="key">def</span> <span class="nam">get_rocks</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t278" href="#t278">278</a></span><span class="t">    <span class="nam">size</span><span class="op">:</span> <span class="nam">int</span> <span class="op">=</span> <span class="num">10</span><span class="op">,</span> <span class="nam">query_string</span><span class="op">:</span> <span class="nam">str</span> <span class="op">=</span> <span class="str">""</span><span class="op">,</span> <span class="nam">page</span><span class="op">:</span> <span class="nam">int</span> <span class="op">=</span> <span class="num">0</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t279" href="#t279">279</a></span><span class="t"><span class="op">)</span> <span class="op">-></span> <span class="nam">List</span><span class="op">[</span><span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t280" href="#t280">280</a></span><span class="t">    <span class="str">"""</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t281" href="#t281">281</a></span><span class="t"><span class="str">    Fetches paginated and parsed rock packages using DeviceGW.</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t282" href="#t282">282</a></span><span class="t"><span class="str">    """</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t283" href="#t283">283</a></span><span class="t">    <span class="nam">rocks</span> <span class="op">=</span> <span class="nam">fetch_rocks</span><span class="op">(</span><span class="nam">query_string</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t284" href="#t284">284</a></span><span class="t">    <span class="nam">total_items</span> <span class="op">=</span> <span class="nam">len</span><span class="op">(</span><span class="nam">rocks</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="mis show_mis"><span class="n"><a id="t285" href="#t285">285</a></span><span class="t">    <span class="nam">total_pages</span> <span class="op">=</span> <span class="op">(</span><span class="nam">total_items</span> <span class="op">+</span> <span class="nam">size</span> <span class="op">-</span> <span class="num">1</span><span class="op">)</span> <span class="op">//</span> <span class="nam">size</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t286" href="#t286">286</a></span><span class="t">    <span class="nam">rocks_per_page</span> <span class="op">=</span> <span class="nam">paginate</span><span class="op">(</span><span class="nam">rocks</span><span class="op">,</span> <span class="nam">page</span><span class="op">,</span> <span class="nam">size</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t287" href="#t287">287</a></span><span class="t">    <span class="nam">parsed_rocks</span> <span class="op">=</span> <span class="op">[</span><span class="nam">parse_package_for_card</span><span class="op">(</span><span class="nam">rock</span><span class="op">)</span> <span class="key">for</span> <span class="nam">rock</span> <span class="key">in</span> <span class="nam">rocks_per_page</span><span class="op">]</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t288" href="#t288">288</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -393,7 +393,7 @@
             <a class="nav" href="z_a3070bce93221b8b_views_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.9.2">coverage.py v7.9.2</a>,
-            created at 2025-07-11 22:07 +0000
+            created at 2025-07-18 22:07 +0000
         </p>
     </div>
 </footer>
