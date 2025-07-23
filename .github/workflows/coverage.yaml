@@ -2,6 +2,10 @@ name: Test coverage
 on:
   schedule:
     - cron: "0 22 * * 5"
+  workflow_dispatch: # Allows manual triggering
+    push:
+      branches:
+        - tics-runner-update #TODO: remove before merge
 
 jobs:
   test:
