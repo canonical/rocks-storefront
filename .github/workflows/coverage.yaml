@@ -108,12 +108,13 @@ jobs:
     steps:
       - name: Checkout the project
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Produce TICS report
         uses: tiobe/tics-github-action@v3
         with:
           mode: qserver
           project: rocks-storefront
-          branchdir: .
           viewerUrl: https://canonical.tiobe.com/tiobeweb/TICS/api/cfg?name=default
           ticsAuthToken: ${{ secrets.TICSAUTHTOKEN }}
           installTics: true
