@@ -18,3 +18,9 @@ links:
 
 extensions:
   - flask-framework
+
+requires:
+  redis:
+    interface: redis
+    optional: true
+    limit: 1
