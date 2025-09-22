@@ -35,3 +35,4 @@ parts:
       - flask/app/webapp
       - flask/app/templates
       - flask/app/static
+      - flask/app/cache
