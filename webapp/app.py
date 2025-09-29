@@ -2,7 +2,7 @@ import re
 
 import talisker.requests
 from flask import render_template, make_response, request, escape
-from webapp.extensions import csrf, cache
+from webapp.extensions import csrf
 from webapp.config import APP_NAME
 from webapp.handlers import set_handlers
 from webapp.store.views import store
@@ -22,8 +22,6 @@ app = FlaskBase(
 
 
 app.name = APP_NAME
-app.config["CACHE_TYPE"] = "simple"
-cache.init_app(app)
 set_handlers(app)
 
 request_session = talisker.requests.get_session()

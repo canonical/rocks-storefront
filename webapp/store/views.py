@@ -6,7 +6,7 @@ from flask import (
 )
 
 from webapp.config import DETAILS_VIEW_REGEX
-from webapp.store.logic import get_rocks, get_rock, parse_rock_details
+from webapp.store.logic import get_rocks, get_rock
 
 
 store = Blueprint(
@@ -27,7 +27,7 @@ def get_store_packages():
 
 @store.route('/<regex("' + DETAILS_VIEW_REGEX + '"):entity_name>')
 def details_overview(entity_name):
-    rock = parse_rock_details(get_rock(entity_name))
+    rock = get_rock(entity_name)
 
     context = {
         "package": rock,
