@@ -6,7 +6,7 @@ from dateutil import parser
 from canonicalwebteam.store_api.devicegw import DeviceGW
 
 from webapp.helpers import get_yaml_loader, is_date_format
-from webapp.extensions import cache
+from cache.cache_utility import redis_cache as cache
 
 ARCHITECTURES = ["amd64", "arm64", "ppc64el", "riscv64", "s390x"]
 FIND_FIELDS = [
@@ -20,7 +20,6 @@ FIND_FIELDS = [
     "categories",
     "links",
 ]
-
 DETAILS_FIELDS = [
     "categories",
     "contact",
@@ -264,14 +263,16 @@ def parse_rock_details(rock):
 
 
 def fetch_rocks(query_string):
-    cached_rocks = cache.get(f"cached_rocks-{query_string}")
-    if cached_rocks is not None:
-        return cached_rocks
+    key = (f"fetch_rocks", {"q": query_string})
+    rocks = cache.get(key, expected_type=list)
+    if rocks:
+        return rocks
     rocks = device_gw.find(
         "%" if query_string == "" else query_string, fields=FIND_FIELDS
     ).get("results", [])
-    cached_rocks = cache.set(f"cached_rocks-{query_string}", rocks)
-    return rocks
+    parsed_rocks = [parse_package_for_card(rock) for rock in rocks]
+    cache.set(key, parsed_rocks, ttl=600)
+    return parsed_rocks
 
 
 def get_rocks(
@@ -284,10 +285,8 @@ def get_rocks(
     total_items = len(rocks)
     total_pages = (total_items + size - 1) // size
     rocks_per_page = paginate(rocks, page, size)
-    parsed_rocks = [parse_package_for_card(rock) for rock in rocks_per_page]
-
     return {
-        "packages": parsed_rocks,
+        "packages": rocks_per_page,
         "total_pages": total_pages,
         "total_items": total_items,
     }
@@ -299,6 +298,12 @@ def get_rock(
     """
     Retrieves a specific rock package by its name.
     """
+    key = f"get_rock:{entity_name}"
+    rock = cache.get(key, expected_type=dict)
+    if rock:
+        return rock
     rock = device_gw.get_item_details(entity_name, fields=DETAILS_FIELDS)
+    parsed_rock = parse_rock_details(rock)
+    cache.set(key, parsed_rock, ttl=600)
 
-    return rock
+    return parsed_rock
