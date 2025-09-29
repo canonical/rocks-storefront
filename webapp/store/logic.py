@@ -263,7 +263,7 @@ def parse_rock_details(rock):
 
 
 def fetch_rocks(query_string):
-    key = (f"fetch_rocks", {"q": query_string})
+    key = ("fetch_rocks", {"q": query_string})
     rocks = cache.get(key, expected_type=list)
     if rocks:
         return rocks
