@@ -1029,12 +1029,12 @@
   resolved "https://registry.npmjs.org/@canonical/cookie-policy/-/cookie-policy-3.6.5.tgz"
   integrity sha512-CQJKSkuLXhSumkIIw4YPSjR7k9561hZ3EEdMPQTkAVTxXURhm3WzJm/uyrvcAuU/a//jzWa8ScltCaHFBdACew==
 
-"@canonical/global-nav@3.6.4":
-  version "3.6.4"
-  resolved "https://registry.npmjs.org/@canonical/global-nav/-/global-nav-3.6.4.tgz"
-  integrity sha512-CEmFtHOdxAG8kFCOBcTR08u/SbwIVZQ1O0evNa/X+KyS7F9YrI6TXBHO3oLNO8Rv1WZUSMeh1BPhv7ChKfojgQ==
+"@canonical/global-nav@3.8.0":
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/@canonical/global-nav/-/global-nav-3.8.0.tgz#3f016b337f93a2b50fccb0cbf8f13c9a10dcee5a"
+  integrity sha512-ioJE4tUENS2L8ubD/lUAA+CvIrtqXB1RTv89vyAW/6eDJWRW8U9Fks+SdKoeoa/IwOtzSC02AOWTPo7rxgj+Mw==
   dependencies:
-    vanilla-framework "4.9.0"
+    vanilla-framework "4.35.0"
 
 "@canonical/react-components@1.9.0":
   version "1.9.0"
@@ -1053,10 +1053,10 @@
     react-table "7.8.0"
     react-useportal "1.0.19"
 
-"@canonical/react-components@2.7.9":
-  version "2.7.9"
-  resolved "https://registry.yarnpkg.com/@canonical/react-components/-/react-components-2.7.9.tgz#681154bc9cc27ee63e5124d43d59678a5b6e8e5e"
-  integrity sha512-nnVV8+rptpUloW+f0D4LTKbZQ0wl/5dtIdVurW/hS0DK8y++/U2oHOP22lINEi8nXuQQumkA9PptTgwrS5CV9g==
+"@canonical/react-components@2.16.1":
+  version "2.16.1"
+  resolved "https://registry.yarnpkg.com/@canonical/react-components/-/react-components-2.16.1.tgz#4c814dd6b64549a4ccda94eb0df5d0ba0d35b41b"
+  integrity sha512-8qoTl/4cci8JzDX+XJXP0/dHJQXhY0skQDYX5jynFXS9lUnjdgAlVehiulghFRZWGXUKrinRqwVYIXR88xEZww==
   dependencies:
     "@types/jest" "29.5.14"
     "@types/node" "20.17.19"
@@ -8149,15 +8149,15 @@ v8-to-istanbul@^9.0.1:
     "@types/istanbul-lib-coverage" "^2.0.1"
     convert-source-map "^2.0.0"
 
-vanilla-framework@4.26.0:
-  version "4.26.0"
-  resolved "https://registry.yarnpkg.com/vanilla-framework/-/vanilla-framework-4.26.0.tgz#510e9fccae358cb8abbfedf483f17fc2e9340b8f"
-  integrity sha512-lFxAvQCwcx8DsHdAvS1Bd1iKCYWMwcjEjdVxQA2bm1Bk0M9ax1LjCZ7/zAcj6y1JkM06ThB2mqUkleghJTr/Tg==
+vanilla-framework@4.35.0:
+  version "4.35.0"
+  resolved "https://registry.yarnpkg.com/vanilla-framework/-/vanilla-framework-4.35.0.tgz#b01bbb525ad3211690c9f10580ca2e00a37a8ab1"
+  integrity sha512-vF8M9vsXiOpJEonFXiTVhY0rXOzNtoWpkhBcCVpyPb4+oHBx0/FaNcX5GAiQpfdT6Q/AAeRYyWwRUDObq6R8uw==
 
-vanilla-framework@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.npmjs.org/vanilla-framework/-/vanilla-framework-4.9.0.tgz"
-  integrity sha512-iTmvqWlsX0ic69VZ1sR9NPQtYRR9+iM679HZCl7SDQhMQSsEeJEQ6Ejjen3JN5a7YxiYmeIhxaLlmC4rExRT1w==
+vanilla-framework@4.36.0:
+  version "4.36.0"
+  resolved "https://registry.yarnpkg.com/vanilla-framework/-/vanilla-framework-4.36.0.tgz#da0e242e7b83b07dd8ce9ba56f7a07b3317e4eee"
+  integrity sha512-6/Qe23GvSr3+jaz/fGpNml5sHgMw9gtkdUdNxVAXo4f9eWbXdyjNChr3RzvonQ6nN8Rr+GN3BH+yfgzWhynlEQ==
 
 verbalize@^0.1.2:
   version "0.1.2"
