@@ -21,10 +21,10 @@
     "check-prettier": "prettier -c '**/*{.js,.jsx,.ts,.tsx}'"
   },
   "dependencies": {
-    "@canonical/cookie-policy": "3.6.5",
-    "@canonical/global-nav": "3.6.4",
-    "@canonical/react-components": "2.7.9",
-    "@canonical/store-components": "0.54.2",
+    "@canonical/cookie-policy": "3.10.0",
+    "@canonical/global-nav": "3.9.0",
+    "@canonical/react-components": "2.16.1",
+    "@canonical/store-components": "0.55.0",
     "autoprefixer": "10.4.21",
     "date-fns": "4.1.0",
     "formik": "^2.4.5",
@@ -37,7 +37,7 @@
     "react-markdown": "10.1.0",
     "react-query": "3.39.3",
     "react-router-dom": "7.6.2",
-    "vanilla-framework": "4.26.0"
+    "vanilla-framework": "4.55.0"
   },
   "devDependencies": {
     "@babel/core": "7.27.4",
