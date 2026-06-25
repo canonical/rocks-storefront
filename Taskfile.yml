@@ -1,0 +1,71 @@
+# https://taskfile.dev
+# Taskfile for the Rocks storefront. Tasks are optional convenience wrappers
+# around the underlying npm scripts; everything can also be run with npm directly.
+version: "3"
+
+tasks:
+  default:
+    desc: Install, build and start the production server
+    deps: [start]
+
+  install:
+    desc: Install project dependencies
+    cmds:
+      - npm install
+
+  build:
+    desc: Build the production application
+    deps: [install]
+    cmds:
+      - npm run build
+
+  start:
+    desc: Install, build and run the production Node server
+    deps: [build]
+    cmds:
+      - npm run start
+
+  dev:
+    desc: Start the SvelteKit dev server
+    deps: [install]
+    cmds:
+      - npm run dev
+
+  shell:
+    desc: Open an interactive shell with the project environment
+    interactive: true
+    cmds:
+      - "{{.SHELL}}"
+    env:
+      SHELL: '{{default "/bin/bash" .SHELL}}'
+
+  lint:
+    desc: Lint all project files with Biome
+    cmds:
+      - npm run lint
+
+  format:
+    desc: Format all project files with Biome
+    cmds:
+      - npm run format
+
+  check:
+    desc: Run Biome linting and formatting checks
+    cmds:
+      - npm run check
+
+  fix:
+    desc: Apply Biome's automatic lint and format fixes
+    cmds:
+      - npm run fix
+
+  test:
+    desc: Run the test suite with Vitest
+    deps: [install]
+    cmds:
+      - npm run test
+
+  clean:
+    desc: Remove build artifacts and installed dependencies
+    cmds:
+      - rm -rf build .svelte-kit node_modules
