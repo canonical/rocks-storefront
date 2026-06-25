@@ -5,7 +5,30 @@ Rocks are OCI-compliant artefacts, designed for the secure software supply chain
 
 This repo is the application for the rockstore website.
 
-The site is largely maintained by the [Web and Design team](https://ubuntu.com/blog/topics/design) at [Canonical](https://www.canonical.com).
+The site is maintained by the [Web and Design team](https://ubuntu.com/blog/topics/design) at [Canonical](https://www.canonical.com). It is a [SvelteKit](https://svelte.dev/docs/kit) application rendered server-side and served by `adapter-node`.
+
+## Local development
+
+This project uses Node.js (see `mise.toml` for the pinned version) and npm.
+
+```bash
+npm install                       # install dependencies
+npx playwright install chromium   # one-time: browser for component tests
+npm run dev                       # start the dev server (http://localhost:5173)
+```
+
+Other useful commands:
+
+| Command | Description |
+| --- | --- |
+| `npm run build` | Build the production app (`./build`) |
+| `npm run start` | Run the production server (`node build`) |
+| `npm test` | Run the Vitest suite (component + server) |
+| `npm run check` | Lint and format check (Biome) |
+| `npm run fix` | Apply Biome lint/format fixes |
+| `npm run svelte-check` | Type-check the project |
+
+If you use [Task](https://taskfile.dev), the same actions are available as `task dev`, `task start`, `task test`, etc. (run `task --list`).
 
 ## Bugs and issues
 
