@@ -4,6 +4,9 @@ on:
   push:
     branches: main
 
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint and format (Biome)
@@ -79,6 +82,9 @@ jobs:
   check-inclusive-naming:
     name: Inclusive naming
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
