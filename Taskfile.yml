@@ -60,10 +60,16 @@ tasks:
       - npm run fix
 
   test:
-    desc: Run the test suite with Vitest
+    desc: Run the unit and component tests with Vitest
     deps: [install]
     cmds:
       - npm run test
+
+  test:e2e:
+    desc: Run the end-to-end tests with Playwright
+    deps: [install]
+    cmds:
+      - npm run test:e2e
 
   clean:
     desc: Remove build artifacts and installed dependencies
