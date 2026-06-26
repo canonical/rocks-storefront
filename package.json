@@ -18,15 +18,20 @@
     "format": "biome format --write .",
     "check": "biome check .",
     "fix": "biome check --write .",
-    "test:unit": "vitest",
-    "test": "npm run test:unit -- --run"
+    "test:unit": "vitest --project server --run",
+    "test:component": "vitest --project client --run",
+    "test:e2e": "playwright test",
+    "test:watch": "vitest",
+    "test": "vitest --run"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.9",
     "@canonical/biome-config": "^0.28.0",
+    "@playwright/test": "^1.61.1",
     "@sveltejs/adapter-node": "^5.5.4",
     "@sveltejs/kit": "^2.63.0",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@types/node": "^26.0.1",
     "@vitest/browser-playwright": "^4.1.8",
     "husky": "^9.1.7",
     "playwright": "^1.60.0",
