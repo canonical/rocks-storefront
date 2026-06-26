@@ -30,6 +30,26 @@ Other useful commands:
 
 If you use [Task](https://taskfile.dev), the same actions are available as `task dev`, `task start`, `task test`, etc. (run `task --list`).
 
+## Working with agents
+
+For small changes or bugfixes just prompt the agent to do what you want.
+
+For bigger features it is recommended to start running the agent in **plan** mode (or use the web interface of a model like Gemini, ChatGPT, Claude...).
+Use this to help you write a complete specification for the feature you want to implement. Tips:
+- Ask the agent to question you about any non clear detail that is needed for the implementation of the feature.
+- Ask the agent to offer you multiple approaches with advantages and disadvantages.
+- Ask the agent to consider security and performance implications for the specification.
+
+If you already have a spec written (the usual workflow for features in Canonical's Web Engineering department), use an agent to make it concise and
+strip any useless information (i.e. the author, reviewers...).
+
+Once you have the specification for the feature, paste it as prompt for the coding agent.
+The agent will create a plan with sub-tasks for the implementation of the feature.
+Make sure the plan and each sub-task makes sense and is properly testable.
+Tell the agent to go ahead and implement the changes.
+
+Remember to clear the session after you are done with the feature to empty the agent context for future prompts.
+
 ## Bugs and issues
 
 If you have found a bug on the site or have an idea for a new feature, feel free to [create a new issue](https://github.com/canonical/rocks-storefront/issues/new), or suggest a fix by [creating a pull request](https://help.github.com/articles/creating-a-pull-request/). You can also find a link to create issues in the footer of every page of the site itself.
