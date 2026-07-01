@@ -17,15 +17,18 @@ exception hierarchy, and identical URL/param/header construction.
   `devicegw.ts`, `publishergw.ts`, `index.ts` (barrel). A per-package `README.md`
   holds the full method mapping table.
 - **HTTP layer:** native `fetch`, zero runtime dependencies. The module-level
-  `request(url, options?, fetchImpl?)` function reads each response eagerly into a
-  normalized `StoreHttpResponse` that also carries a redactable snapshot of the
-  outgoing request, so `processResponse` can log failures without re-reading a
-  consumed stream. Clients don't call it directly — they use `this.request`, a
-  thin `Base` method that binds the client's `fetch` and folds in
-  `processResponse`, returning the parsed body. (Every ported endpoint is public
-  and read-only, so there's no raw-response variant; the exported `request`
-  function is the escape hatch if one is ever needed.) The transport is injectable
-  (constructor `fetch` option) for hermetic tests.
+  `request(url, options?, fetchImpl?)` function returns a `StoreHttpResponse` — a
+  `Proxy` over the native `Response` that adds a redactable `request` snapshot of
+  the outgoing call and backs `text()`/`json()` with the body read once up front
+  (so they stay idempotent despite `Response`'s single-shot stream, and error
+  logging can re-read the body). Every other field/method routes straight to the
+  underlying `Response`, so `StoreHttpResponse extends Response`. Clients don't
+  call `request` directly — they use `this.request`, a thin `Base` method that
+  binds the client's `fetch` and folds in `processResponse` (now `async`),
+  returning the parsed body. (Every ported endpoint is public and read-only, so
+  there's no raw-response variant; the exported `request` function is the escape
+  hatch if one is ever needed.) The transport is injectable (constructor `fetch`
+  option) for hermetic tests.
 - **Config:** base URLs come from `$env/dynamic/private` (`DEVICEGW_URL`,
   `PUBLISHERGW_URL`) with the same defaults as Python, overridable per-instance
   via the constructor `baseUrl` option. **Behavior change:** unlike the Python

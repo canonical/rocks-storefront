@@ -156,7 +156,7 @@ export class DeviceGW extends Base {
       params.section = category;
     }
 
-    return (await this.get(url, params, headers)) as JsonObject;
+    return (await this.request(url, { params, headers })) as JsonObject;
   }
 
   /**
@@ -190,7 +190,10 @@ export class DeviceGW extends Base {
       params.featured = featured;
     }
 
-    return (await this.get(url, params, this.headers(2))) as JsonObject;
+    return (await this.request(url, {
+      params,
+      headers: this.headers(2),
+    })) as JsonObject;
   }
 
   /**
@@ -198,11 +201,10 @@ export class DeviceGW extends Base {
    */
   async getAllItems(size: number, apiVersion = 1): Promise<JsonObject> {
     const url = this.getEndpointUrl("search", apiVersion);
-    return (await this.get(
-      url,
-      { scope: "wide", size },
-      this.headers(apiVersion),
-    )) as JsonObject;
+    return (await this.request(url, {
+      params: { scope: "wide", size },
+      headers: this.headers(apiVersion),
+    })) as JsonObject;
   }
 
   /**
@@ -251,11 +253,10 @@ export class DeviceGW extends Base {
     if (channel) {
       params.channel = channel;
     }
-    return (await this.get(
-      url,
+    return (await this.request(url, {
       params,
-      this.headers(apiVersion),
-    )) as JsonObject;
+      headers: this.headers(apiVersion),
+    })) as JsonObject;
   }
 
   /**
@@ -278,11 +279,10 @@ export class DeviceGW extends Base {
     if (channel !== undefined) {
       params.channel = channel;
     }
-    return (await this.get(
-      url,
+    return (await this.request(url, {
       params,
-      this.headers(apiVersion),
-    )) as JsonObject;
+      headers: this.headers(apiVersion),
+    })) as JsonObject;
   }
 
   /**
@@ -305,11 +305,10 @@ export class DeviceGW extends Base {
   async getCategories(options: CategoriesOptions = {}): Promise<JsonObject> {
     const { apiVersion = 2, type = "shared" } = options;
     const url = this.getEndpointUrl("categories", apiVersion);
-    return (await this.get(
-      url,
-      { type },
-      this.headers(apiVersion),
-    )) as JsonObject;
+    return (await this.request(url, {
+      params: { type },
+      headers: this.headers(apiVersion),
+    })) as JsonObject;
   }
 
   /**
@@ -325,11 +324,9 @@ export class DeviceGW extends Base {
       `resources/${name}/${resourceName}/revisions`,
       apiVersion,
     );
-    const body = (await this.get(
-      url,
-      undefined,
-      this.headers(apiVersion),
-    )) as JsonObject;
+    const body = (await this.request(url, {
+      headers: this.headers(apiVersion),
+    })) as JsonObject;
     return body.revisions as unknown[];
   }
 
@@ -350,14 +347,9 @@ export class DeviceGW extends Base {
       fields,
       section: "featured",
     };
-    return (await this.get(url, params, mergedHeaders)) as JsonObject;
-  }
-
-  private async get(
-    url: string,
-    params: Record<string, string | number> | undefined,
-    headers: Record<string, string>,
-  ): Promise<unknown> {
-    return this.request(url, { params, headers });
+    return (await this.request(url, {
+      params,
+      headers: mergedHeaders,
+    })) as JsonObject;
   }
 }

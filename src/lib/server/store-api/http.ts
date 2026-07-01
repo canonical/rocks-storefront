@@ -4,11 +4,14 @@
  * The Python clients accept a `requests.Session`; here we expose a single
  * {@link request} function that wraps the native `fetch`. The transport can be
  * swapped out in tests by passing a `fetch`-compatible function as the final
- * argument. Each request is executed eagerly (body fully read) and returned as a
- * {@link StoreHttpResponse}, which carries both the parsed response and a
- * redactable snapshot of the outgoing request so that
- * {@link Base.processResponse} can log failures without re-reading a consumed
- * stream.
+ * argument.
+ *
+ * The returned {@link StoreHttpResponse} is a `Proxy` over the native
+ * `Response`: every field and method is routed to the underlying `Response`
+ * except that (1) a `request` snapshot of the outgoing call is added for error
+ * logging, and (2) `text()`/`json()` are backed by the body read *once* up
+ * front, so they can be called repeatedly without hitting the single-shot
+ * stream (`Response` bodies can only be consumed once).
  *
  * Clients don't call {@link request} directly; they use the `this.request`
  * method on {@link Base}, which binds the client's `fetch` and folds in
@@ -46,18 +49,14 @@ export interface LoggableRequest {
   body: string;
 }
 
-/** Normalized response returned by {@link request}. */
-export interface StoreHttpResponse {
-  status: number;
-  ok: boolean;
-  url: string;
-  headers: Headers;
-  /** Raw response body text (already read). */
-  text: string;
-  /** Parse {@link text} as JSON. Throws `SyntaxError` on invalid JSON. */
-  json(): unknown;
+/**
+ * A native `Response` augmented with a {@link LoggableRequest} snapshot of the
+ * outgoing request. `text()`/`json()` keep the native async signature but are
+ * served from the eagerly-read (and memoized) body, so they are idempotent.
+ */
+export interface StoreHttpResponse extends Response {
   /** Snapshot of the outgoing request for logging. */
-  request: LoggableRequest;
+  readonly request: LoggableRequest;
 }
 
 function buildUrl(url: string, params?: QueryParams): string {
@@ -79,6 +78,55 @@ function buildUrl(url: string, params?: QueryParams): string {
   }
 
   return url.includes("?") ? `${url}&${query}` : `${url}?${query}`;
+}
+
+/**
+ * Wrap a native `Response` so that `text()`/`json()` are served from the
+ * already-read body (idempotent, no single-shot stream) and a `request`
+ * snapshot is exposed. Everything else is routed to the underlying `Response`.
+ */
+function wrapResponse(
+  response: Response,
+  bodyText: string,
+  request: LoggableRequest,
+): StoreHttpResponse {
+  let parsed: unknown;
+  let parseError: unknown;
+  let hasParsed = false;
+
+  const json = (): Promise<unknown> => {
+    if (!hasParsed) {
+      try {
+        parsed = JSON.parse(bodyText);
+      } catch (error) {
+        parseError = error;
+      }
+      hasParsed = true;
+    }
+    return parseError ? Promise.reject(parseError) : Promise.resolve(parsed);
+  };
+
+  return new Proxy(response, {
+    get(target, prop) {
+      if (prop === "request") {
+        return request;
+      }
+      if (prop === "text") {
+        return () => Promise.resolve(bodyText);
+      }
+      if (prop === "json") {
+        return json;
+      }
+      // Read from the target (not the proxy) so native accessor getters like
+      // `status`/`headers` run against the real Response and don't throw
+      // "Illegal invocation"; bind methods to the target for the same reason.
+      const value = Reflect.get(target, prop, target);
+      return typeof value === "function" ? value.bind(target) : value;
+    },
+    has(target, prop) {
+      return prop === "request" || Reflect.has(target, prop);
+    },
+  }) as unknown as StoreHttpResponse;
 }
 
 /**
@@ -111,35 +159,12 @@ export async function request(
     body,
   });
 
-  const text = await response.text();
-  let parsed: unknown;
-  let parsedError: unknown;
-  let hasParsed = false;
+  // Drain the single-shot body stream once; text()/json() serve from this.
+  const bodyText = await response.text();
 
-  return {
-    status: response.status,
-    ok: response.ok,
-    url: response.url || finalUrl,
-    headers: response.headers,
-    text,
-    json(): unknown {
-      if (!hasParsed) {
-        try {
-          parsed = JSON.parse(text);
-        } catch (error) {
-          parsedError = error;
-        }
-        hasParsed = true;
-      }
-      if (parsedError) {
-        throw parsedError;
-      }
-      return parsed;
-    },
-    request: {
-      url: finalUrl,
-      headers: requestHeaders,
-      body: body ?? "",
-    },
-  };
+  return wrapResponse(response, bodyText, {
+    url: finalUrl,
+    headers: requestHeaders,
+    body: body ?? "",
+  });
 }

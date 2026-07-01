@@ -85,7 +85,7 @@ export class Base {
     );
   }
 
-  protected logDetailedError(response: StoreHttpResponse): void {
+  protected async logDetailedError(response: StoreHttpResponse): Promise<void> {
     this.logger.error(
       {
         request: {
@@ -97,17 +97,17 @@ export class Base {
           status: response.status,
           url: response.url,
           headers: sanitizeHeaders(headersToObject(response.headers)),
-          text: response.text,
+          text: await response.text(),
         },
       },
       "Request failed",
     );
   }
 
-  processResponse(response: StoreHttpResponse): unknown {
+  async processResponse(response: StoreHttpResponse): Promise<unknown> {
     // 5xx responses are not in JSON format.
     if (response.status >= 500) {
-      this.logDetailedError(response);
+      await this.logDetailedError(response);
       switch (response.status) {
         case 500:
           throw new StoreApiInternalError("Internal error upstream");
@@ -130,9 +130,12 @@ export class Base {
 
     let body: unknown;
     try {
-      body = response.json();
+      body = await response.json();
     } catch (decodeError) {
-      this.logger.error({ text: response.text }, "JSON decoding failed");
+      this.logger.error(
+        { text: await response.text() },
+        "JSON decoding failed",
+      );
       throw new StoreApiResponseDecodeError(
         `JSON decoding failed: ${(decodeError as Error).message}`,
       );
@@ -149,7 +152,7 @@ export class Base {
         throw new PublisherMacaroonRefreshRequired();
       }
 
-      this.logDetailedError(response);
+      await this.logDetailedError(response);
 
       const errorList = this.extractErrorList(body);
       if (errorList) {

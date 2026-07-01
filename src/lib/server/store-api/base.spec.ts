@@ -47,8 +47,8 @@ function buildResponse(options: ResponseOptions): StoreHttpResponse {
     ok,
     url: SAMPLE_URL,
     headers: new Headers(headers),
-    text,
-    json() {
+    text: async () => text,
+    json: async () => {
       if (throwOnJson) {
         throw new SyntaxError("Unexpected token");
       }
@@ -59,7 +59,7 @@ function buildResponse(options: ResponseOptions): StoreHttpResponse {
       headers: requestHeaders,
       body: requestBody,
     },
-  };
+  } as unknown as StoreHttpResponse;
 }
 
 function silentLogger(): StoreApiLogger {
@@ -71,7 +71,7 @@ function makeClient(logger: StoreApiLogger = silentLogger()): Base {
 }
 
 describe("Base.processResponse", () => {
-  it("maps known 5xx statuses to typed connection errors", () => {
+  it("maps known 5xx statuses to typed connection errors", async () => {
     const mapping: Array<[number, new (...args: never[]) => Error]> = [
       [500, StoreApiInternalError],
       [501, StoreApiNotImplementedError],
@@ -82,24 +82,24 @@ describe("Base.processResponse", () => {
 
     const client = makeClient();
     for (const [status, exception] of mapping) {
-      expect(() => client.processResponse(buildResponse({ status }))).toThrow(
-        exception,
-      );
+      await expect(
+        client.processResponse(buildResponse({ status })),
+      ).rejects.toThrow(exception);
     }
   });
 
-  it("maps unknown 5xx statuses to StoreApiConnectionError", () => {
+  it("maps unknown 5xx statuses to StoreApiConnectionError", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(buildResponse({ status: 599 })),
-    ).toThrow(StoreApiConnectionError);
+    ).rejects.toThrow(StoreApiConnectionError);
   });
 
-  it("logs a detailed error when the response is not ok", () => {
+  it("logs a detailed error when the response is not ok", async () => {
     const logger = silentLogger();
     const client = makeClient(logger);
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 404,
@@ -107,7 +107,7 @@ describe("Base.processResponse", () => {
           requestBody: "test-body",
         }),
       ),
-    ).toThrow(StoreApiResponseError);
+    ).rejects.toThrow(StoreApiResponseError);
 
     expect(logger.error).toHaveBeenCalled();
     const [payload] = (logger.error as ReturnType<typeof vi.fn>).mock.calls.at(
@@ -120,11 +120,11 @@ describe("Base.processResponse", () => {
     expect(payload.response.url).toBe(SAMPLE_URL);
   });
 
-  it("redacts request/response header values in logs", () => {
+  it("redacts request/response header values in logs", async () => {
     const logger = silentLogger();
     const client = makeClient(logger);
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 404,
@@ -132,7 +132,7 @@ describe("Base.processResponse", () => {
           requestHeaders: { Authorization: "super-secret" },
         }),
       ),
-    ).toThrow(StoreApiResponseError);
+    ).rejects.toThrow(StoreApiResponseError);
 
     const [payload] = (logger.error as ReturnType<typeof vi.fn>).mock.calls.at(
       -1,
@@ -140,34 +140,38 @@ describe("Base.processResponse", () => {
     expect(payload.request.headers.Authorization).toBe("<len 12>");
   });
 
-  it("does not log on a successful response", () => {
+  it("does not log on a successful response", async () => {
     const logger = silentLogger();
     const client = makeClient(logger);
 
-    expect(client.processResponse(buildResponse({ status: 200 }))).toEqual({});
+    expect(
+      await client.processResponse(buildResponse({ status: 200 })),
+    ).toEqual({});
     expect(logger.error).not.toHaveBeenCalled();
   });
 
-  it("returns the parsed body on success", () => {
+  it("returns the parsed body on success", async () => {
     const client = makeClient();
     const body = { hello: "world" };
     expect(
-      client.processResponse(buildResponse({ status: 200, jsonValue: body })),
+      await client.processResponse(
+        buildResponse({ status: 200, jsonValue: body }),
+      ),
     ).toEqual(body);
   });
 
-  it("raises a decode error on invalid JSON", () => {
+  it("raises a decode error on invalid JSON", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({ status: 200, throwOnJson: true, text: "<html>" }),
       ),
-    ).toThrow(StoreApiResponseDecodeError);
+    ).rejects.toThrow(StoreApiResponseDecodeError);
   });
 
-  it("raises PublisherMacaroonRefreshRequired from the refresh header", () => {
+  it("raises PublisherMacaroonRefreshRequired from the refresh header", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 401,
@@ -175,12 +179,12 @@ describe("Base.processResponse", () => {
           headers: { "WWW-Authenticate": "Macaroon needs_refresh=1" },
         }),
       ),
-    ).toThrow(PublisherMacaroonRefreshRequired);
+    ).rejects.toThrow(PublisherMacaroonRefreshRequired);
   });
 
-  it("raises PublisherMacaroonRefreshRequired from the response body", () => {
+  it("raises PublisherMacaroonRefreshRequired from the response body", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 401,
@@ -190,26 +194,26 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(PublisherMacaroonRefreshRequired);
+    ).rejects.toThrow(PublisherMacaroonRefreshRequired);
   });
 
-  it("raises StoreApiResponseError for a non-error-list failure", () => {
+  it("raises StoreApiResponseError for a non-error-list failure", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 401,
           jsonValue: { code: "unauthorized", message: "Unauthorized" },
         }),
       ),
-    ).toThrow(StoreApiResponseError);
+    ).rejects.toThrow(StoreApiResponseError);
   });
 
-  it("falls back to `message` when `Message` is an empty string", () => {
+  it("falls back to `message` when `Message` is an empty string", async () => {
     const client = makeClient();
     let thrown: unknown;
     try {
-      client.processResponse(
+      await client.processResponse(
         buildResponse({
           status: 400,
           jsonValue: { Message: "", message: "real error" },
@@ -222,11 +226,11 @@ describe("Base.processResponse", () => {
     expect((thrown as StoreApiResponseError).message).toBe("real error");
   });
 
-  it("raises StoreApiResponseErrorList for a generic error_list", () => {
+  it("raises StoreApiResponseErrorList for a generic error_list", async () => {
     const client = makeClient();
     let thrown: unknown;
     try {
-      client.processResponse(
+      await client.processResponse(
         buildResponse({
           status: 400,
           jsonValue: {
@@ -242,9 +246,9 @@ describe("Base.processResponse", () => {
     expect((thrown as StoreApiResponseErrorList).statusCode).toBe(400);
   });
 
-  it("supports the hyphenated error-list key", () => {
+  it("supports the hyphenated error-list key", async () => {
     const client = makeClient();
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 400,
@@ -253,13 +257,13 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(StoreApiResponseErrorList);
+    ).rejects.toThrow(StoreApiResponseErrorList);
   });
 
-  it("maps specific error codes to dedicated exceptions", () => {
+  it("maps specific error codes to dedicated exceptions", async () => {
     const client = makeClient();
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 403,
@@ -268,9 +272,9 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(PublisherAgreementNotSigned);
+    ).rejects.toThrow(PublisherAgreementNotSigned);
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 403,
@@ -281,9 +285,9 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(PublisherAgreementNotSigned);
+    ).rejects.toThrow(PublisherAgreementNotSigned);
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 403,
@@ -294,9 +298,9 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(PublisherMissingUsername);
+    ).rejects.toThrow(PublisherMissingUsername);
 
-    expect(() =>
+    await expect(
       client.processResponse(
         buildResponse({
           status: 404,
@@ -305,7 +309,7 @@ describe("Base.processResponse", () => {
           },
         }),
       ),
-    ).toThrow(StoreApiResourceNotFound);
+    ).rejects.toThrow(StoreApiResourceNotFound);
   });
 });
 

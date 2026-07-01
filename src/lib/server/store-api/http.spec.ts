@@ -75,22 +75,55 @@ describe("request", () => {
     );
   });
 
-  it("exposes parsed json and caches the result", async () => {
+  it("exposes parsed json and text, and memoizes the parse", async () => {
     const { fetchImpl } = fakeFetch({ body: '{"answer":42}' });
 
     const response = await request("https://example.com/api", {}, fetchImpl);
 
-    expect(response.json()).toEqual({ answer: 42 });
-    expect(response.json()).toEqual({ answer: 42 });
-    expect(response.text).toBe('{"answer":42}');
+    const first = await response.json();
+    const second = await response.json();
+    expect(first).toEqual({ answer: 42 });
+    // Same object reference on repeat calls => parsed exactly once.
+    expect(first).toBe(second);
+    expect(await response.text()).toBe('{"answer":42}');
   });
 
-  it("throws when the body is not valid JSON", async () => {
+  it("drains the underlying Response body only once", async () => {
+    const underlying = new Response('{"answer":42}', { status: 200 });
+    const textSpy = vi.spyOn(underlying, "text");
+    const fetchImpl: FetchLike = vi.fn(async () => underlying);
+
+    const response = await request("https://example.com/api", {}, fetchImpl);
+    await response.text();
+    await response.json();
+    await response.json();
+
+    // request() reads it once up front; every wrapper call serves the cache.
+    expect(textSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("rejects on every json() call when the body is not valid JSON", async () => {
     const { fetchImpl } = fakeFetch({ body: "<html></html>" });
 
     const response = await request("https://example.com/api", {}, fetchImpl);
 
-    expect(() => response.json()).toThrow(SyntaxError);
+    await expect(response.json()).rejects.toThrow(SyntaxError);
+    // The memoized error is re-thrown on subsequent calls, not swallowed.
+    await expect(response.json()).rejects.toThrow(SyntaxError);
+  });
+
+  it("routes untouched fields to the underlying Response", async () => {
+    const { fetchImpl } = fakeFetch({
+      status: 201,
+      headers: { "X-Custom": "yes" },
+    });
+
+    const response = await request("https://example.com/api", {}, fetchImpl);
+
+    expect(response.status).toBe(201);
+    expect(response.ok).toBe(true);
+    expect(response.headers.get("X-Custom")).toBe("yes");
+    expect(response instanceof Response).toBe(true);
   });
 
   it("captures a request snapshot for logging", async () => {
