@@ -26,7 +26,8 @@ import {
   StoreApiResponseErrorList,
   StoreApiServiceUnavailableError,
 } from "./exceptions";
-import type { HttpSession, StoreHttpResponse } from "./http";
+import type { FetchLike, RequestOptions, StoreHttpResponse } from "./http";
+import { request as httpRequest } from "./http";
 
 /** Minimal logger contract satisfied by pino and by test doubles. */
 export interface StoreApiLogger {
@@ -57,12 +58,31 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export class Base {
-  protected session: HttpSession;
+  protected fetchImpl: FetchLike;
   protected logger: StoreApiLogger;
 
-  constructor(session: HttpSession, logger: StoreApiLogger = defaultLogger) {
-    this.session = session;
+  constructor(
+    fetchImpl: FetchLike = fetch,
+    logger: StoreApiLogger = defaultLogger,
+  ) {
+    this.fetchImpl = fetchImpl;
     this.logger = logger;
+  }
+
+  /**
+   * Execute a request with the client's transport and return the processed
+   * body. Every ported endpoint is public and read-only, so this always runs
+   * {@link Base.processResponse} and hands back parsed JSON — there is no
+   * raw-response variant. Callers needing the raw {@link StoreHttpResponse} can
+   * use the exported `request` function directly.
+   */
+  protected async request(
+    url: string,
+    options?: RequestOptions,
+  ): Promise<unknown> {
+    return this.processResponse(
+      await httpRequest(url, options, this.fetchImpl),
+    );
   }
 
   protected logDetailedError(response: StoreHttpResponse): void {

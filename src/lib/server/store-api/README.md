@@ -43,9 +43,8 @@ const found = await charms.find({ query: "postgres", category: "databases" });
 
 ### Dependency injection / testing
 
-Every client accepts an injectable `fetch` (or a pre-built `HttpSession`) plus an
-optional logger and base-URL overrides — the equivalent of passing a
-`requests.Session` in Python:
+Every client accepts an injectable `fetch` plus an optional logger and base-URL
+overrides — the equivalent of passing a `requests.Session` in Python:
 
 ```ts
 const client = new DeviceGW("snap", {
@@ -89,7 +88,7 @@ const staging = new DeviceGW("snap", {
 | ----------------------------------------- | ------------------------------------------------ |
 | `canonicalwebteam.store_api.base.Base`    | `Base` (`base.ts`)                               |
 | `canonicalwebteam.exceptions`             | `exceptions.ts`                                  |
-| `requests.Session` (injected)             | `HttpSession` / injectable `fetch` (`http.ts`)   |
+| `requests.Session` (injected)             | injectable `fetch` + `request()` (`http.ts`)     |
 | `DeviceGW(namespace, ...)`                | `new DeviceGW(namespace, options)`               |
 | `PublisherGW(name_space, ...)`            | `new PublisherGW(nameSpace, options)`            |
 | `process_response(response)`              | `processResponse(response)`                      |

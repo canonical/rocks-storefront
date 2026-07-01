@@ -1,13 +1,18 @@
 /**
  * Minimal injectable HTTP layer for the store API clients.
  *
- * The Python clients accept a `requests.Session`; here we wrap the native
- * `fetch` in an {@link HttpSession} whose transport can be swapped out in tests
- * by passing a `fetch`-compatible function. Each request is executed eagerly
- * (body fully read) and returned as a {@link StoreHttpResponse}, which carries
- * both the parsed response and a redactable snapshot of the outgoing request so
- * that {@link Base.processResponse} can log failures without re-reading a
- * consumed stream.
+ * The Python clients accept a `requests.Session`; here we expose a single
+ * {@link request} function that wraps the native `fetch`. The transport can be
+ * swapped out in tests by passing a `fetch`-compatible function as the final
+ * argument. Each request is executed eagerly (body fully read) and returned as a
+ * {@link StoreHttpResponse}, which carries both the parsed response and a
+ * redactable snapshot of the outgoing request so that
+ * {@link Base.processResponse} can log failures without re-reading a consumed
+ * stream.
+ *
+ * Clients don't call {@link request} directly; they use the `this.request`
+ * method on {@link Base}, which binds the client's `fetch` and folds in
+ * `processResponse`.
  */
 
 /** The subset of the global `fetch` signature the clients rely on. */
@@ -26,6 +31,8 @@ export type QueryParams = Record<
 >;
 
 export interface RequestOptions {
+  /** HTTP method. Defaults to `GET`. */
+  method?: string;
   params?: QueryParams;
   headers?: Record<string, string>;
   /** JSON body; serialized and sent with `Content-Type: application/json`. */
@@ -39,7 +46,7 @@ export interface LoggableRequest {
   body: string;
 }
 
-/** Normalized response returned by {@link HttpSession}. */
+/** Normalized response returned by {@link request}. */
 export interface StoreHttpResponse {
   status: number;
   ok: boolean;
@@ -74,83 +81,65 @@ function buildUrl(url: string, params?: QueryParams): string {
   return url.includes("?") ? `${url}&${query}` : `${url}?${query}`;
 }
 
-export class HttpSession {
-  private readonly fetchImpl: FetchLike;
+/**
+ * Execute a single HTTP request and normalize the result.
+ *
+ * @param url The request URL (query params in {@link RequestOptions.params} are
+ *   appended).
+ * @param options Method (defaults to `GET`), query params, headers and JSON body.
+ * @param fetchImpl A `fetch`-compatible transport. Defaults to the global
+ *   `fetch`; override in tests.
+ */
+export async function request(
+  url: string,
+  options: RequestOptions = {},
+  fetchImpl: FetchLike = fetch,
+): Promise<StoreHttpResponse> {
+  const { method = "GET", params, headers = {}, json } = options;
+  const finalUrl = buildUrl(url, params);
 
-  constructor(fetchImpl: FetchLike = fetch) {
-    this.fetchImpl = fetchImpl;
+  const requestHeaders: Record<string, string> = { ...headers };
+  let body: string | undefined;
+  if (json !== undefined) {
+    body = JSON.stringify(json);
+    requestHeaders["Content-Type"] = "application/json";
   }
 
-  get(url: string, options: RequestOptions = {}): Promise<StoreHttpResponse> {
-    return this.request("GET", url, options);
-  }
+  const response = await fetchImpl(finalUrl, {
+    method,
+    headers: requestHeaders,
+    body,
+  });
 
-  post(url: string, options: RequestOptions = {}): Promise<StoreHttpResponse> {
-    return this.request("POST", url, options);
-  }
+  const text = await response.text();
+  let parsed: unknown;
+  let parsedError: unknown;
+  let hasParsed = false;
 
-  patch(url: string, options: RequestOptions = {}): Promise<StoreHttpResponse> {
-    return this.request("PATCH", url, options);
-  }
-
-  delete(
-    url: string,
-    options: RequestOptions = {},
-  ): Promise<StoreHttpResponse> {
-    return this.request("DELETE", url, options);
-  }
-
-  private async request(
-    method: string,
-    url: string,
-    options: RequestOptions,
-  ): Promise<StoreHttpResponse> {
-    const { params, headers = {}, json } = options;
-    const finalUrl = buildUrl(url, params);
-
-    const requestHeaders: Record<string, string> = { ...headers };
-    let body: string | undefined;
-    if (json !== undefined) {
-      body = JSON.stringify(json);
-      requestHeaders["Content-Type"] = "application/json";
-    }
-
-    const response = await this.fetchImpl(finalUrl, {
-      method,
+  return {
+    status: response.status,
+    ok: response.ok,
+    url: response.url || finalUrl,
+    headers: response.headers,
+    text,
+    json(): unknown {
+      if (!hasParsed) {
+        try {
+          parsed = JSON.parse(text);
+        } catch (error) {
+          parsedError = error;
+        }
+        hasParsed = true;
+      }
+      if (parsedError) {
+        throw parsedError;
+      }
+      return parsed;
+    },
+    request: {
+      url: finalUrl,
       headers: requestHeaders,
-      body,
-    });
-
-    const text = await response.text();
-    let parsed: unknown;
-    let parsedError: unknown;
-    let hasParsed = false;
-
-    return {
-      status: response.status,
-      ok: response.ok,
-      url: response.url || finalUrl,
-      headers: response.headers,
-      text,
-      json(): unknown {
-        if (!hasParsed) {
-          try {
-            parsed = JSON.parse(text);
-          } catch (error) {
-            parsedError = error;
-          }
-          hasParsed = true;
-        }
-        if (parsedError) {
-          throw parsedError;
-        }
-        return parsed;
-      },
-      request: {
-        url: finalUrl,
-        headers: requestHeaders,
-        body: body ?? "",
-      },
-    };
-  }
+      body: body ?? "",
+    },
+  };
 }

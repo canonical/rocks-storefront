@@ -9,7 +9,6 @@
 
 import { env } from "$env/dynamic/private";
 import { Base } from "./base";
-import { HttpSession } from "./http";
 import type { ClientOptions, JsonObject } from "./types";
 
 const PUBLISHERGW_URL = env.PUBLISHERGW_URL ?? "https://api.charmhub.io";
@@ -49,8 +48,7 @@ export class PublisherGW extends Base {
   private config: Record<number, PublisherApiConfig>;
 
   constructor(nameSpace: string, options: PublisherGWOptions = {}) {
-    const session = options.session ?? new HttpSession(options.fetch ?? fetch);
-    super(session, options.logger);
+    super(options.fetch ?? fetch, options.logger);
 
     this.nameSpace = nameSpace;
     const baseUrl = options.baseUrl ?? PUBLISHERGW_URL;
@@ -102,9 +100,7 @@ export class PublisherGW extends Base {
       params.requires = requires.join(",");
     }
 
-    return this.processResponse(
-      await this.session.get(url, { params }),
-    ) as JsonObject;
+    return (await this.request(url, { params })) as JsonObject;
   }
 
   /**
@@ -115,9 +111,7 @@ export class PublisherGW extends Base {
   ): Promise<JsonObject> {
     const { apiVersion = 2, type = "shared" } = options;
     const url = this.getEndpointUrl("charms/categories", apiVersion);
-    return this.processResponse(
-      await this.session.get(url, { params: { type } }),
-    ) as JsonObject;
+    return (await this.request(url, { params: { type } })) as JsonObject;
   }
 
   /**
@@ -126,9 +120,10 @@ export class PublisherGW extends Base {
    */
   async getCharmLibraries(packageName: string): Promise<JsonObject> {
     const url = this.getEndpointUrl("libraries/bulk", 1, true);
-    return this.processResponse(
-      await this.session.post(url, { json: [{ "charm-name": packageName }] }),
-    ) as JsonObject;
+    return (await this.request(url, {
+      method: "POST",
+      json: [{ "charm-name": packageName }],
+    })) as JsonObject;
   }
 
   /**
@@ -147,9 +142,7 @@ export class PublisherGW extends Base {
     const url = this.getEndpointUrl(
       `charm/libraries/${charmName}/${libraryId}`,
     );
-    return this.processResponse(
-      await this.session.get(url, { params }),
-    ) as JsonObject;
+    return (await this.request(url, { params })) as JsonObject;
   }
 
   /**
@@ -171,8 +164,6 @@ export class PublisherGW extends Base {
     if (channel) {
       params.channel = channel;
     }
-    return this.processResponse(
-      await this.session.get(url, { params }),
-    ) as JsonObject;
+    return (await this.request(url, { params })) as JsonObject;
   }
 }

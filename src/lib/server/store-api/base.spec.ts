@@ -15,7 +15,7 @@ import {
   StoreApiResponseErrorList,
   StoreApiServiceUnavailableError,
 } from "./exceptions";
-import type { HttpSession, StoreHttpResponse } from "./http";
+import type { FetchLike, StoreHttpResponse } from "./http";
 
 const SAMPLE_URL = "http://www.test.com";
 
@@ -67,7 +67,7 @@ function silentLogger(): StoreApiLogger {
 }
 
 function makeClient(logger: StoreApiLogger = silentLogger()): Base {
-  return new Base({} as HttpSession, logger);
+  return new Base(vi.fn() as unknown as FetchLike, logger);
 }
 
 describe("Base.processResponse", () => {
@@ -306,5 +306,43 @@ describe("Base.processResponse", () => {
         }),
       ),
     ).toThrow(StoreApiResourceNotFound);
+  });
+});
+
+describe("Base.request", () => {
+  class TestClient extends Base {
+    call(
+      url: string,
+      options?: Parameters<Base["request"]>[1],
+    ): Promise<unknown> {
+      return this.request(url, options);
+    }
+  }
+
+  it("calls the injected fetch and returns the processed body", async () => {
+    const calls: Array<{ url: string; init?: RequestInit }> = [];
+    const fetchImpl: FetchLike = vi.fn(async (input, init) => {
+      calls.push({ url: String(input), init });
+      return new Response(JSON.stringify({ ok: true }), { status: 200 });
+    });
+    const client = new TestClient(fetchImpl, silentLogger());
+
+    const body = await client.call("https://example.com/api", {
+      params: { q: "x" },
+    });
+
+    expect(body).toEqual({ ok: true });
+    expect(new URL(calls[0].url).searchParams.get("q")).toBe("x");
+  });
+
+  it("propagates processResponse errors", async () => {
+    const fetchImpl: FetchLike = vi.fn(
+      async () => new Response("", { status: 500 }),
+    );
+    const client = new TestClient(fetchImpl, silentLogger());
+
+    await expect(client.call("https://example.com/api")).rejects.toThrow(
+      StoreApiInternalError,
+    );
   });
 });

@@ -8,7 +8,6 @@
 
 import { env } from "$env/dynamic/private";
 import { Base } from "./base";
-import { HttpSession } from "./http";
 import type { ApiConfig, ClientOptions, JsonObject } from "./types";
 
 const DEVICEGW_URL = env.DEVICEGW_URL ?? "https://api.snapcraft.io/";
@@ -87,8 +86,7 @@ export class DeviceGW extends Base {
   private config: ApiConfig;
 
   constructor(namespace: string, options: DeviceGWOptions = {}) {
-    const session = options.session ?? new HttpSession(options.fetch ?? fetch);
-    super(session, options.logger);
+    super(options.fetch ?? fetch, options.logger);
 
     const baseUrl = options.baseUrl ?? DEVICEGW_URL;
 
@@ -294,9 +292,11 @@ export class DeviceGW extends Base {
     const url = this.getEndpointUrl("metrics");
     const headers = this.headers(apiVersion);
     headers["Content-Type"] = "application/json";
-    return this.processResponse(
-      await this.session.post(url, { headers, json }),
-    ) as JsonObject;
+    return (await this.request(url, {
+      method: "POST",
+      headers,
+      json,
+    })) as JsonObject;
   }
 
   /**
@@ -358,8 +358,6 @@ export class DeviceGW extends Base {
     params: Record<string, string | number> | undefined,
     headers: Record<string, string>,
   ): Promise<unknown> {
-    return this.processResponse(
-      await this.session.get(url, { params, headers }),
-    );
+    return this.request(url, { params, headers });
   }
 }

@@ -3,7 +3,7 @@
  */
 
 import type { StoreApiLogger } from "./base";
-import type { FetchLike, HttpSession } from "./http";
+import type { FetchLike } from "./http";
 
 /** Per-API-version configuration (base URL + default headers). */
 export interface ApiVersionConfig {
@@ -19,9 +19,7 @@ export type ApiConfig = Record<number, ApiVersionConfig>;
  * injected `requests.Session` while keeping the transport swappable for tests.
  */
 export interface ClientOptions {
-  /** Pre-built HTTP session (takes precedence over `fetch`). */
-  session?: HttpSession;
-  /** `fetch`-compatible transport used to build a session. */
+  /** `fetch`-compatible transport. Defaults to the global `fetch`. */
   fetch?: FetchLike;
   /** Logger for detailed error reporting. Defaults to the app logger. */
   logger?: StoreApiLogger;

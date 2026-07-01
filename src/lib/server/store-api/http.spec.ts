@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { type FetchLike, HttpSession } from "./http";
+import { type FetchLike, request } from "./http";
 
 function fakeFetch(
   responseInit: {
@@ -17,14 +17,17 @@ function fakeFetch(
   return { fetchImpl, calls };
 }
 
-describe("HttpSession", () => {
+describe("request", () => {
   it("appends query params and drops null/undefined", async () => {
     const { fetchImpl, calls } = fakeFetch();
-    const session = new HttpSession(fetchImpl);
 
-    await session.get("https://example.com/api", {
-      params: { q: "hello world", size: 5, empty: null, missing: undefined },
-    });
+    await request(
+      "https://example.com/api",
+      {
+        params: { q: "hello world", size: 5, empty: null, missing: undefined },
+      },
+      fetchImpl,
+    );
 
     const url = new URL(calls[0].url);
     expect(url.searchParams.get("q")).toBe("hello world");
@@ -33,11 +36,22 @@ describe("HttpSession", () => {
     expect(url.searchParams.has("missing")).toBe(false);
   });
 
+  it("defaults to the GET method", async () => {
+    const { fetchImpl, calls } = fakeFetch();
+
+    await request("https://example.com/api", {}, fetchImpl);
+
+    expect(calls[0].init?.method).toBe("GET");
+  });
+
   it("merges query params onto a URL that already has a query string", async () => {
     const { fetchImpl, calls } = fakeFetch();
-    const session = new HttpSession(fetchImpl);
 
-    await session.get("https://example.com/api?a=1", { params: { b: 2 } });
+    await request(
+      "https://example.com/api?a=1",
+      { params: { b: 2 } },
+      fetchImpl,
+    );
 
     const url = new URL(calls[0].url);
     expect(url.searchParams.get("a")).toBe("1");
@@ -46,9 +60,12 @@ describe("HttpSession", () => {
 
   it("serializes JSON bodies and sets the content-type header", async () => {
     const { fetchImpl, calls } = fakeFetch();
-    const session = new HttpSession(fetchImpl);
 
-    await session.post("https://example.com/api", { json: { name: "rock" } });
+    await request(
+      "https://example.com/api",
+      { method: "POST", json: { name: "rock" } },
+      fetchImpl,
+    );
 
     const init = calls[0].init;
     expect(init?.method).toBe("POST");
@@ -60,9 +77,8 @@ describe("HttpSession", () => {
 
   it("exposes parsed json and caches the result", async () => {
     const { fetchImpl } = fakeFetch({ body: '{"answer":42}' });
-    const session = new HttpSession(fetchImpl);
 
-    const response = await session.get("https://example.com/api");
+    const response = await request("https://example.com/api", {}, fetchImpl);
 
     expect(response.json()).toEqual({ answer: 42 });
     expect(response.json()).toEqual({ answer: 42 });
@@ -71,21 +87,24 @@ describe("HttpSession", () => {
 
   it("throws when the body is not valid JSON", async () => {
     const { fetchImpl } = fakeFetch({ body: "<html></html>" });
-    const session = new HttpSession(fetchImpl);
 
-    const response = await session.get("https://example.com/api");
+    const response = await request("https://example.com/api", {}, fetchImpl);
 
     expect(() => response.json()).toThrow(SyntaxError);
   });
 
   it("captures a request snapshot for logging", async () => {
     const { fetchImpl } = fakeFetch();
-    const session = new HttpSession(fetchImpl);
 
-    const response = await session.post("https://example.com/api", {
-      headers: { Authorization: "secret" },
-      json: { a: 1 },
-    });
+    const response = await request(
+      "https://example.com/api",
+      {
+        method: "POST",
+        headers: { Authorization: "secret" },
+        json: { a: 1 },
+      },
+      fetchImpl,
+    );
 
     expect(response.request.url).toBe("https://example.com/api");
     expect(response.request.headers.Authorization).toBe("secret");

@@ -45,7 +45,7 @@ export type {
   RequestOptions,
   StoreHttpResponse,
 } from "./http";
-export { HttpSession } from "./http";
+export { request } from "./http";
 export type {
   PublisherCategoriesOptions,
   PublisherFindOptions,
