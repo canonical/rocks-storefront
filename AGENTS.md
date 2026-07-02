@@ -1,6 +1,6 @@
 # AGENTS.md
 
-SvelteKit app (Svelte 5, server-rendered via `adapter-node`) for rockstore.io, maintained by Canonical's Web & Design team.
+SvelteKit app (Svelte 5, server-rendered via `adapter-node`) for the rock store, maintained by Canonical's Web Engineering team.
 
 ## Commands
 
@@ -15,9 +15,9 @@ SvelteKit app (Svelte 5, server-rendered via `adapter-node`) for rockstore.io, m
 ## Documentation
 
 Any documentation for the project architecture and business logic decisions can be found
-in `README.md` and the relevant source files and tests.
+in `docs` and the relevant source files and tests.
 
-Read those files lazily - only those you need for the task at hand - when you need to understand a given part of the application
+Read documentation files lazily - only those you need for the task at hand - when you need to understand a given part of the application
 (along with reading any code files for more specific details).
 
 ## Workflow
@@ -25,10 +25,10 @@ Read those files lazily - only those you need for the task at hand - when you ne
 ### Small changes
 
 For bugfixes, style modifications and similar small changes:
-- Read any relevant `README.md` section and source file
+- Read any relevant files found in the `docs` folder
 - Implement the change
 - Update the tests (if necessary)
-- Run the Verification steps detailed in the next section.
+- Run the Verification steps detailed in the next section
 
 ### Big changes
 
