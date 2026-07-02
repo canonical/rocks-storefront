@@ -1,9 +1,11 @@
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 import type { Logger } from "pino";
-import { resolveRequestId, resolveTraceId } from "$lib/server/correlation";
+import {
+  REQUEST_ID_HEADER,
+  resolveRequestId,
+  resolveTraceId,
+} from "$lib/server/correlation";
 import { logger } from "$lib/server/logger";
-
-const REQUEST_ID_HEADER = "x-request-id";
 
 /**
  * Build the `handle` hook bound to a base logger. A child logger carrying the
