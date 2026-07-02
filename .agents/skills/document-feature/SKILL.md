@@ -94,8 +94,8 @@ Keep the contents as concise as possible without losing any context.
     the new section.
   - If it exists, append the new `##` section at the end. Don't rewrite or
     reorder existing sections.
-  - If documenting a menaingful change to an existing feature, update its 
-    corresponding section without
+  - If documenting a meaningful change to an existing feature, update its
+    corresponding section without rewriting unrelated entries.
 4. Write a descriptive title and the **Approach**. Add **Why** only if a real
    rationale exists.
 5. Keep entries concise and factual; link to code with paths instead of pasting
