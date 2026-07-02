@@ -1,7 +1,7 @@
-import { ApiClient } from "$lib/server/rocks/api";
-import type { PageLoad } from "./$types";
+import { ApiClient } from "$lib/server/api/rocks";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageLoad = async () => {
+export const load: PageServerLoad = async () => {
   const client = new ApiClient();
 
   return {

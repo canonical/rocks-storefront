@@ -1,9 +1,6 @@
 import {
   array,
-  type BaseIssue,
-  type BaseSchema,
   type InferInput,
-  type InferOutput,
   literal,
   object,
   optional,
@@ -12,6 +9,20 @@ import {
   union,
 } from "valibot";
 import { env } from "$env/dynamic/private";
+import {
+  StoreApiBadGatewayError,
+  StoreApiConnectionError,
+  type StoreApiErrorEntry,
+  StoreApiGatewayTimeoutError,
+  StoreApiInternalError,
+  StoreApiNotImplementedError,
+  StoreApiResourceNotFound,
+  StoreApiResponseDecodeError,
+  StoreApiResponseError,
+  StoreApiResponseErrorList,
+  StoreApiServiceUnavailableError,
+  StoreApiTimeoutError,
+} from "./errors";
 import type { RockFindResponse, RockInfoResponse } from "./types";
 
 /**
@@ -55,17 +66,29 @@ export type GetRockDetailsInput = InferInput<typeof getRockDetailsSchema>;
 // A decorator factory for that parses incoming arguments against a schema
 // before executing the actual class method it decorates; if input doesn't
 // match the schema it will throw a ValiError exception
-function _ValidateArgs<
-  S extends BaseSchema<unknown, unknown, BaseIssue<unknown>>,
->(schema: S) {
-  type InputS = InferInput<S> | InferOutput<S>;
-  return <This, Args extends InputS, Return>(
-    originalMethod: (this: This, args: Args) => Return,
-  ) =>
-    function (this: This, args: Args): Return {
-      const validatedArgs = parse(schema, args) as Args;
-      return originalMethod.apply(this, [validatedArgs]);
-    };
+// function ValidateArgs<
+//   S extends BaseSchema<unknown, unknown, BaseIssue<unknown>>,
+// >(schema: S) {
+//   type InputS = InferInput<S> | InferOutput<S>;
+//   return <This, Args extends InputS, Return>(
+//     originalMethod: (this: This, args: Args) => Return,
+//   ) =>
+//     function (this: This, args: Args): Return {
+//       const validatedArgs = parse(schema, args) as Args;
+//       return originalMethod.apply(this, [validatedArgs]);
+//     };
+// }
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function extractErrorList(body: unknown): StoreApiErrorEntry[] | null {
+  if (!isRecord(body)) {
+    return null;
+  }
+  const list = body.error_list ?? body["error-list"];
+  return Array.isArray(list) ? (list as StoreApiErrorEntry[]) : null;
 }
 
 /**
@@ -86,9 +109,7 @@ export class ApiClient {
     pathname: string,
     searchParams: Record<string, string> = {},
   ): URL {
-    if (!pathname.includes(NAMESPACE)) {
-      pathname = `${NAMESPACE}/${pathname}`.replaceAll("//", "/");
-    }
+    pathname = `${NAMESPACE}/${pathname}`.replaceAll("//", "/");
 
     const url = new URL(pathname, API_BASE_URL);
 
@@ -99,21 +120,107 @@ export class ApiClient {
     return url;
   }
 
+  private async processResponse<T>(response: Response): Promise<T> {
+    // 5xx responses are not in JSON format.
+    if (response.status >= 500) {
+      switch (response.status) {
+        case 500:
+          throw new StoreApiInternalError("Internal error upstream");
+        case 501:
+          throw new StoreApiNotImplementedError(
+            "Service doesn't implement this method",
+          );
+        case 502:
+          throw new StoreApiBadGatewayError("Invalid response from upstream");
+        case 503:
+          throw new StoreApiServiceUnavailableError("Service is unavailable");
+        case 504:
+          throw new StoreApiGatewayTimeoutError("Upstream request timed out");
+        default:
+          throw new StoreApiConnectionError(
+            `Service unavailable, code ${response.status}`,
+          );
+      }
+    }
+
+    let body: unknown;
+    try {
+      body = await response.json();
+    } catch (decodeError) {
+      throw new StoreApiResponseDecodeError(
+        `JSON decoding failed: ${(decodeError as Error).message}`,
+      );
+    }
+
+    if (!response.ok) {
+      const errorList = extractErrorList(body);
+      if (errorList) {
+        // Mirror the Python client: a `resource-not-found` code maps to the
+        // dedicated exception so callers can catch it directly.
+        if (errorList.some((entry) => entry.code === "resource-not-found")) {
+          throw new StoreApiResourceNotFound("Resource not found");
+        }
+        throw new StoreApiResponseErrorList(
+          "The api returned a list of errors",
+          response.status,
+          errorList,
+        );
+      }
+
+      if (response.status === 404) {
+        throw new StoreApiResourceNotFound("Resource not found");
+      }
+
+      if (!body) {
+        throw new StoreApiResponseError(
+          "Unknown error from api",
+          response.status,
+        );
+      }
+
+      let message: string | undefined;
+      if (isRecord(body)) {
+        // Fall back to `message` when `Message` is falsy (incl. empty string),
+        // matching the Python client's `if not message` behavior.
+        message =
+          (body.Message as string | undefined) ||
+          (body.message as string | undefined);
+      }
+      throw new StoreApiResponseError(
+        message || "Unknown error from api",
+        response.status,
+      );
+    }
+
+    return body as T;
+  }
+
   private async request<T>(
     input: string | URL | Request,
     init: RequestInit = {},
   ): Promise<T> {
-    const response = await fetch(input, {
-      ...init,
-      signal: this.getAbortSignal?.(),
-      // headers: { ...init?.headers, "Snap-Device-Series": "16" },
-    });
-    const result = (await response.json()) as T;
+    let response: Response;
+    try {
+      response = await fetch(input, {
+        ...init,
+        signal: this.getAbortSignal?.(),
+      });
+    } catch (error) {
+      // `AbortSignal.timeout()` rejects the fetch with a `TimeoutError`
+      // DOMException; surface it as our dedicated timeout error. Genuine
+      // cancellations (`AbortError`) are rethrown untouched.
+      if (error instanceof DOMException && error.name === "TimeoutError") {
+        throw new StoreApiTimeoutError("Request to the store API timed out");
+      }
+      throw error;
+    }
+    const result = await this.processResponse<T>(response);
     return result;
   }
 
   // @ValidateArgs(getRocksSchema)
   async getRocks(input: GetRocksInput): Promise<RockFindResponse> {
+    // parse manually because ValidateArgs is broken :(
     const { query, architecture, categories, fields } = parse(
       getRocksSchema,
       input,
@@ -133,8 +240,9 @@ export class ApiClient {
 
   // @ValidateArgs(getRockDetailsSchema)
   async getRockDetails(input: GetRockDetailsInput): Promise<RockInfoResponse> {
+    // parse manually because ValidateArgs is broken :(
     const { name, fields } = parse(getRockDetailsSchema, input);
-    const url = this.buildUrl(`info/${name}`, {
+    const url = this.buildUrl(`info/${encodeURIComponent(name)}`, {
       fields: fields.join(","),
     });
 

@@ -13,7 +13,7 @@
     Result: {rocks.length} rocks
 </h2>
 <ul>
-    {#each rocks as rock}
+    {#each rocks as rock (rock.name)}
         <li>{rock.name}</li>
     {/each}
 </ul>

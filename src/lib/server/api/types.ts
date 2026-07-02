@@ -24,7 +24,7 @@ export interface RockFindResultItem {
 }
 
 export interface DefaultRelease {
-  channel: Channel; // TODO: Channel, but nothing is optional
+  channel: Channel;
   revision: number;
   version: string;
 }
