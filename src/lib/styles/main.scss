@@ -1,0 +1,10 @@
+// Global stylesheet: pulls in Canonical's Vanilla framework.
+// Imported once from the root layout so styles are available app-wide (and SSR'd).
+@import "vanilla-framework/scss/build";
+
+@include vanilla;
+
+// Extra icons not part of Vanilla's default icon set.
+@include vf-p-icon-revisions;
+@include vf-p-icon-certification;
+@include vf-p-icon-submit-bug;
