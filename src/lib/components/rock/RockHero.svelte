@@ -8,8 +8,7 @@
   const FALLBACK_ICON =
     "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
 
-  let { rock, onSeeAllTags }: { rock: Rock; onSeeAllTags?: () => void } =
-    $props();
+  let { rock }: { rock: Rock } = $props();
 
   let iconSrc = $derived(rock.iconUrl || FALLBACK_ICON);
 
@@ -46,7 +45,7 @@
             <time datetime={rock.publishedAt}>{formatRelativeTime(rock.publishedAt)}</time>
           </p>
 
-          <QuickPull quickPull={rock.quickPull} {onSeeAllTags} />
+          <QuickPull quickPull={rock.quickPull} />
         </div>
       </div>
     </div>

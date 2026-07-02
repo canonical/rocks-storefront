@@ -12,6 +12,18 @@ export interface LinkItem {
   icon?: string;
 }
 
+export interface ChannelRow {
+  /** Present for "free" channel rows (rendered as a link); absent for Pro version rows. */
+  channelTag?: string;
+  channelTagHref?: string;
+  version: string;
+  architecture: string;
+  lastUpdated: string; // ISO timestamp; formatted in the UI
+  securityCompliance: string[];
+  registries: string[];
+  collection: string;
+}
+
 export interface Rock {
   name: string;
   /** Slug used in the URL, e.g. "prometheus". */
@@ -36,4 +48,12 @@ export interface Rock {
   /** Rendered documentation body as sanitized HTML. */
   documentationHtml: string;
   feedbackHref: string;
+  tagsChannels: {
+    /** Command shown in the "Pull the image" card. */
+    pullCommand: string;
+    /** Rows shown in the free (no Ubuntu Pro) table. */
+    free: ChannelRow[];
+    /** Rows shown in the Ubuntu Pro table. */
+    pro: ChannelRow[];
+  };
 }

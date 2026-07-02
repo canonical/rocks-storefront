@@ -1,5 +1,3 @@
-// Global stylesheet: pulls in Canonical's Vanilla framework.
-// Imported once from the root layout so styles are available app-wide (and SSR'd).
 @import "vanilla-framework/scss/build";
 
 @include vanilla;
@@ -8,3 +6,5 @@
 @include vf-p-icon-revisions;
 @include vf-p-icon-certification;
 @include vf-p-icon-submit-bug;
+@include vf-p-icon-open-terminal;
+@include vf-p-icon-book;

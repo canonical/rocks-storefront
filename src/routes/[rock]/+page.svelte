@@ -1,24 +1,27 @@
 <script lang="ts">
+  import { page } from "$app/state";
   import FeedbackBanner from "$lib/components/rock/FeedbackBanner.svelte";
   import RichContent from "$lib/components/rock/RichContent.svelte";
   import RockHero from "$lib/components/rock/RockHero.svelte";
   import RockSidebar from "$lib/components/rock/RockSidebar.svelte";
+  import TagsChannels from "$lib/components/rock/TagsChannels.svelte";
   import Tabs from "$lib/components/ui/Tabs.svelte";
   import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
   const rock = $derived(data.rock);
 
-  const tabs = [
-    { id: "description", label: "Description" },
-    { id: "tags", label: "Tags and channels" },
+  // The selected tab lives in the URL (`?tab=…`) so it's shareable and survives a refresh.
+  const activeTab = $derived(page.url.searchParams.get("tab") ?? "description");
+  const tabs = $derived([
+    { id: "description", label: "Description", href: page.url.pathname },
+    {
+      id: "tags",
+      label: "Tags and channels",
+      href: `${page.url.pathname}?tab=tags`,
+    },
     { id: "parameters", label: "Parameters", disabled: true },
-  ];
-  let activeTab = $state("description");
-
-  function showTags() {
-    activeTab = "tags";
-  }
+  ]);
 </script>
 
 <svelte:head>
@@ -27,11 +30,11 @@
 </svelte:head>
 
 <article>
-  <RockHero {rock} onSeeAllTags={showTags} />
+  <RockHero {rock} />
 
   <div class="p-strip is-shallow">
     <div class="row">
-      <Tabs {tabs} bind:active={activeTab} />
+      <Tabs {tabs} active={activeTab} />
     </div>
 
     {#if activeTab === "description"}
@@ -50,7 +53,7 @@
       </div>
     {:else if activeTab === "tags"}
       <div class="row">
-        <p>Tags and channels — coming soon.</p>
+        <TagsChannels {rock} />
       </div>
     {/if}
   </div>

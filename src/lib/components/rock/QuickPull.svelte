@@ -3,8 +3,8 @@
 
   let {
     quickPull,
-    onSeeAllTags,
-  }: { quickPull: Rock["quickPull"]; onSeeAllTags?: () => void } = $props();
+    seeAllTagsHref = "?tab=tags",
+  }: { quickPull: Rock["quickPull"]; seeAllTagsHref?: string } = $props();
 </script>
 
 <div class="quick-pull">
@@ -12,9 +12,9 @@
   <!-- Custom flex row: Vanilla has no flex/gap utility for aligning mixed code + button + link. -->
   <div class="quick-pull__row">
     <code>{quickPull.latestTag}</code>
-    <button type="button" class="p-button u-no-margin--bottom" onclick={onSeeAllTags}>
+    <a class="p-button u-no-margin--bottom" href={seeAllTagsHref} data-sveltekit-noscroll>
       See all tags
-    </button>
+    </a>
     <a class="p-link--external" href={quickPull.learnMoreHref}>Learn how to use rocks</a>
   </div>
 </div>

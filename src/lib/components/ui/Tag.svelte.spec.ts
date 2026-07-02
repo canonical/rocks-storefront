@@ -17,3 +17,17 @@ test("renders as a link when href is provided", async () => {
   const link = screen.getByRole("link", { name: "latest" });
   await expect.element(link).toHaveAttribute("href", "/tags");
 });
+
+test("applies a colour variant modifier", async () => {
+  const { container } = render(Tag, {
+    props: { label: "latest", variant: "information" },
+  });
+  expect(container.querySelector(".p-chip--information")).not.toBeNull();
+});
+
+test("inline modifier makes the chip flush for use inside a row", async () => {
+  const { container } = render(Tag, {
+    props: { label: "latest", inline: true },
+  });
+  expect(container.querySelector(".p-chip.is-inline")).not.toBeNull();
+});
