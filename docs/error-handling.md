@@ -59,7 +59,7 @@ store (Loki in COS).
 - `handleError` logs uncaught server errors at `error` level with the request's
   correlation ids (reusing the bound child logger when present) and returns only
   a generic message to the client.
-- Redaction: a curated `err` serializer (`serializeError`) whitelists only
+- Redaction: a curated `err` serializer (`serializeError`) allowlists only
   `type`/`message`/`stack`/`statusCode`, plus defensive `redact` paths for
   common credential/cookie/header keys. The hooks log only curated fields, never
   bodies, cookies, or auth headers.
@@ -67,11 +67,11 @@ store (Loki in COS).
 **Why:** Centralizing in hooks guarantees one consistent, correlatable line per
 request and keeps secrets out of logs by construction. Pino was chosen for log
 levels, async output, child loggers, and built-in OpenTelemetry/Sentry
-integration for later observability work. The `err` serializer whitelists fields
+integration for later observability work. The `err` serializer allowlists fields
 rather than relying on redact paths because pino's default error serializer
 copies all enumerable properties and `redact` wildcards cannot reach arbitrary
 nested shapes (e.g. an upstream HTTP client error carrying
-`config.headers.authorization` or `response.data`) — a whitelist makes the
+`config.headers.authorization` or `response.data`) — an allowlist makes the
 "no secrets/PII" guarantee hold regardless of error shape. Traces and metrics
 (OpenTelemetry) are deferred; `traceId` is already emitted so logs will correlate
 with Tempo traces once tracing lands.

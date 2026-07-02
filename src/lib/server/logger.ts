@@ -41,7 +41,7 @@ export interface CreateLoggerOptions {
  * Curated error serializer. Pino's default `err` serializer copies every
  * enumerable property of the error, which leaks secrets/PII when upstream
  * clients throw errors carrying request config (auth headers) or response
- * bodies (customer data). We whitelist only safe fields so no exotic nested
+ * bodies (customer data). We allowlist only safe fields so no exotic nested
  * shape can ever reach the log store.
  */
 export function serializeError(error: unknown): Record<string, unknown> {
