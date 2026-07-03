@@ -2,8 +2,7 @@
   import type { PageProps } from "./$types";
 
   const { data }: PageProps = $props();
-  // svelte-ignore state_referenced_locally
-  const rocks = data.rocks;
+  const rocks = $derived(data.rocks);
 </script>
 
 <h1>
