@@ -84,8 +84,10 @@ describe("rockFromApi", () => {
 
   it("only uses the github icon for genuine github hosts", () => {
     const withLinks = (source: string) =>
-      rockFromApi({ ...info, metadata: { ...info.metadata, links: { source: [source] } } })
-        .sourceCode[0].icon;
+      rockFromApi({
+        ...info,
+        metadata: { ...info.metadata, links: { source: [source] } },
+      }).sourceCode[0].icon;
 
     expect(withLinks("https://github.com/acme/demo")).toBe("github");
     expect(withLinks("https://raw.github.com/acme/demo")).toBe("github");

@@ -31,7 +31,9 @@ function iconForUrl(url: string): string {
   } catch {
     return "file";
   }
-  return hostname === "github.com" || hostname.endsWith(".github.com") ? "github" : "file";
+  return hostname === "github.com" || hostname.endsWith(".github.com")
+    ? "github"
+    : "file";
 }
 
 /** Drop null/undefined/empty entries, narrowing the array to non-empty values. */
