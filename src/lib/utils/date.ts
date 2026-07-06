@@ -10,7 +10,6 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["minute", 60],
 ];
 
-/** Format an ISO timestamp as a coarse relative time, e.g. "2 days ago". */
 export function formatRelativeTime(
   iso: string,
   now: Date = new Date(),

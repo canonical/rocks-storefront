@@ -36,7 +36,6 @@ function iconForUrl(url: string): string {
     : "file";
 }
 
-/** Drop null/undefined/empty entries, narrowing the array to non-empty values. */
 function compact<T>(values: (T | null | undefined)[]): T[] {
   return values.filter((value): value is T => Boolean(value));
 }
@@ -45,11 +44,6 @@ function unique<T>(values: T[]): T[] {
   return [...new Set(values)];
 }
 
-/**
- * Map the store API's rock `info` response to the view model the detail-page
- * components consume. Fields the API doesn't provide (security/compliance,
- * separate documentation) fall back to empty.
- */
 export function rockFromApi(info: RockInfoResponse): Rock {
   const meta = info.metadata ?? {};
   const channels = info["channel-map"] ?? [];

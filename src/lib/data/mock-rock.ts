@@ -1,6 +1,5 @@
 import type { Rock } from "./types";
 
-/** Prometheus fixture matching the Figma design. Stand-in until the real API is wired up. */
 export const prometheusRock: Rock = {
   name: "Prometheus",
   slug: "prometheus",
