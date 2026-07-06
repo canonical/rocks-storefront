@@ -82,6 +82,19 @@ describe("rockFromApi", () => {
     ]);
   });
 
+  it("only uses the github icon for genuine github hosts", () => {
+    const withLinks = (source: string) =>
+      rockFromApi({ ...info, metadata: { ...info.metadata, links: { source: [source] } } })
+        .sourceCode[0].icon;
+
+    expect(withLinks("https://github.com/acme/demo")).toBe("github");
+    expect(withLinks("https://raw.github.com/acme/demo")).toBe("github");
+    // Spoofed / lookalike hosts must not be treated as github.
+    expect(withLinks("https://github.com.evil.com/x")).toBe("file");
+    expect(withLinks("https://gitlab.com/acme/demo")).toBe("file");
+    expect(withLinks("not-a-url")).toBe("file");
+  });
+
   it("renders the description as HTML paragraphs", () => {
     const rock = rockFromApi(info);
     expect(rock.descriptionHtml).toBe("<p>Line one.</p><p>Line two.</p>");

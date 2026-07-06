@@ -25,7 +25,13 @@ function textToHtml(text: string): string {
 }
 
 function iconForUrl(url: string): string {
-  return url.includes("github.com") ? "github" : "file";
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return "file";
+  }
+  return hostname === "github.com" || hostname.endsWith(".github.com") ? "github" : "file";
 }
 
 /** Drop null/undefined/empty entries, narrowing the array to non-empty values. */
