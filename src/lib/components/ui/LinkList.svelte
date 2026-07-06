@@ -17,7 +17,7 @@
       {#if item.icon && ICON_CLASS[item.icon]}
         <i class={ICON_CLASS[item.icon]} aria-hidden="true"></i>
       {/if}
-      <a class="p-link--external" href={item.url} rel="noopener noreferrer">{item.label}</a>
+      <a class="p-link--external" href={item.url}>{item.label}</a>
     </li>
   {/each}
 </ul>
