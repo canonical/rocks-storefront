@@ -42,10 +42,12 @@
               <span>{rock.category}</span>
             {/if}
           </p>
-          <p class="p-text--small u-text--muted rock-hero__updated">
-            <i class="p-icon--revisions"></i>
-            <time datetime={rock.publishedAt}>{formatRelativeTime(rock.publishedAt)}</time>
-          </p>
+          {#if rock.publishedAt}
+            <p class="p-text--small u-text--muted rock-hero__updated">
+              <i class="p-icon--revisions"></i>
+              <time datetime={rock.publishedAt}>{formatRelativeTime(rock.publishedAt)}</time>
+            </p>
+          {/if}
 
           <QuickPull quickPull={rock.quickPull} />
         </div>
