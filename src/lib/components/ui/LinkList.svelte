@@ -15,7 +15,7 @@
   {#each items as item (item.url)}
     <li class="link-list__item">
       {#if item.icon && ICON_CLASS[item.icon]}
-        <i class={ICON_CLASS[item.icon]}></i>
+        <i class={ICON_CLASS[item.icon]} aria-hidden="true"></i>
       {/if}
       <a class="p-link--external" href={item.url} rel="noopener noreferrer">{item.label}</a>
     </li>
