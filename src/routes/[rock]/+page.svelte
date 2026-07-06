@@ -11,8 +11,9 @@
   const rock = $derived(data.rock);
 
   // The selected tab lives in the URL (`?tab=…`) so it's shareable and survives a refresh.
-  const activeTab = $derived(page.url.searchParams.get("tab") ?? "description");
-  const tabs = $derived([
+  const activeTab = $derived(
+    page.url.searchParams.get("tab") === "tags" ? "tags" : "description",
+  );
     { id: "description", label: "Description", href: page.url.pathname },
     {
       id: "tags",
