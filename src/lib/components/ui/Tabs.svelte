@@ -14,7 +14,7 @@
     {#each tabs as tab (tab.id)}
       <li class="p-tabs__item" role="presentation">
         {#if tab.disabled}
-          <button type="button" class="p-tabs__link" role="tab" aria-selected="false" disabled>
+          <button type="button" class="p-tabs__link" role="tab" aria-selected={active === tab.id} disabled>
             {tab.label}
           </button>
         {:else}
