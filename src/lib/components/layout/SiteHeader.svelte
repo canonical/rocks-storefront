@@ -15,7 +15,6 @@
 </header>
 
 <style>
-  /* Preserve the logo's aspect ratio at whatever default height applies. */
   .site-logo__image {
     width: auto;
   }

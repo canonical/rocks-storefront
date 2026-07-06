@@ -6,8 +6,6 @@
     disabled?: boolean;
   }
 
-  // Tabs are links so selection lives in the URL (SSR + shareable). Vanilla styles the
-  // active tab off `aria-selected`.
   let { tabs, active }: { tabs: TabItem[]; active: string } = $props();
 </script>
 

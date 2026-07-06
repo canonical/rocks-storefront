@@ -77,7 +77,6 @@
     align-items: center;
     gap: 0.5rem;
   }
-  /* Parent-qualified to out-specify Vanilla's `p + p { margin-top: -0.5rem }` rule. */
   .rock-hero__body .rock-hero__updated {
     display: flex;
     align-items: center;

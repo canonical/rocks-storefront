@@ -9,7 +9,6 @@
 
 <div class="quick-pull">
   <h2 class="p-muted-heading">Quick pull</h2>
-  <!-- Custom flex row: Vanilla has no flex/gap utility for aligning mixed code + button + link. -->
   <div class="quick-pull__row">
     <code>{quickPull.latestTag}</code>
     <a class="p-button u-no-margin--bottom" href={seeAllTagsHref} data-sveltekit-noscroll>
@@ -26,7 +25,6 @@
     gap: 1rem;
     flex-wrap: wrap;
   }
-  /* Match the code token's height to the adjacent button. */
   .quick-pull__row code {
     display: inline-flex;
     align-items: center;

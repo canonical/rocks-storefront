@@ -29,7 +29,6 @@
     gap: 0.5rem;
     padding: 0.25rem 0;
   }
-  /* The GitHub brand glyph fills its box, so shrink its container to match the UI icons. */
   .link-list__item :global(.p-icon--github) {
     width: 0.9rem;
     height: 0.9rem;
