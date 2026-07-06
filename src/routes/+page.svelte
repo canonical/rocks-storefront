@@ -13,6 +13,6 @@
 </h2>
 <ul>
     {#each rocks as rock (rock.name)}
-        <li><a href="/{encodeURIComponent(rock.name)}">{rock.name}</a></li>
+        <li><a href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</a></li>
     {/each}
 </ul>
