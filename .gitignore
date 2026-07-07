@@ -16,6 +16,9 @@ node_modules
 /playwright-report
 /playwright/.cache
 
+# Coding agents
+.opencode
+
 # OS
 .DS_Store
 Thumbs.db
