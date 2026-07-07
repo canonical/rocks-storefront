@@ -1,3 +1,4 @@
+import MarkdownIt from "markdown-it";
 import type { RockInfoResponse } from "$lib/server/api/types";
 import type { LinkItem, Rock } from "./types";
 
@@ -5,23 +6,14 @@ const LEARN_MORE_HREF = "https://documentation.ubuntu.com/rockcraft/";
 const FEEDBACK_HREF = "https://ubuntu.com/survey";
 const DISCOURSE_HREF = "https://discourse.ubuntu.com/";
 
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
+const markdown = new MarkdownIt({
+  html: false,
+  linkify: true,
+  breaks: true,
+});
 
-/** Convert the API's plain-text description into simple, safe paragraphs. */
 function textToHtml(text: string): string {
-  return text
-    .split(/\n{2,}/)
-    .map((paragraph) => paragraph.trim())
-    .filter(Boolean)
-    .map(
-      (paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, "<br>")}</p>`,
-    )
-    .join("");
+  return markdown.render(text);
 }
 
 function iconForUrl(url: string): string {
@@ -99,7 +91,6 @@ export function rockFromApi(info: RockInfoResponse): Rock {
       latestTag: info["default-track"] || "latest",
       learnMoreHref: LEARN_MORE_HREF,
     },
-    securityCompliance: [],
     sourceCode,
     architectures,
     bases,

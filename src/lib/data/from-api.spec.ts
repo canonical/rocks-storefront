@@ -97,9 +97,39 @@ describe("rockFromApi", () => {
     expect(withLinks("not-a-url")).toBe("file");
   });
 
+  const descriptionHtml = (description: string) =>
+    rockFromApi({
+      ...info,
+      metadata: { ...info.metadata, description },
+    }).descriptionHtml;
+
   it("renders the description as HTML paragraphs", () => {
     const rock = rockFromApi(info);
-    expect(rock.descriptionHtml).toBe("<p>Line one.</p><p>Line two.</p>");
+    expect(rock.descriptionHtml).toBe("<p>Line one.</p>\n<p>Line two.</p>\n");
+  });
+
+  it("renders markdown formatting in the description", () => {
+    expect(descriptionHtml("This is **bold** and _italic_.")).toBe(
+      "<p>This is <strong>bold</strong> and <em>italic</em>.</p>\n",
+    );
+    expect(descriptionHtml("- one\n- two")).toBe(
+      "<ul>\n<li>one</li>\n<li>two</li>\n</ul>\n",
+    );
+    expect(descriptionHtml("[docs](https://example.com)")).toBe(
+      '<p><a href="https://example.com">docs</a></p>\n',
+    );
+  });
+
+  it("escapes raw HTML in the description", () => {
+    expect(descriptionHtml(`<script>alert("x&y")</script>`)).toBe(
+      "<p>&lt;script&gt;alert(&quot;x&amp;y&quot;)&lt;/script&gt;</p>\n",
+    );
+  });
+
+  it("neutralizes dangerous link protocols", () => {
+    expect(descriptionHtml("[x](javascript:alert(1))")).toBe(
+      "<p>[x](javascript:alert(1))</p>\n",
+    );
   });
 
   it("treats an 'unset' license as empty", () => {

@@ -11,7 +11,6 @@ export const prometheusRock: Rock = {
     latestTag: "latest",
     learnMoreHref: "https://documentation.ubuntu.com/rockcraft/",
   },
-  securityCompliance: ["FIPS"],
   sourceCode: [
     {
       label: "Upstream source",

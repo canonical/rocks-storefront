@@ -20,7 +20,6 @@ export interface Rock {
     latestTag: string;
     learnMoreHref: string;
   };
-  securityCompliance: string[];
   sourceCode: LinkItem[];
   architectures: string[];
   bases: string[];

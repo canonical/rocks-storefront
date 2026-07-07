@@ -11,15 +11,15 @@
     inline?: boolean;
   } = $props();
 
-  const base = $derived(
-    ["p-chip", variant && `p-chip--${variant}`, inline && "is-inline"]
-      .filter(Boolean)
-      .join(" "),
-  );
+  const base = $derived([
+    "p-chip",
+    variant && `p-chip--${variant}`,
+    inline && "is-inline",
+  ]);
 </script>
 
 {#if href}
   <a class={base} {href}><span class="p-chip__value">{label}</span></a>
 {:else}
-  <span class={`${base} is-readonly`}><span class="p-chip__value">{label}</span></span>
+  <span class={[base, "is-readonly"]}><span class="p-chip__value">{label}</span></span>
 {/if}
