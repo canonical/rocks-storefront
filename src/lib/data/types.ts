@@ -9,6 +9,15 @@ export interface LinkItem {
   icon?: string;
 }
 
+export interface ChannelRow {
+  channelTag?: string;
+  version: string;
+  architecture: string;
+  lastUpdated: string;
+  registries: string[];
+  collection: string;
+}
+
 export interface Rock {
   name: string;
   slug: string;
@@ -20,7 +29,6 @@ export interface Rock {
     latestTag: string;
     learnMoreHref: string;
   };
-  securityCompliance: string[];
   sourceCode: LinkItem[];
   architectures: string[];
   bases: string[];
@@ -32,4 +40,8 @@ export interface Rock {
   /** Rendered documentation body as sanitized HTML. */
   documentationHtml: string;
   feedbackHref: string;
+  tagsChannels: {
+    pullCommand: string;
+    channels: ChannelRow[];
+  };
 }

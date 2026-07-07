@@ -1,5 +1,5 @@
-import type { RockInfoResponse } from "$lib/server/api/types";
-import type { LinkItem, Rock } from "./types";
+import type { ChannelMapItem, RockInfoResponse } from "$lib/server/api/types";
+import type { ChannelRow, LinkItem, Rock } from "./types";
 
 const LEARN_MORE_HREF = "https://documentation.ubuntu.com/rockcraft/";
 const FEEDBACK_HREF = "https://ubuntu.com/survey";
@@ -44,6 +44,25 @@ function unique<T>(values: T[]): T[] {
   return [...new Set(values)];
 }
 
+// The Ubuntu base is the last version in a track, e.g. "9.0-24.04" -> "24.04".
+function baseFromTrack(track: string | undefined): string | undefined {
+  const matches = track?.match(/\d+\.\d+/g);
+  return matches?.[matches.length - 1];
+}
+
+function toChannelRow(item: ChannelMapItem): ChannelRow {
+  const channel = item.channel;
+  const downloadUrl = item.revision?.download?.url ?? "";
+  return {
+    version: item.revision?.version ?? channel?.track ?? "",
+    architecture: (channel?.platform?.architecture ?? "").toUpperCase(),
+    lastUpdated:
+      channel?.["released-at"] ?? item.revision?.["created-at"] ?? "",
+    registries: downloadUrl ? [downloadUrl.split("/")[0]] : [],
+    collection: baseFromTrack(channel?.track) ?? "",
+  };
+}
+
 export function rockFromApi(info: RockInfoResponse): Rock {
   const meta = info.metadata ?? {};
   const channels = info["channel-map"] ?? [];
@@ -55,35 +74,67 @@ export function rockFromApi(info: RockInfoResponse): Rock {
   );
 
   const bases = unique(
-    compact(
-      channels.map((item) => item.channel?.track?.match(/\d+\.\d+/)?.[0]),
-    ),
+    compact(channels.map((item) => baseFromTrack(item.channel?.track))),
   );
 
   const latestRelease = compact(
     channels.map((item) => item.channel?.["released-at"]),
   ).reduce((latest, date) => (date > latest ? date : latest), "");
 
-  const sourceCode: LinkItem[] = Object.entries(meta.links ?? {}).flatMap(
-    ([label, urls]) =>
-      (urls ?? []).map((url) => ({
-        label: label.charAt(0).toUpperCase() + label.slice(1),
-        url,
-        icon: iconForUrl(url),
-      })),
+  const links = Object.entries(meta.links ?? {}).flatMap(([key, urls]) =>
+    (urls ?? []).map((url) => ({ key, url })),
   );
+  const isContactLink = (key: string) => /contact|issue|bug|support/i.test(key);
+  const titleCase = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
-  const contacts: LinkItem[] = meta.contact
-    ? [
-        {
-          label: meta.contact,
-          url: meta.contact.startsWith("http")
-            ? meta.contact
-            : `mailto:${meta.contact}`,
-          icon: "bug",
-        },
-      ]
-    : [];
+  const sourceCode: LinkItem[] = links
+    .filter((link) => !isContactLink(link.key))
+    .map((link) => ({
+      label: titleCase(link.key),
+      url: link.url,
+      icon: iconForUrl(link.url),
+    }));
+
+  const latestItem = channels.reduce<ChannelMapItem | undefined>(
+    (latest, item) => {
+      const date = item.channel?.["released-at"] ?? "";
+      const latestDate = latest?.channel?.["released-at"] ?? "";
+      return date > latestDate ? item : latest;
+    },
+    undefined,
+  );
+  const channelRows: ChannelRow[] = channels.map((item) => ({
+    ...toChannelRow(item),
+    channelTag: item === latestItem ? "latest" : (item.channel?.name ?? ""),
+  }));
+  const downloadRepo = (
+    channels.find((item) => item.revision?.download?.url)?.revision?.download
+      ?.url ?? ""
+  ).split("@")[0];
+  const pullCommand = downloadRepo
+    ? `docker pull ${downloadRepo}:${info["default-track"] || "latest"}`
+    : `docker pull ${info.name}:latest`;
+
+  const contacts: LinkItem[] = [
+    ...links
+      .filter((link) => isContactLink(link.key))
+      .map((link) => ({
+        label: titleCase(link.key),
+        url: link.url,
+        icon: "bug",
+      })),
+    ...(meta.contact
+      ? [
+          {
+            label: meta.contact,
+            url: meta.contact.startsWith("http")
+              ? meta.contact
+              : `mailto:${meta.contact}`,
+            icon: "bug",
+          },
+        ]
+      : []),
+  ];
 
   return {
     name: meta.title || info.name,
@@ -99,7 +150,6 @@ export function rockFromApi(info: RockInfoResponse): Rock {
       latestTag: info["default-track"] || "latest",
       learnMoreHref: LEARN_MORE_HREF,
     },
-    securityCompliance: [],
     sourceCode,
     architectures,
     bases,
@@ -109,5 +159,9 @@ export function rockFromApi(info: RockInfoResponse): Rock {
     descriptionHtml: meta.description ? textToHtml(meta.description) : "",
     documentationHtml: "",
     feedbackHref: FEEDBACK_HREF,
+    tagsChannels: {
+      pullCommand,
+      channels: channelRows,
+    },
   };
 }

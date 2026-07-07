@@ -1,6 +1,5 @@
 <script lang="ts">
   import Badge from "$lib/components/ui/Badge.svelte";
-  import Tag from "$lib/components/ui/Tag.svelte";
   import type { Rock } from "$lib/data/types";
   import { formatRelativeTime } from "$lib/utils/date";
   import QuickPull from "./QuickPull.svelte";
@@ -53,15 +52,6 @@
         </div>
       </div>
     </div>
-
-    {#if rock.securityCompliance.length}
-      <div class="col-4">
-        <h2 class="p-muted-heading">Security and compliance options</h2>
-        {#each rock.securityCompliance as option (option)}
-          <Tag label={option} />
-        {/each}
-      </div>
-    {/if}
   </div>
 </section>
 

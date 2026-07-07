@@ -11,7 +11,6 @@ export const prometheusRock: Rock = {
     latestTag: "latest",
     learnMoreHref: "https://documentation.ubuntu.com/rockcraft/",
   },
-  securityCompliance: ["FIPS"],
   sourceCode: [
     {
       label: "Upstream source",
@@ -73,4 +72,34 @@ export const prometheusRock: Rock = {
     <pre><code>docker images --no-trunc --quiet ubuntu/prometheus:&lt;tag&gt;</code></pre>
   `,
   feedbackHref: "https://ubuntu.com/survey",
+  tagsChannels: {
+    pullCommand:
+      "docker pull rockstore.canonical.com/canonical/prometheus:latest",
+    channels: [
+      {
+        channelTag: "latest",
+        version: "12.0",
+        architecture: "Amd64",
+        lastUpdated: "2026-07-01T20:00:00.000Z",
+        registries: ["Docker Hub", "Azure", "GHCR"],
+        collection: "24.04",
+      },
+      {
+        channelTag: "11.6-24.04/stable",
+        version: "11.6",
+        architecture: "Amd64",
+        lastUpdated: "2026-07-01T00:00:00.000Z",
+        registries: ["Docker Hub", "Azure", "GHCR"],
+        collection: "24.04",
+      },
+      {
+        channelTag: "8.2-22.04/stable",
+        version: "8.2",
+        architecture: "Amd64",
+        lastUpdated: "2026-06-30T00:00:00.000Z",
+        registries: ["Docker Hub"],
+        collection: "22.04",
+      },
+    ],
+  },
 };

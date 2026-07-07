@@ -4,6 +4,7 @@
   import RichContent from "$lib/components/rock/RichContent.svelte";
   import RockHero from "$lib/components/rock/RockHero.svelte";
   import RockSidebar from "$lib/components/rock/RockSidebar.svelte";
+  import TagsChannels from "$lib/components/rock/TagsChannels.svelte";
   import Tabs from "$lib/components/ui/Tabs.svelte";
   import type { PageData } from "./$types";
 
@@ -56,7 +57,7 @@
       </div>
     {:else if activeTab === "tags"}
       <div class="row">
-        <p>Tags and channels — coming soon.</p>
+        <TagsChannels {rock} />
       </div>
     {/if}
   </div>
