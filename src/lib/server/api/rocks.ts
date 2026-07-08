@@ -1,10 +1,14 @@
 import {
   array,
+  fallback,
   type InferInput,
   literal,
+  nonEmpty,
+  nullish,
   object,
   optional,
   parse,
+  pipe,
   string,
   union,
 } from "valibot";
@@ -47,8 +51,9 @@ const FIELDS = [
   "channel-map",
 ] as const;
 
+const query = () => fallback(pipe(nullish(string(), ""), nonEmpty()), "%");
 export const getRocksSchema = object({
-  query: optional(string(), "%"),
+  query: query(),
   categories: optional(array(string()), []),
   architecture: optional(array(string()), []),
   fields: optional(array(union(FIELDS.map((f) => literal(f)))), []),
