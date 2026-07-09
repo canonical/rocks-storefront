@@ -24,7 +24,7 @@
     <img class="logo" src={FALLBACK_ICON} alt="" />
 
     <Link class="name" href={`/${encodeURIComponent(rock.name)}`}>
-        <Heading level={1}>{rock.name}</Heading>
+        <Heading level={3}>{rock.name}</Heading>
     </Link>
 
     {#if rock.metadata?.categories?.length}

@@ -21,7 +21,7 @@
   .name {
     grid-area: name;
 
-    .heading[data-level="1"] {
+    .heading {
       font-size: var(--dimension-size-fontSize-400);
       margin-block: 0;
     }
