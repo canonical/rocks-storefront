@@ -1,0 +1,11 @@
+.ds.small-caps {
+  display: block;
+  margin-block: 0 var(--space-100);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  font-family: var(--typography-text-primary-smallcaps-font-family);
+  font-size: var(--typography-text-primary-smallcaps-font-size);
+  font-weight: var(--typography-text-primary-smallcaps-font-weight);
+  letter-spacing: var(--typography-text-primary-smallcaps-letter-spacing);
+  line-height: var(--typography-text-primary-smallcaps-line-height);
+}

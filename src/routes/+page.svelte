@@ -7,10 +7,18 @@
   const rocks = $derived(data.rocks);
 </script>
 
-<Heading level={1}>Rocks store</Heading>
-<Heading level={2}>Result: {rocks.length} rocks</Heading>
-<ul>
+<div class="app-container page">
+  <Heading level={1}>Rocks store</Heading>
+  <Heading level={2}>Result: {rocks.length} rocks</Heading>
+  <ul>
     {#each rocks as rock (rock.name)}
-        <li><Link href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</Link></li>
+      <li><Link href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</Link></li>
     {/each}
-</ul>
+  </ul>
+</div>
+
+<style>
+  .page {
+    padding-block: var(--space-400);
+  }
+</style>

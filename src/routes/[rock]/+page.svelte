@@ -1,12 +1,14 @@
 <script lang="ts">
-  import { page } from "$app/state";
-  import { Heading } from "$lib/components/ui/Heading";
+  import { RockHero } from "$lib/components/rock/RockHero";
+  import { getRockTitle } from "$lib/utils/rock";
+  import type { PageProps } from "./$types";
 
-  const rockName = $derived(page.params.rock);
+  let { data }: PageProps = $props();
+  const rock = $derived(data.rock);
 </script>
 
 <svelte:head>
-  <title>{rockName} · Rock Store</title>
+  <title>{getRockTitle(rock)} · Rock Store</title>
 </svelte:head>
 
-<Heading level={1}>{rockName}</Heading>
+<RockHero {rock} />

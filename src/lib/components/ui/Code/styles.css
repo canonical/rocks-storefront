@@ -1,0 +1,6 @@
+.ds.code {
+  padding: var(--space-100) var(--space-150);
+  font-family: var(--typography-font-family-monospace);
+  background: var(--color-background-container);
+  border-radius: var(--dimension-025);
+}
