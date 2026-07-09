@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Heading } from "$lib/components/ui/Heading";
   import { page } from "$app/state";
+  import { Heading } from "$lib/components/ui/Heading";
 
   const rockName = $derived(page.params.rock);
 </script>

@@ -1,2 +1,2 @@
 export { default as Heading } from "./Heading.svelte";
-export type { HeadingProps, HeadingLevel } from "./types.js";
+export type { HeadingLevel, HeadingProps } from "./types.js";
