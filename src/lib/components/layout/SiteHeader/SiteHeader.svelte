@@ -1,12 +1,12 @@
 <script lang="ts">
-  import logo from "$lib/assets/rockstore-logo.svg";
+  import logo from "$lib/assets/rockstore-logo.svg?raw";
   import "./styles.css";
 </script>
 
 <header class="ds site-header">
   <div class="app-container">
     <a href="/" aria-label="Rockstore home">
-      <img src={logo} alt="Rockstore" width="122" height="37" />
+      {@html logo}
     </a>
   </div>
 </header>
