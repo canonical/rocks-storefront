@@ -1,6 +1,6 @@
 <script lang="ts">
   import { queryParameters } from "sveltekit-search-params";
-  import { RockList } from "$lib/components/rocks/RockList";
+  import { RockList } from "$lib/components/rock/RockList";
   import { Heading } from "$lib/components/ui/Heading";
   import SearchForm from "$lib/components/ui/SearchForm/SearchForm.svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
