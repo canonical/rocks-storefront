@@ -1,24 +1,29 @@
 <script lang="ts">
   import { Link } from "@canonical/svelte-ds-app-launchpad";
+  import { queryParameters } from "sveltekit-search-params";
   import { Heading } from "$lib/components/ui/Heading";
-  import type { PageProps } from "./$types";
+  import Search from "$lib/components/ui/Search.svelte";
+  import { getRocks } from "$lib/remote/api.remote";
+  import { type RockFindResponse } from "$lib/server/api/types";
 
-  const { data }: PageProps = $props();
-  const rocks = $derived(data.rocks);
+  const params = queryParameters({ q: true });
+  const query = $derived(params.q);
 </script>
 
-<div class="app-container page">
-  <Heading level={1}>Rocks store</Heading>
-  <Heading level={2}>Result: {rocks.length} rocks</Heading>
-  <ul>
-    {#each rocks as rock (rock.name)}
-      <li><Link href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</Link></li>
-    {/each}
-  </ul>
-</div>
+<Heading level={1}>Rocks store</Heading>
 
-<style>
-  .page {
-    padding-block: var(--space-400);
-  }
-</style>
+<form data-sveltekit-keepfocus>
+    <Search name="q" value={query} />
+</form>
+
+{@render rocksList(await getRocks({ query }))}
+
+{#snippet rocksList(response: RockFindResponse)}
+    {@const rocks = response.results}
+    <Heading level={2}>Result: {rocks.length} rocks</Heading>
+    <ul>
+        {#each rocks as rock (rock.name)}
+            <li><Link href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</Link></li>
+        {/each}
+    </ul>
+{/snippet}
