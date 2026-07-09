@@ -27,7 +27,7 @@
       rock.metadata?.publisher?.username,
   );
   const category = $derived(rock.metadata?.categories?.[0]?.name);
-  const iconUrl = $derived(
+  let iconUrl = $derived(
     rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON,
   );
   const publishedAt = $derived.by(() => {
@@ -38,10 +38,9 @@
   });
   const latestTag = $derived(rock["default-track"] || "latest");
 
-  function handleIconError(event: Event) {
-    const img = event.currentTarget as HTMLImageElement;
-    if (img.src !== FALLBACK_ICON) {
-      img.src = FALLBACK_ICON;
+  function handleIconError() {
+    if (iconUrl !== FALLBACK_ICON) {
+      iconUrl = FALLBACK_ICON;
     }
   }
 </script>
