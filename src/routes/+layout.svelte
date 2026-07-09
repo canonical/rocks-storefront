@@ -1,5 +1,7 @@
 <script lang="ts">
-  import favicon from "$lib/assets/favicon.svg";
+  import favicon from "$lib/assets/favicon.png";
+  import { SiteHeader } from "$lib/components/layout/SiteHeader";
+  import "../app.css";
 
   let { children } = $props();
 </script>
@@ -8,4 +10,14 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
+<SiteHeader />
+
+<main class="app-main app-container">
+  {@render children()}
+</main>
+
+<style>
+  .app-main {
+    padding-block: var(--space-400);
+  }
+</style>
