@@ -1,0 +1,46 @@
+/* Generic Pragma stylesheet + tokens — the target foundation for our
+ * own components. Provides --color-*, --space-*, --dimension-* and typography.
+ * Its @layer architecture keeps its reset low-priority so it doesn't override
+ * the launchpad component styles below. */
+@import "@canonical/styles";
+
+/* Pragma (Launchpad) design system — token + component styles. */
+@import "@canonical/svelte-ds-app-launchpad/styles.css";
+@import "@canonical/launchpad-design-tokens/dist/css/color/system.css";
+@import "@canonical/launchpad-design-tokens/dist/css/dimension/responsive.css";
+@import "@canonical/launchpad-design-tokens/dist/css/typography/responsive.css";
+@import "@canonical/launchpad-design-tokens/dist/css/opacity/opacity.css";
+@import "@canonical/launchpad-design-tokens/dist/css/transition/preferred.css";
+
+:root {
+  /* Content column width. Pragma has no container-width token, so this is the
+     one named layout constant — matches Vanilla's $grid-max-width so the
+     centered side spacing lines up with the vanilla design. */
+  --app-content-max-width: 72rem;
+}
+
+/* Centered content column: Pragma token gutter on small screens, symmetric
+   side whitespace on wide screens (the side space seen in the vanilla layout). */
+.app-container {
+  max-width: var(--app-content-max-width);
+  margin-inline: auto;
+  padding-inline: var(--space-300);
+}
+
+/* Reserve the scrollbar gutter so pages with and without a scrollbar keep the
+   same content width — otherwise the centered column recenters and short pages
+   (no scrollbar) look like they have more side padding than long ones. */
+html {
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: var(--typography-text-primary-font-family);
+  font-size: var(--typography-text-primary-font-size);
+  font-weight: var(--typography-text-primary-font-weight);
+  letter-spacing: var(--typography-text-primary-letter-spacing);
+  line-height: var(--typography-text-primary-line-height);
+}
