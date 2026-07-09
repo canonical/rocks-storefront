@@ -1,0 +1,62 @@
+.ds.rocks-list-card {
+  --logo-size: 40px;
+  --padding: var(--space-200);
+  --gap: var(--space-200);
+  --half-gap-collapse: calc(-0.5 * var(--gap));
+
+  padding: var(--padding);
+  display: grid;
+  grid-template-columns: var(--logo-size) auto 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0 var(--gap);
+  grid-template-areas:
+    "logo name categories revision"
+    "logo description description last-update";
+
+  .logo {
+    grid-area: logo;
+    margin-block: auto;
+  }
+
+  .name {
+    grid-area: name;
+
+    .heading[data-level="1"] {
+      font-size: var(--dimension-size-fontSize-400);
+      margin-block: 0;
+    }
+  }
+
+  .categories {
+    grid-area: categories;
+    margin-inline-start: var(--half-gap-collapse);
+  }
+
+  .description {
+    grid-area: description;
+
+    &.empty {
+      color: var(--color-text-muted);
+    }
+  }
+
+  .small {
+    font-size: var(--dimension-size-fontSize-250);
+    color: var(--color-text-muted);
+    text-align: right;
+  }
+
+  .revision {
+    grid-area: revision;
+    margin-top: auto;
+  }
+
+  .last-update {
+    grid-area: last-update;
+    white-space: nowrap;
+
+    svg {
+      display: inline;
+    }
+  }
+}

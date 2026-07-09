@@ -83,6 +83,26 @@ describe("debounced", () => {
     cleanup();
   });
 
+  it("exposes pending as a reactive property while a change is settling", () => {
+    const cleanup = $effect.root(() => {
+      let source = $state("a");
+      const value = debounced(() => source, 100);
+      flushSync();
+
+      expect(value.pending()).toBe(false);
+
+      source = "b";
+      flushSync();
+      expect(value.pending()).toBe(true);
+
+      vi.advanceTimersByTime(100);
+      flushSync();
+      expect(value.pending()).toBe(false);
+    });
+
+    cleanup();
+  });
+
   it("cancels a pending update when the effect is destroyed", () => {
     let value: () => string = () => "unset";
     let source = $state("a");

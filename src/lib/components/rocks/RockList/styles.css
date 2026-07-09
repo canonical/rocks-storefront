@@ -1,0 +1,11 @@
+.ds.rocks-list {
+  list-style-type: "";
+
+  hr {
+    opacity: 30%;
+  }
+
+  li:last-child hr {
+    display: none;
+  }
+}
