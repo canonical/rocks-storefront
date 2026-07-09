@@ -12,12 +12,6 @@
 
 <SiteHeader />
 
-<main class="app-main app-container">
+<main>
   {@render children()}
 </main>
-
-<style>
-  .app-main {
-    padding-block: var(--space-400);
-  }
-</style>
