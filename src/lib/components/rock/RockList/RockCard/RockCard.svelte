@@ -4,6 +4,7 @@
   import type { RockFindResultItem } from "$lib/server/api/types";
   import "./styles.css";
   import { RevisionsIcon } from "@canonical/svelte-icons";
+  import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
 
   type Props = {
     rock: RockFindResultItem;
@@ -18,10 +19,13 @@
   const latestUpdate = $derived(
     rock["default-release"]?.channel["released-at"] || new Date().toISOString(),
   );
+  const iconUrl = $derived(
+    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON,
+  );
 </script>
 
 <article class="ds rocks-list-card">
-    <img class="logo" src={FALLBACK_ICON} alt="" />
+    <ImageWithFallback class="logo" src={iconUrl} alt="" fallback={FALLBACK_ICON} />
 
     <Link class="name" href={`/${encodeURIComponent(rock.name)}`}>
         <Heading level={3}>{rock.name}</Heading>
