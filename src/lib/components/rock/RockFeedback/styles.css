@@ -1,0 +1,10 @@
+.ds.rock-feedback {
+  margin-block-start: var(--space-400);
+  padding-block-start: var(--space-400);
+  border-block-start: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
+}
+
+.ds.rock-feedback .rock-feedback__text {
+  margin: 0;
+}
