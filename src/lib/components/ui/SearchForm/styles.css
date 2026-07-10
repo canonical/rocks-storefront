@@ -1,0 +1,34 @@
+.ds.search-form {
+  margin-block: 0 var(--dimension-500);
+}
+
+.ds.search-box-children {
+  justify-self: end;
+  display: flex;
+  gap: 0.5rem;
+  place-items: center;
+  padding: 0;
+  --color-background-button-hover: transparent;
+  --color-background-button-active: transparent;
+
+  height: 100%;
+  margin-inline-end: var(--dimension-gap-search-box);
+
+  & > * {
+    flex-shrink: 0;
+  }
+}
+
+.ds.search-box-loading {
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

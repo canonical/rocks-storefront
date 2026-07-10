@@ -1,24 +1,49 @@
 <script lang="ts">
-  import { Link } from "@canonical/svelte-ds-app-launchpad";
+  import { queryParameters } from "sveltekit-search-params";
+  import { RockList } from "$lib/components/rock/RockList";
   import { Heading } from "$lib/components/ui/Heading";
-  import type { PageProps } from "./$types";
+  import SearchForm from "$lib/components/ui/SearchForm/SearchForm.svelte";
+  import { SmallCaps } from "$lib/components/ui/SmallCaps";
+  import { getRocks } from "$lib/remote/api.remote";
+  import debounced from "$lib/utils/debounced.svelte";
 
-  const { data }: PageProps = $props();
-  const rocks = $derived(data.rocks);
+  const params = queryParameters({ q: true });
+  const query = debounced(() => params.q, 200);
+  const rocksRequest = $derived(getRocks({ query: query() }));
 </script>
 
-<div class="app-container page">
-  <Heading level={1}>Rocks store</Heading>
-  <Heading level={2}>Result: {rocks.length} rocks</Heading>
-  <ul>
-    {#each rocks as rock (rock.name)}
-      <li><Link href={`/${encodeURIComponent(rock.name)}`}>{rock.name}</Link></li>
-    {/each}
-  </ul>
+<svelte:head>
+    {#if query()}
+        <title>
+            Search results for "{query()}" · Rock Store
+        </title>
+    {:else}
+        <title>
+            Rock Store
+        </title>
+    {/if}
+</svelte:head>
+
+<div class="app-container">
+    <Heading class="visually-hidden" level={1}>Rocks store</Heading>
+
+    <div class="grid responsive">
+        <aside style="grid-column: span 3">
+            <Heading level={2}><SmallCaps>Categories</SmallCaps></Heading>
+
+            TODO...
+        </aside>
+
+        <section style="grid-column: span 9">
+            <SearchForm name="q" bind:value={params.q} loading={$effect.pending() > 0} />
+
+            <RockList rocks={(await rocksRequest).results} />
+        </section>
+    </div>
 </div>
 
 <style>
-  .page {
-    padding-block: var(--space-400);
-  }
+    .app-container {
+        margin-block: var(--dimension-500);
+    }
 </style>

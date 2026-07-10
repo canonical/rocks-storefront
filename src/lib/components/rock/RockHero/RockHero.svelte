@@ -7,10 +7,11 @@
   import { ChevronRightIcon, RevisionsIcon } from "@canonical/svelte-icons";
   import { Code } from "$lib/components/ui/Code";
   import { Heading } from "$lib/components/ui/Heading";
+  import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import { getRockTitle } from "$lib/utils/rock";
-  import type { RockHeroProps } from "./types.js";
   import "./styles.css";
+  import type { RockHeroProps } from "./types.js";
 
   const FALLBACK_ICON =
     "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
@@ -37,22 +38,12 @@
     return dates.length ? dates.reduce((a, b) => (b > a ? b : a)) : undefined;
   });
   const latestTag = $derived(rock["default-track"] || "latest");
-
-  function handleIconError() {
-    if (iconUrl !== FALLBACK_ICON) {
-      iconUrl = FALLBACK_ICON;
-    }
-  }
 </script>
 
 <header class={componentCssClassName}>
   <div class="app-container rock-hero__inner">
-    <img
-      class="rock-hero__icon"
-      src={iconUrl}
-      alt=""
-      onerror={handleIconError}
-    />
+    <ImageWithFallback src={iconUrl} alt="" fallback={FALLBACK_ICON} />
+
     <div class="rock-hero__body">
       <Heading level={1}>{title}</Heading>
       {#if publisher || category}
