@@ -12,11 +12,14 @@
   let { data }: PageProps = $props();
   const rock = $derived(data.rock);
 
-  const activeTab = $derived(page.url.searchParams.get("tab") ?? "description");
   const tabs = [
     { id: "description", label: "Description", href: "?tab=description" },
     { id: "tags", label: "Tags and channels", href: "?tab=tags" },
   ];
+  const activeTab = $derived.by(() => {
+    const tab = page.url.searchParams.get("tab");
+    return tab && tabs.some((t) => t.id === tab) ? tab : "description";
+  });
 </script>
 
 <svelte:head>

@@ -49,9 +49,14 @@
     return value.includes("@") && !value.includes("//");
   }
   function hrefFor(value: string): string {
-    if (/^https?:\/\//.test(value) || value.startsWith("mailto:")) return value;
-    if (isEmail(value)) return `mailto:${value}`;
-    return value;
+    const trimmed = value.trim();
+    if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
+    // Block dangerous/unknown schemes (javascript:, data:, …) before falling
+    // through to bare-email or relative handling, since metadata is untrusted.
+    if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith("//"))
+      return "#";
+    if (isEmail(trimmed)) return `mailto:${trimmed}`;
+    return trimmed;
   }
 
   function pickLinks(keys: string[]): { key: string; url: string }[] {
@@ -82,7 +87,7 @@
       out.push({
         icon: sourceIcon(key, url),
         label: SOURCE_LABELS[key] ?? displayUrl(url),
-        href: url,
+        href: hrefFor(url),
       });
     }
     return out;
@@ -93,7 +98,7 @@
     return isGithub(value) ? GithubIcon : LinkIcon;
   }
   function contactLabel(value: string, email: boolean): string {
-    if (email) return value;
+    if (email) return displayUrl(value);
     const segments = displayUrl(value).split("/").filter(Boolean);
     return segments.at(-1) ?? displayUrl(value);
   }
@@ -166,7 +171,7 @@
 
   <div class="rock-sidebar__item rock-sidebar__discourse">
     <p class="rock-sidebar__discourse-text">
-      Share your thoughts on this rock with the community on discourse.
+      Share your thoughts on this rock with the community on Discourse.
     </p>
     <Button href={DISCOURSE_HREF} target="_blank" rel="noopener">
       Join the discussion
