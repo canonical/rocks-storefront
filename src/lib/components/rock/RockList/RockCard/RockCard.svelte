@@ -1,10 +1,10 @@
 <script lang="ts">
   import { Link, RelativeDateTime } from "@canonical/svelte-ds-app-launchpad";
+  import { RevisionsIcon } from "@canonical/svelte-icons";
   import { Heading } from "$lib/components/ui/Heading";
+  import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import type { RockFindResultItem } from "$lib/server/api/types";
   import "./styles.css";
-  import { RevisionsIcon } from "@canonical/svelte-icons";
-  import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
 
   type Props = {
     rock: RockFindResultItem;
@@ -17,7 +17,7 @@
 
   const latestRevision = $derived(rock["default-release"]?.version || "?");
   const latestUpdate = $derived(
-    rock["default-release"]?.channel["released-at"] || new Date().toISOString(),
+    rock["default-release"]?.channel["released-at"],
   );
   const iconUrl = $derived(
     rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON,
@@ -45,15 +45,20 @@
         {rock.metadata?.description || "No description"}
     </p>
 
-    {#if latestRevision}
-        <span class="revision small">
-            Latest: {latestRevision}
-        </span>
-    {/if}
+    <span class="revision small">
+        Latest: {latestRevision}
+    </span>
 
-    {#if latestUpdate}
-        <span class="last-update small">
-            <RevisionsIcon />&nbsp;<RelativeDateTime date={latestUpdate} />
-        </span>
-    {/if}
+    <span class="last-update small">
+        {@render latestUpdateText(latestUpdate)}
+    </span>
 </article>
+
+{#snippet latestUpdateText(latestUpdate?: string | null)}
+    <RevisionsIcon aria-label="{rock.name} last updated" />&nbsp;
+    {#if !isNaN(Date.parse(latestUpdate!))}
+        <RelativeDateTime date={latestUpdate!} />
+    {:else}
+        unknown
+    {/if}
+{/snippet}
