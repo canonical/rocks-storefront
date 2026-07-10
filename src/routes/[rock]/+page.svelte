@@ -33,7 +33,7 @@
 
   <div class="rock-detail__content">
     {#if activeTab === "tags"}
-      <p class="rock-detail__todo">Coming soon ...</p>
+      <p class="rock-detail__todo">Coming soon…</p>
     {:else}
       <SplitLayout>
         {#snippet aside()}
