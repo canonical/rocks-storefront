@@ -1,0 +1,32 @@
+.ds.tabs {
+  border-block-end: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
+}
+
+.ds.tabs .tabs__list {
+  display: flex;
+  gap: var(--space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ds.tabs .tabs__link {
+  display: inline-block;
+  padding-block: var(--space-150);
+  padding-inline: var(--space-200);
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-block-end: var(--dimension-stroke-thickness-large) solid transparent;
+  /* Overlap the nav's bottom border so the active underline sits on top of it. */
+  margin-block-end: calc(-1 * var(--dimension-stroke-thickness-medium));
+}
+
+.ds.tabs .tabs__link:hover {
+  color: var(--color-text);
+}
+
+.ds.tabs .tabs__link[aria-current="page"] {
+  color: var(--color-text);
+  border-block-end-color: var(--color-text);
+}
