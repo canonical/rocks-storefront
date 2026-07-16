@@ -25,11 +25,11 @@
     category: optional(array(string()), []),
   });
 
+  const query = debounced(() => params.q, 200);
   const rocksRequest = $derived.by(() => {
-    const paramsDebounced = debounced(() => params, 200);
     return getRocks({
-      query: paramsDebounced().q,
-      categories: paramsDebounced().category,
+      query: query(),
+      categories: params.category,
     });
   });
 </script>
