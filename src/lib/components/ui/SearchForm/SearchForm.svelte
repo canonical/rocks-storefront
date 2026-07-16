@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Checkbox, SearchBox } from "@canonical/svelte-ds-app-launchpad";
+  import { SearchBox } from "@canonical/svelte-ds-app-launchpad";
   import { SpinnerIcon } from "@canonical/svelte-icons";
   import "./styles.css";
 
