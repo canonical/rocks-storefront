@@ -25,6 +25,9 @@ jobs:
       - name: Check linting and formatting
         run: npm run check
 
+      - name: Check no authored --lp- tokens
+        run: npm run check:tokens
+
   typecheck:
     name: Type check (svelte-check)
     runs-on: ubuntu-latest

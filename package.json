@@ -14,6 +14,7 @@
     "prepare": "svelte-kit sync; husky",
     "svelte-check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "svelte-check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "check:tokens": "! grep -rIn --include='*.svelte' --include='*.css' -- '--lp-' src/",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
