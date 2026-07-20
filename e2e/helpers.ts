@@ -9,7 +9,10 @@ import { expect } from "@playwright/test";
 let cached: Promise<string> | undefined;
 
 export function firstRockPath(request: APIRequestContext): Promise<string> {
-  cached ??= discoverFirstRockPath(request);
+  cached ??= discoverFirstRockPath(request).catch((err) => {
+    cached = undefined;
+    throw err;
+  });
   return cached;
 }
 

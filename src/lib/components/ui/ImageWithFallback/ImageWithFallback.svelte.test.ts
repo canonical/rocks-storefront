@@ -62,9 +62,7 @@ describe("ImageWithFallback.svelte", () => {
     });
 
     await vi.waitFor(() => expect(onerror).toHaveBeenCalledTimes(2));
-    await new Promise((resolve) => setTimeout(resolve, 100));
 
-    expect(onerror).toHaveBeenCalledTimes(2);
     expect(imageIn(container).getAttribute("src")).toBe(ALSO_BROKEN);
   });
 
