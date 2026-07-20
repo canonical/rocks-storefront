@@ -168,7 +168,7 @@
           </tr>
         </thead>
         <tbody>
-          {#each pagedRows as row (row.channelTag + row.architecture)}
+          {#each pagedRows as row (`${row.channelTag}|${row.architecture}|${row.version}|${row.lastUpdated ?? ""}`)}
             <tr>
               <td>{row.channelTag}</td>
               <td>{row.version || "—"}</td>
