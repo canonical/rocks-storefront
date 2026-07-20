@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from "$app/state";
+  import { RockChannels } from "$lib/components/rock/RockChannels";
   import { RockDescription } from "$lib/components/rock/RockDescription";
   import { RockFeedback } from "$lib/components/rock/RockFeedback";
   import { RockHero } from "$lib/components/rock/RockHero";
@@ -33,7 +34,7 @@
 
   <div class="rock-detail__content">
     {#if activeTab === "tags"}
-      <p class="rock-detail__todo">Coming soon…</p>
+      <RockChannels {rock} />
     {:else}
       <SplitLayout>
         {#snippet aside()}
@@ -58,10 +59,5 @@
 
   .rock-detail__content {
     padding-block-start: var(--space-400);
-  }
-
-  .rock-detail__todo {
-    margin: 0;
-    color: var(--color-text-muted);
   }
 </style>

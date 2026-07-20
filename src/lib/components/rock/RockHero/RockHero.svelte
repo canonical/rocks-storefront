@@ -9,7 +9,7 @@
   import { Heading } from "$lib/components/ui/Heading";
   import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
-  import { getRockTitle } from "$lib/utils/rock";
+  import { getLatestTag, getRockTitle } from "$lib/utils/rock";
   import "./styles.css";
   import type { RockHeroProps } from "./types.js";
 
@@ -37,7 +37,7 @@
       .filter((d): d is string => Boolean(d));
     return dates.length ? dates.reduce((a, b) => (b > a ? b : a)) : undefined;
   });
-  const latestTag = $derived(rock["default-track"] || "latest");
+  const latestTag = $derived(getLatestTag(rock));
 </script>
 
 <header class={componentCssClassName}>

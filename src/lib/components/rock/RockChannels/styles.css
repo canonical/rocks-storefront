@@ -1,0 +1,105 @@
+.ds.rock-channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-400);
+}
+
+.ds.rock-channels .rock-channels__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+}
+
+.ds.rock-channels .rock-channels__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  gap: var(--space-300);
+}
+
+.ds.rock-channels .rock-channels__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  padding: var(--space-300);
+  border: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
+}
+
+.ds.rock-channels .rock-channels__card p {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.ds.rock-channels .rock-channels__card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+}
+
+.ds.rock-channels .rock-channels__card-header .ds.heading {
+  margin-block: 0;
+}
+
+.ds.rock-channels .rock-channels__pull {
+  position: relative;
+}
+
+.ds.rock-channels .rock-channels__pull .ds.code {
+  display: block;
+  padding-inline-end: var(--space-400);
+}
+
+.ds.rock-channels .rock-channels__copy {
+  position: absolute;
+  inset-block-start: var(--space-100);
+  inset-inline-end: var(--space-100);
+  padding: var(--space-050);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.ds.rock-channels .rock-channels__card-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
+
+.ds.rock-channels .rock-channels__card-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-050);
+}
+
+.ds.rock-channels .rock-channels__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-300);
+}
+
+.ds.rock-channels .rock-channels__filter {
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+}
+
+.ds.rock-channels .rock-channels__filter > span {
+  color: var(--color-text);
+}
+
+.ds.rock-channels .rock-channels__empty {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.ds.rock-channels .rock-channels__pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-200);
+}
+
+.ds.rock-channels .rock-channels__page-status {
+  color: var(--color-text-muted);
+}
