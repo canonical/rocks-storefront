@@ -27,7 +27,12 @@
     rockcraft: "rockcraft.yaml",
   };
 
-  type LinkRow = { icon: Component; label: string; href: string };
+  type LinkRow = {
+    key: string;
+    icon: Component;
+    label: string;
+    href: string;
+  };
 
   let { rock }: RockSidebarProps = $props();
 
@@ -85,6 +90,7 @@
       if (seen.has(url)) continue;
       seen.add(url);
       out.push({
+        key: url,
         icon: sourceIcon(key, url),
         label: SOURCE_LABELS[key] ?? displayUrl(url),
         href: hrefFor(url),
@@ -115,6 +121,7 @@
       seen.add(value);
       const email = isEmail(value);
       out.push({
+        key: value,
         icon: contactIcon(value, email),
         label: contactLabel(value, email),
         href: hrefFor(value),
@@ -138,7 +145,7 @@
       <dt><SmallCaps>Source code</SmallCaps></dt>
       <dd>
         <ul class="rock-sidebar__links">
-          {#each sourceCode as item (item.href)}{@render linkRow(item)}{/each}
+          {#each sourceCode as item (item.key)}{@render linkRow(item)}{/each}
         </ul>
       </dd>
     </div>
@@ -163,7 +170,7 @@
       <dt><SmallCaps>Contacts</SmallCaps></dt>
       <dd>
         <ul class="rock-sidebar__links">
-          {#each contacts as item (item.href)}{@render linkRow(item)}{/each}
+          {#each contacts as item (item.key)}{@render linkRow(item)}{/each}
         </ul>
       </dd>
     </div>
