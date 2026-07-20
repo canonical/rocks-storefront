@@ -14,7 +14,7 @@
     "prepare": "svelte-kit sync; husky",
     "svelte-check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "svelte-check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "check:tokens": "! grep -rIn --include='*.svelte' --include='*.css' -- '--lp-' src/",
+    "check:tokens": "grep -rIn --include='*.svelte' --include='*.css' -- '--lp-' src/ && { echo 'Found authored --lp- token(s) in src/. Use generic Pragma tokens instead.' >&2; exit 1; } || test $? -eq 1",
     "lint": "biome lint .",
     "format": "biome format --write .",
     "check": "biome check .",
