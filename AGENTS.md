@@ -20,6 +20,8 @@ in `docs` and the relevant source files and tests.
 Read documentation files lazily - only those you need for the task at hand - when you need to understand a given part of the application
 (along with reading any code files for more specific details).
 
+Any UI or styling work: read [`docs/pragma-design-system.md`](docs/pragma-design-system.md) first — it defines the component and token rules (notably: never author `--lp-*` tokens in our own styles). The `check:tokens` script enforces that rule.
+
 ## Workflow
 
 ### Small changes
