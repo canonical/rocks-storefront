@@ -25,6 +25,14 @@ When step 3 fires (a value with no generic token), we add a project token rather
 
 For example, `--app-content-max-width` (`72rem`) exists because Pragma has no container-width token.
 
+## Component style conventions
+
+Applies to reusable components under `src/lib/components` — not route `+page.svelte` / `+layout.svelte` files, which may keep small page-scoped `<style>` blocks.
+
+- **Styles live in a co-located `styles.css`**, imported by the component — not in a Svelte `<style>` block. Enforced in CI by the `check:styles` script.
+- **The root element carries `ds <name>`** (e.g. `class="ds tabs"`), and the stylesheet scopes every rule under `.ds.<name>` (e.g. `.ds.tabs { … }`). This namespaces our styles and mirrors how Pragma's own components are structured.
+- A style-less passthrough component (one that just forwards an element, e.g. `ImageWithFallback` around an `<img>`) needs neither.
+
 ## The two token systems
 
 Pragma exposes two **non-interchangeable** token vocabularies:

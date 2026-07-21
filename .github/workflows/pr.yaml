@@ -28,6 +28,9 @@ jobs:
       - name: Check no authored --lp- tokens
         run: npm run check:tokens
 
+      - name: Check component styles are in styles.css
+        run: npm run check:styles
+
   typecheck:
     name: Type check (svelte-check)
     runs-on: ubuntu-latest
