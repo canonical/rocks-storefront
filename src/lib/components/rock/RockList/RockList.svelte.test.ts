@@ -21,8 +21,9 @@ describe("RockList.svelte", () => {
   it("shows the empty state when there are no rocks", async () => {
     const { container } = render(RockList, { rocks: [] });
 
-    expect(container.textContent).toContain("No results :(");
-    expect(container.querySelector("ul")).toBeNull();
+    expect(container.textContent).toContain("No results found");
+    expect(container.textContent).toContain("Contact us");
+    expect(container.querySelector("ul")).not.toBeNull();
   });
 
   it("gives the results a heading for screen readers", async () => {

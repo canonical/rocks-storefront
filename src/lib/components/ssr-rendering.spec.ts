@@ -138,7 +138,8 @@ describe("RockList server rendering", () => {
   it("emits the empty state with no rocks", () => {
     const { body } = render(RockList, { props: { rocks: [] } });
 
-    expect(body).toContain("No results :(");
+    expect(body).toContain("No results found");
+    expect(body).toContain("Contact us");
   });
 });
 
