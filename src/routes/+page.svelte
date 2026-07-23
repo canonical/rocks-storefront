@@ -55,6 +55,7 @@
 
             <!-- TODO: change this in some way to move the form logic into the SearchForm component -->
             <fieldset class="ds checkbox-group">
+                <legend class="visually-hidden">Categories</legend>
                 {#each CATEGORIES as category}
                     {@const lower = category.toLowerCase() }
                     <label class="ds checkbox-label" for="checkbox-{lower}">

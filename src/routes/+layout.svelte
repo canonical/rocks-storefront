@@ -19,7 +19,7 @@
      - delay 100ms because most page loads are instant, and we don't want to flash
      - long 10s duration because we don't actually know how long it will take
      - exponential easing so fast loads (>100ms and <1s) still see enough progress,
-       while slow networks see it moving for a full 12 seconds
+       while slow networks see it moving for a full 10 seconds
   -->
   <div
     class="ds navigation-loader"
