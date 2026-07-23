@@ -101,8 +101,7 @@ function buildSearchParams<T extends SchemaMap>(
 
 /** A stable, order-independent serialization used for equality checks. */
 function canonical(sp: URLSearchParams): string {
-  const clone = new URLSearchParams(sp);
-  clone.sort();
+  const clone = new URLSearchParams([...sp.entries()].sort());
   return clone.toString();
 }
 

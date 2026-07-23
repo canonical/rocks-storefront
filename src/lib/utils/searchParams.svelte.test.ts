@@ -243,4 +243,21 @@ describe("searchParams", () => {
 
     cleanup();
   });
+
+  it("treats repeated-key value order as order-independent when checking URL equality", async () => {
+    setUrl("?q=nginx&category=Data&category=Web");
+    let params!: { category: string[] };
+    const cleanup = $effect.root(() => {
+      params = searchParams({ category: v.optional(v.array(v.string()), []) });
+    });
+    await settle();
+    gotoMock.mockClear();
+
+    params.category = ["Web", "Data"];
+    await settle();
+
+    expect(gotoMock).not.toHaveBeenCalled();
+
+    cleanup();
+  });
 });
