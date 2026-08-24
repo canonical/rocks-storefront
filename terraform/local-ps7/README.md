@@ -1,6 +1,6 @@
 # rocks-storefront
 
-Terraform configuration to deploy a PS7-like environment with rockstore-io application 
+Terraform configuration to deploy a PS7-like environment with rocks-storefront application 
 locally in a Multipass VM.
 
 ## Requirements
@@ -131,12 +131,12 @@ juju models
 juju switch app
 juju status
 # Under the 'App' column you should see the name of your app:
-# in this case it should be rockstore-io by default
+# in this case it should be rocks-storefront by default
 
 # To deploy the new version of the app run the following command
 # (rock_name and version are the ones you gave to the image in the line
 # `docker://localhost:32000/${rock_name}:${version}`)
-juju refresh rockstore-io \
+juju refresh rocks-storefront \
   --path ./charm/${charmcarft_pack_output} \
   --resource app-image=localhost:32000/${rock_name}:${version}
 ```
@@ -147,10 +147,10 @@ If the application remains in error state it may be useful to completely remove
 it and re-deploy it.
 
 ```bash
-juju remove-application rockstore-io --force --no-wait
+juju remove-application rocks-storefront --force --no-wait
 # once the pods have been removed deploy the charm and app
 juju deploy ./charm/${charmcarft_pack_output} \
 --resource app-image=localhost:32000/${rock_name}:${version} -n 2
 # re-integrate the application with the ingress
-juju integrate rockstore-io ingress-configurator
+juju integrate rocks-storefront ingress-configurator
 ```

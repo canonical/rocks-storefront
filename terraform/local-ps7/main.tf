@@ -31,12 +31,12 @@ module "host_access" {
   depends_on = [module.app_ps7]
 }
 
-resource "juju_application" "rockstore_io" {
+resource "juju_application" "rocks_storefront" {
   model_uuid = module.app_ps7.model_uuid
   units      = var.units["rockstore"]
 
   charm {
-    name    = "rockstore-io"
+    name    = "rocks-storefront"
     channel = "latest/stable"
   }
 }

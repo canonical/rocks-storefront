@@ -34,7 +34,7 @@ This will deploy the charm with the rock image you just uploaded attached as a r
 once `juju status` reports the charm as `active`, you can test the webserver:
 
 ```bash
-curl {IP_OF_ROCKSTORE_IO_UNIT}:8000
+curl {IP_OF_ROCKS_STOREFRONT_UNIT}:8000
 ```
 
 to connect using a browser, the easiest way is to integrate with `nginx-ingress-integrator`:
@@ -42,7 +42,7 @@ to connect using a browser, the easiest way is to integrate with `nginx-ingress-
 ```bash
 juju deploy nginx-ingress-integrator --trust
 juju config nginx-ingress-integrator service-hostname=rockstore.local path-routes=/
-juju integrate nginx-ingress-integrator rockstore-io
+juju integrate nginx-ingress-integrator rocks-storefront
 ```
 
 You can then add `rockstore.local` to your `/etc/hosts` file with the IP of the multipass vm:

@@ -23,7 +23,9 @@ parts:
     override-build: |
       rm -rf node_modules
 
-      # We need the dev dependencies to build the app
+      # The image in which the rock is built has the NODE_ENV=production variable set
+      # and that causes `npm install` to skip dev dependencies; we need them to build
+      # the app so we specify that they must be included
       npm install --include=dev
       npm run build
 
@@ -31,9 +33,13 @@ parts:
       craftctl default
       mkdir -p ${CRAFT_PART_INSTALL}/app
       cp -r ${CRAFT_PART_BUILD}/build ${CRAFT_PART_INSTALL}/app
+      cp ${CRAFT_PART_BUILD}/package.json ${CRAFT_PART_INSTALL}/app
+      cp ${CRAFT_PART_BUILD}/.npmrc ${CRAFT_PART_INSTALL}/app
 
-      # delete node_modules from the final rock (imported by this npm plugin)
-      mv ${CRAFT_PART_INSTALL}/lib/node_modules/rocks-storefront/node_modules ${CRAFT_PART_INSTALL}/app/node_modules
+      # install just the node_modules needed for production (no dev dependencies)
+      npm install --ignore-scripts --prefix ${CRAFT_PART_INSTALL}/app
+
+      # delete duplicated node_modules from the final rock (imported by this npm plugin)
       rm -rf ${CRAFT_PART_INSTALL}/lib/node_modules/*
       rm -f ${CRAFT_PART_INSTALL}/bin/corepack ${CRAFT_PART_INSTALL}/bin/np*
 
@@ -45,8 +51,6 @@ parts:
     - bash_bins
     - ca-certificates_data
     - coreutils_bins
-    build-environment:
-    - UV_USE_IO_URING: '0'
 
   expressjs-framework/runtime:
     plugin: nil
@@ -77,7 +81,7 @@ services:
   # name must stay like this because the charm references it
   expressjs:
     override: replace
-    command: node build
+    command: node build/index.js
     startup: enabled
     environment:
       NODE_ENV: production
