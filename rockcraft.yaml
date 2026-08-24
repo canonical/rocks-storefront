@@ -1,0 +1,85 @@
+name: rocks-storefront
+version: '1.0'
+summary: Rocked store page for rocks
+description: |
+  This is the OCI image for the rocks storefront application.
+  It offers users the possibility to search and inspect details
+  of rocks uploaded to Canonical's registry.
+
+base: bare
+build-base: ubuntu@24.04
+platforms:
+  amd64:
+  arm64:
+
+# The parts are taken from the expressjs-framework extension but without
+# using it, as the project doesn't follow the required structure
+parts:
+  expressjs-framework/install-app:
+    npm-node-version: lts/krypton
+    npm-include-node: true
+    build-snaps:
+    - node/24/stable
+    override-build: |
+      rm -rf node_modules
+
+      # We need the dev dependencies to build the app
+      npm install --include=dev
+      npm run build
+
+      # copy built files to install directory so that they remain in rock's final image
+      craftctl default
+      mkdir -p ${CRAFT_PART_INSTALL}/app
+      cp -r ${CRAFT_PART_BUILD}/build ${CRAFT_PART_INSTALL}/app
+
+      # delete node_modules from the final rock (imported by this npm plugin)
+      mv ${CRAFT_PART_INSTALL}/lib/node_modules/rocks-storefront/node_modules ${CRAFT_PART_INSTALL}/app/node_modules
+      rm -rf ${CRAFT_PART_INSTALL}/lib/node_modules/*
+      rm -f ${CRAFT_PART_INSTALL}/bin/corepack ${CRAFT_PART_INSTALL}/bin/np*
+
+      # apply the _daemon_ user ownership to the app
+      chown -R 584792:584792 ${CRAFT_PART_INSTALL}/app
+    plugin: npm
+    source: .
+    stage-packages:
+    - bash_bins
+    - ca-certificates_data
+    - coreutils_bins
+    build-environment:
+    - UV_USE_IO_URING: '0'
+
+  expressjs-framework/runtime:
+    plugin: nil
+    stage-packages:
+    - libstdc++6
+    - zlib1g
+    stage:
+    - -etc/ssl/certs/ca-certificates.crt
+
+  # 584792 is the _daemon_ user and group that runs the application
+  # these directories are used when integrating the app with COS
+  expressjs-framework/logging:
+    plugin: nil
+    override-build: |-
+      craftctl default
+      mkdir -p $CRAFT_PART_INSTALL/opt/promtail
+      mkdir -p $CRAFT_PART_INSTALL/etc/promtail
+    permissions:
+    - path: opt/promtail
+      owner: 584792
+      group: 584792
+    - path: etc/promtail
+      owner: 584792
+      group: 584792
+
+run-user: _daemon_
+services:
+  # name must stay like this because the charm references it
+  expressjs:
+    override: replace
+    command: node build
+    startup: enabled
+    environment:
+      NODE_ENV: production
+    user: _daemon_
+    working-dir: /app
