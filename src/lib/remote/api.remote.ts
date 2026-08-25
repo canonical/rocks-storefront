@@ -1,4 +1,5 @@
 import { getRequestEvent, query } from "$app/server";
+import { memoizedAsync } from "$lib/utils/cache.server";
 import {
   ApiClient,
   getRockDetailsSchema,
@@ -15,12 +16,18 @@ function requestSignal(): AbortSignal {
   return getRequestEvent().request.signal;
 }
 
-export const getRocks = query(getRocksSchema, async (input) => {
-  const client = new ApiClient(requestSignal);
-  return await client.getRocks(input);
-});
+export const getRocks = query(
+  getRocksSchema,
+  memoizedAsync(async (input) => {
+    const client = new ApiClient(requestSignal);
+    return await client.getRocks(input);
+  }),
+);
 
-export const getRockDetails = query(getRockDetailsSchema, async (input) => {
-  const client = new ApiClient(requestSignal);
-  return await client.getRockDetails(input);
-});
+export const getRockDetails = query(
+  getRockDetailsSchema,
+  memoizedAsync(async (input) => {
+    const client = new ApiClient(requestSignal);
+    return await client.getRockDetails(input);
+  }),
+);
