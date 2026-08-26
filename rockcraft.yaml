@@ -1,5 +1,5 @@
 name: rocks-storefront
-version: '1.0'
+version: '1.1'
 summary: Rocked store page for rocks
 description: |
   This is the OCI image for the rocks storefront application.
@@ -21,12 +21,10 @@ parts:
     build-snaps:
     - node/24/stable
     override-build: |
-      rm -rf node_modules
-
       # The image in which the rock is built has the NODE_ENV=production variable set
       # and that causes `npm install` to skip dev dependencies; we need them to build
       # the app so we specify that they must be included
-      npm install --include=dev
+      npm ci --include=dev
       npm run build
 
       # copy built files to install directory so that they remain in rock's final image
@@ -75,6 +73,18 @@ parts:
     - path: etc/promtail
       owner: 584792
       group: 584792
+
+  # `juju ssh` needs "sh" command to work
+  # we alias it here so that we can SSH into the rock via juju
+  debugging:
+    plugin: nil
+    after:
+      - expressjs-framework/install-app
+    override-build: |
+      craftctl default
+      mkdir -p ${CRAFT_PART_INSTALL}/bin ${CRAFT_PART_INSTALL}/usr/bin
+      ln -sf /usr/bin/bash ${CRAFT_PART_INSTALL}/bin/sh
+      ln -sf /usr/bin/bash ${CRAFT_PART_INSTALL}/usr/bin/sh
 
 run-user: _daemon_
 services:
