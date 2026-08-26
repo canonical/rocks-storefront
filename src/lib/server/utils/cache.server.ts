@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-import { deepFreeze } from "../../utils/deepFreeze";
 
 const DEFAULT_TTL_MS = 3_600_000;
 
@@ -34,7 +33,9 @@ export class TtlCache {
   }
 
   /**
-   * Looks up a cached value.
+   * Retrieves a cached value. Object values (anything where
+   * `typeof value === "object"`) are cloned to ensure they are not changed
+   * while in cache.
    *
    * Expired entries are treated as misses and evicted lazily on access.
    *
@@ -43,19 +44,22 @@ export class TtlCache {
    */
   get<T>(key: string): T | undefined {
     const value = TtlCache.cache.get(key);
-    if (value) {
-      if (Date.now() <= value.expiresAt) {
-        return value.data as T;
-      } else {
-        TtlCache.cache.delete(key);
-      }
+    if (!value) return;
+
+    if (Date.now() <= value.expiresAt) {
+      let data = value.data;
+      if (value !== null && typeof value === "object")
+        data = structuredClone(data);
+      return data as T;
+    } else {
+      TtlCache.cache.delete(key);
     }
   }
 
   /**
    * Stores a value, overwriting any existing entry for the same key.
    * Object values (anything where `typeof value === "object"`) are
-   * cloned and frozen to ensure they are treated as read-only.
+   * cloned to ensure they are not changed while in cache.
    *
    * Runs an eager cache cleanup to maintain memory usage under control.
    *
@@ -68,11 +72,11 @@ export class TtlCache {
     if (!Number.isFinite(ttl_ms) || ttl_ms <= 0)
       throw new Error("`ttl_ms` must be positive and finite.");
 
+    let data = value;
     if (value !== null && typeof value === "object")
-      value = deepFreeze(structuredClone(value));
-
+      data = structuredClone(value);
     TtlCache.cache.set(key, {
-      data: value,
+      data,
       expiresAt: Date.now() + ttl_ms,
     });
 

@@ -17,6 +17,17 @@ describe("TtlCache", () => {
     expect(cache.get("roundtrip")).toEqual({ name: "redis" });
   });
 
+  it("clones object value when caching and retrieving", () => {
+    const structuredCloneSpy = vi.spyOn(globalThis, "structuredClone");
+
+    const cache = TtlCache.instance();
+    cache.set("roundtrip", { name: "redis" });
+    expect(structuredCloneSpy).toHaveBeenCalled();
+
+    expect(cache.get("roundtrip")).toEqual({ name: "redis" });
+    expect(structuredCloneSpy).toHaveBeenCalledTimes(2);
+  });
+
   it("returns undefined for an unknown key", () => {
     expect(TtlCache.instance().get("never-set")).toBeUndefined();
   });
@@ -37,51 +48,6 @@ describe("TtlCache", () => {
     vi.advanceTimersByTime(1001);
 
     expect(cache.get("stale")).toBeUndefined();
-  });
-
-  it("freezes cached objects (including nested properties)", () => {
-    const cache = TtlCache.instance();
-    const value = {
-      nested: { count: 2 },
-    };
-
-    cache.set("frozen", value);
-
-    const cached = cache.get<typeof value>("frozen");
-    expect(cached).toBeDefined();
-
-    if (!cached) {
-      throw new Error("Expected cached value to exist");
-    }
-
-    expect(Object.isFrozen(cached)).toBe(true);
-    expect(Object.isFrozen(cached.nested)).toBe(true);
-
-    expect(() => {
-      cached.nested.count = 3;
-    }).toThrow(TypeError);
-  });
-
-  it("does not freeze the original object, only the retrieved cached value", () => {
-    const cache = TtlCache.instance();
-    const value = {
-      nested: { count: 2 },
-    };
-
-    cache.set("frozen-boundary", value);
-
-    expect(Object.isFrozen(value)).toBe(false);
-    expect(Object.isFrozen(value.nested)).toBe(false);
-
-    const cached = cache.get<typeof value>("frozen-boundary");
-    expect(cached).toBeDefined();
-
-    if (!cached) {
-      throw new Error("Expected cached value to exist");
-    }
-
-    expect(Object.isFrozen(cached)).toBe(true);
-    expect(Object.isFrozen(cached.nested)).toBe(true);
   });
 });
 
