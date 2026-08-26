@@ -34,6 +34,13 @@ function fetchedUrl(fetchMock: ReturnType<typeof vi.fn>, call = 0): URL {
   return new URL(String(fetchMock.mock.calls[call][0]));
 }
 
+function getApiClient(
+  getAbortSignal?: () => AbortSignal,
+  options = { caching: false, retry: false },
+): ApiClient {
+  return new ApiClient(getAbortSignal, options);
+}
+
 afterEach(() => {
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
@@ -47,20 +54,20 @@ describe("ApiClient.getRocks", () => {
   });
 
   it("targets the v2/rocks/find endpoint", async () => {
-    await new ApiClient().getRocks({});
+    await getApiClient().getRocks({});
 
     const url = fetchedUrl(fetchMock);
     expect(url.pathname).toBe("/v2/rocks/find");
   });
 
   it("applies the default wildcard query", async () => {
-    await new ApiClient().getRocks({});
+    await getApiClient().getRocks({});
 
     expect(fetchedUrl(fetchMock).searchParams.get("q")).toBe("%");
   });
 
   it("omits empty list parameters", async () => {
-    await new ApiClient().getRocks({});
+    await getApiClient().getRocks({});
 
     const params = fetchedUrl(fetchMock).searchParams;
     expect(params.has("fields")).toBe(false);
@@ -69,7 +76,7 @@ describe("ApiClient.getRocks", () => {
   });
 
   it("serializes list parameters as comma-separated values", async () => {
-    await new ApiClient().getRocks({
+    await getApiClient().getRocks({
       query: "redis",
       fields: ["summary", "title"],
       architecture: ["amd64", "arm64"],
@@ -84,14 +91,14 @@ describe("ApiClient.getRocks", () => {
   });
 
   it("returns the decoded response body", async () => {
-    const result = await new ApiClient().getRocks({});
+    const result = await getApiClient().getRocks({});
 
     expect(result).toEqual({ results: [{ name: "redis" }] });
   });
 
   it("rejects input that violates the schema", async () => {
     await expect(
-      new ApiClient().getRocks({
+      getApiClient().getRocks({
         // @ts-expect-error deliberately invalid field for the test
         fields: ["not-a-real-field"],
       }),
@@ -107,13 +114,13 @@ describe("ApiClient.getRockDetails", () => {
   });
 
   it("targets the v2/rocks/info/<name> endpoint", async () => {
-    await new ApiClient().getRockDetails({ name: "redis" });
+    await getApiClient().getRockDetails({ name: "redis" });
 
     expect(fetchedUrl(fetchMock).pathname).toBe("/v2/rocks/info/redis");
   });
 
   it("requests every field by default", async () => {
-    await new ApiClient().getRockDetails({ name: "redis" });
+    await getApiClient().getRockDetails({ name: "redis" });
 
     const fields = fetchedUrl(fetchMock).searchParams.get("fields");
     expect(fields).toContain("summary");
@@ -121,7 +128,7 @@ describe("ApiClient.getRockDetails", () => {
   });
 
   it("returns the decoded response body", async () => {
-    const result = await new ApiClient().getRockDetails({ name: "redis" });
+    const result = await getApiClient().getRockDetails({ name: "redis" });
 
     expect(result).toEqual({ name: "redis", "package-id": "abc" });
   });
@@ -129,8 +136,107 @@ describe("ApiClient.getRockDetails", () => {
   it("requires a name", async () => {
     await expect(
       // @ts-expect-error name is mandatory
-      new ApiClient().getRockDetails({}),
+      getApiClient().getRockDetails({}),
     ).rejects.toThrow();
+  });
+});
+
+describe("ApiClient caching", () => {
+  it("reuses a cached getRockDetails result for identical requests", async () => {
+    const fetchMock = vi
+      .fn<(...args: Parameters<typeof fetch>) => Promise<Response>>()
+      .mockResolvedValue(
+        jsonResponse({ name: "cache-hit-redis", "package-id": "pkg-cache" }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = getApiClient(undefined, { caching: true, retry: false });
+
+    const first = await client.getRockDetails({ name: "cache-hit-redis" });
+    const second = await client.getRockDetails({ name: "cache-hit-redis" });
+
+    expect(first).toEqual({
+      name: "cache-hit-redis",
+      "package-id": "pkg-cache",
+    });
+    expect(second).toEqual({
+      name: "cache-hit-redis",
+      "package-id": "pkg-cache",
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not reuse cache entries for different request arguments", async () => {
+    const fetchMock = vi
+      .fn<(...args: Parameters<typeof fetch>) => Promise<Response>>()
+      .mockResolvedValueOnce(
+        jsonResponse({ name: "cache-a", "package-id": "pkg-a" }),
+      )
+      .mockResolvedValueOnce(
+        jsonResponse({ name: "cache-b", "package-id": "pkg-b" }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = getApiClient(undefined, { caching: true, retry: false });
+
+    await expect(client.getRockDetails({ name: "cache-a" })).resolves.toEqual({
+      name: "cache-a",
+      "package-id": "pkg-a",
+    });
+    await expect(client.getRockDetails({ name: "cache-b" })).resolves.toEqual({
+      name: "cache-b",
+      "package-id": "pkg-b",
+    });
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("ApiClient retry", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("retries retryable failures and eventually resolves", async () => {
+    const fetchMock = vi
+      .fn<(...args: Parameters<typeof fetch>) => Promise<Response>>()
+      .mockResolvedValueOnce(
+        new Response("temporarily unavailable", { status: 503 }),
+      )
+      .mockResolvedValueOnce(new Response("still unavailable", { status: 503 }))
+      .mockResolvedValueOnce(
+        jsonResponse({ name: "retry-success", "package-id": "pkg-retry" }),
+      );
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = getApiClient(undefined, { caching: false, retry: true });
+
+    const pending = client.getRockDetails({ name: "retry-success" });
+    await vi.advanceTimersByTimeAsync(300);
+
+    await expect(pending).resolves.toEqual({
+      name: "retry-success",
+      "package-id": "pkg-retry",
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not retry non-retryable failures", async () => {
+    const fetchMock = vi
+      .fn<(...args: Parameters<typeof fetch>) => Promise<Response>>()
+      .mockResolvedValue(jsonResponse({ Message: "invalid request" }, 400));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const client = getApiClient(undefined, { caching: false, retry: true });
+
+    await expect(
+      client.getRockDetails({ name: "fatal" }),
+    ).rejects.toBeInstanceOf(StoreApiResponseError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -144,7 +250,7 @@ describe("ApiClient error handling", () => {
   ])("maps HTTP %i to the matching error", async (status, errorClass) => {
     mockFetch(new Response("upstream failure", { status }));
 
-    await expect(new ApiClient().getRocks({})).rejects.toBeInstanceOf(
+    await expect(getApiClient().getRocks({})).rejects.toBeInstanceOf(
       errorClass,
     );
   });
@@ -152,7 +258,7 @@ describe("ApiClient error handling", () => {
   it("maps an unmapped 5xx status to a connection error", async () => {
     mockFetch(new Response("boom", { status: 599 }));
 
-    await expect(new ApiClient().getRocks({})).rejects.toBeInstanceOf(
+    await expect(getApiClient().getRocks({})).rejects.toBeInstanceOf(
       StoreApiConnectionError,
     );
   });
@@ -160,7 +266,7 @@ describe("ApiClient error handling", () => {
   it("raises a decode error when the body is not JSON", async () => {
     mockFetch(new Response("<html>not json</html>", { status: 200 }));
 
-    await expect(new ApiClient().getRocks({})).rejects.toBeInstanceOf(
+    await expect(getApiClient().getRocks({})).rejects.toBeInstanceOf(
       StoreApiResponseDecodeError,
     );
   });
@@ -174,7 +280,7 @@ describe("ApiClient error handling", () => {
     );
 
     await expect(
-      new ApiClient().getRockDetails({ name: "ghost" }),
+      getApiClient().getRockDetails({ name: "ghost" }),
     ).rejects.toBeInstanceOf(StoreApiResourceNotFound);
   });
 
@@ -182,7 +288,7 @@ describe("ApiClient error handling", () => {
     mockFetch(jsonResponse({}, 404));
 
     await expect(
-      new ApiClient().getRockDetails({ name: "ghost" }),
+      getApiClient().getRockDetails({ name: "ghost" }),
     ).rejects.toBeInstanceOf(StoreApiResourceNotFound);
   });
 
@@ -194,7 +300,7 @@ describe("ApiClient error handling", () => {
       ),
     );
 
-    await expect(new ApiClient().getRocks({})).rejects.toMatchObject({
+    await expect(getApiClient().getRocks({})).rejects.toMatchObject({
       constructor: StoreApiResponseErrorList,
       statusCode: 400,
       errors: [{ code: "bad-request", message: "invalid" }],
@@ -209,7 +315,7 @@ describe("ApiClient error handling", () => {
       ),
     );
 
-    await expect(new ApiClient().getRocks({})).rejects.toBeInstanceOf(
+    await expect(getApiClient().getRocks({})).rejects.toBeInstanceOf(
       StoreApiResourceNotFound,
     );
   });
@@ -217,7 +323,7 @@ describe("ApiClient error handling", () => {
   it("surfaces the response Message for a plain error body", async () => {
     mockFetch(jsonResponse({ Message: "quota exceeded" }, 429));
 
-    await expect(new ApiClient().getRocks({})).rejects.toMatchObject({
+    await expect(getApiClient().getRocks({})).rejects.toMatchObject({
       constructor: StoreApiResponseError,
       statusCode: 429,
       message: "quota exceeded",
@@ -227,7 +333,7 @@ describe("ApiClient error handling", () => {
   it("falls back to the lowercase message key", async () => {
     mockFetch(jsonResponse({ Message: "", message: "try again" }, 400));
 
-    await expect(new ApiClient().getRocks({})).rejects.toMatchObject({
+    await expect(getApiClient().getRocks({})).rejects.toMatchObject({
       message: "try again",
     });
   });
@@ -235,7 +341,7 @@ describe("ApiClient error handling", () => {
   it("uses a default message when the error body is empty", async () => {
     mockFetch(jsonResponse(null, 400));
 
-    await expect(new ApiClient().getRocks({})).rejects.toMatchObject({
+    await expect(getApiClient().getRocks({})).rejects.toMatchObject({
       constructor: StoreApiResponseError,
       message: "Unknown error from api",
     });
@@ -244,7 +350,7 @@ describe("ApiClient error handling", () => {
   it("maps a fetch TimeoutError to StoreApiTimeoutError", async () => {
     mockFetch(Promise.reject(new DOMException("timed out", "TimeoutError")));
 
-    await expect(new ApiClient().getRocks({})).rejects.toBeInstanceOf(
+    await expect(getApiClient().getRocks({})).rejects.toBeInstanceOf(
       StoreApiTimeoutError,
     );
   });
@@ -253,7 +359,7 @@ describe("ApiClient error handling", () => {
     const abort = new DOMException("aborted", "AbortError");
     mockFetch(Promise.reject(abort));
 
-    await expect(new ApiClient().getRocks({})).rejects.toBe(abort);
+    await expect(getApiClient().getRocks({})).rejects.toBe(abort);
   });
 });
 
@@ -262,7 +368,7 @@ describe("ApiClient abort signal", () => {
     const fetchMock = mockFetch(jsonResponse({ results: [] }));
     const controller = new AbortController();
 
-    await new ApiClient(() => controller.signal).getRocks({});
+    await getApiClient(() => controller.signal).getRocks({});
 
     expect(fetchMock.mock.calls[0][1]).toMatchObject({
       signal: controller.signal,

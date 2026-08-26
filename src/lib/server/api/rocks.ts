@@ -13,6 +13,8 @@ import {
   union,
 } from "valibot";
 import { env } from "$env/dynamic/private";
+import { memoizedAsync } from "../utils/cache.server";
+import { expoBackoff, retry } from "../utils/retry.server";
 import {
   StoreApiBadGatewayError,
   StoreApiConnectionError,
@@ -97,8 +99,30 @@ function extractErrorList(body: unknown): StoreApiErrorEntry[] | null {
 }
 
 /**
+ * Utilities for implementing retry logic
+ */
+
+const RETRIES = 3;
+const BACKOFF = expoBackoff(100);
+// It only makes sense to retry for some specific errors
+const RETRYABLE = [
+  StoreApiConnectionError,
+  StoreApiBadGatewayError,
+  StoreApiServiceUnavailableError,
+  StoreApiGatewayTimeoutError,
+  StoreApiTimeoutError,
+];
+const retryCallback = (e: Error) =>
+  !RETRYABLE.some((StoreApiError) => e instanceof StoreApiError);
+
+/**
  * Actual API client implementation
  */
+
+type ApiClientOptions = {
+  caching?: boolean;
+  retry?: boolean;
+};
 
 const API_BASE_URL = env.API_BASE_URL ?? "https://api.snapcraft.io/";
 const NAMESPACE = "v2/rocks";
@@ -106,8 +130,24 @@ const NAMESPACE = "v2/rocks";
 export class ApiClient {
   private getAbortSignal?: () => AbortSignal;
 
-  constructor(getAbortSignal?: () => AbortSignal) {
+  constructor(
+    getAbortSignal?: () => AbortSignal,
+    options: ApiClientOptions = {
+      caching: true,
+      retry: true,
+    },
+  ) {
     this.getAbortSignal = getAbortSignal;
+
+    if (options?.retry) {
+      this.request = retry(this.request, RETRIES, BACKOFF, retryCallback).bind(
+        this,
+      );
+    }
+
+    if (options?.caching) {
+      this.request = memoizedAsync(this.request).bind(this);
+    }
   }
 
   private buildUrl(
@@ -200,10 +240,19 @@ export class ApiClient {
     return body as T;
   }
 
-  private async request<T>(
+  /**
+   * Make a network request to the Store API. Same interface as built-in fetch.
+   * Does *not* implement caching or retry logic. Use this directly when
+   * calling non-cacheable or non-retryable APIs.
+   *
+   * @param input - The resource to fetch (URL string, URL object, or Request).
+   * @param init - Optional fetch configuration.
+   * @returns The parsed JSON response body typed as `T`.
+   */
+  private _request = async <T>(
     input: string | URL | Request,
     init: RequestInit = {},
-  ): Promise<T> {
+  ): Promise<T> => {
     let response: Response;
     try {
       response = await fetch(input, {
@@ -221,7 +270,17 @@ export class ApiClient {
     }
     const result = await this.processResponse<T>(response);
     return result;
-  }
+  };
+
+  /**
+   * Make a network request to the Store API. Same as above, but also might
+   * implement caching and retry logic based on the `options` at creation time.
+   *
+   * @param input - The resource to fetch (URL string, URL object, or Request).
+   * @param init - Optional fetch configuration.
+   * @returns The parsed JSON response body typed as `T`.
+   */
+  private request = this._request;
 
   // @ValidateArgs(getRocksSchema)
   async getRocks(input: GetRocksInput): Promise<RockFindResponse> {

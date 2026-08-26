@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { deepFreeze } from "./deepFreeze";
+import { deepFreeze } from "../../utils/deepFreeze";
 
 const DEFAULT_TTL_MS = 3_600_000;
 
@@ -7,21 +7,29 @@ const DEFAULT_TTL_MS = 3_600_000;
  * In-memory cache whose entries expire after a time-to-live (TTL).
  */
 export class TtlCache {
-  private cache: Map<string, { data: unknown; expiresAt: number }>;
+  private static cache: Map<string, { data: unknown; expiresAt: number }>;
+  private static _instance: TtlCache;
 
-  constructor() {
-    this.cache = new Map();
+  private constructor() {
+    TtlCache.cache = new Map();
+  }
+
+  static instance(): TtlCache {
+    if (!TtlCache._instance) {
+      TtlCache._instance = new TtlCache();
+    }
+    return TtlCache._instance;
   }
 
   /**
    * Removes all expired entries.
    */
   private cleanup() {
-    this.cache
+    TtlCache.cache
       .entries()
       .filter(([_, { expiresAt: ttl }]) => Date.now() > ttl)
       .forEach(([key]) => {
-        this.cache.delete(key);
+        TtlCache.cache.delete(key);
       });
   }
 
@@ -34,12 +42,12 @@ export class TtlCache {
    * @returns The cached value, or `undefined` if absent or expired.
    */
   get<T>(key: string): T | undefined {
-    const value = this.cache.get(key);
+    const value = TtlCache.cache.get(key);
     if (value) {
       if (Date.now() <= value.expiresAt) {
         return value.data as T;
       } else {
-        this.cache.delete(key);
+        TtlCache.cache.delete(key);
       }
     }
   }
@@ -63,7 +71,7 @@ export class TtlCache {
     if (value !== null && typeof value === "object")
       value = deepFreeze(structuredClone(value));
 
-    this.cache.set(key, {
+    TtlCache.cache.set(key, {
       data: value,
       expiresAt: Date.now() + ttl_ms,
     });
@@ -133,7 +141,7 @@ export function memoized<Args extends unknown[], Ret>(
   ttl_ms = DEFAULT_TTL_MS,
   argsSerializer: (args: Args) => string = hashArgs,
 ): (...args: Args) => Ret {
-  const cache = new TtlCache();
+  const cache = TtlCache.instance();
 
   return (...args: Args) => {
     const cacheKey = argsSerializer(args);
@@ -174,7 +182,7 @@ export function memoizedAsync<Args extends unknown[], Ret>(
   ttl_ms = DEFAULT_TTL_MS,
   argsSerializer: (args: Args) => string = hashArgs,
 ): (...args: Args) => Promise<Ret> {
-  const cache = new TtlCache();
+  const cache = TtlCache.instance();
 
   return async (...args: Args) => {
     const cacheKey = argsSerializer(args);
@@ -188,3 +196,15 @@ export function memoizedAsync<Args extends unknown[], Ret>(
     return value;
   };
 }
+
+/**
+ * TODO: implement Redis caching
+ *
+ * The charm will inject environment variables with the Redis hostname, port
+ * and password. If the variables are set, at app startup we attempt to
+ * establish a connection to the Redis server.
+ * We wrap the Redis connection with a RedisCache class that implements the
+ * same contract as the TtlCache.
+ * memoizedAsync will then be updated to select the appropriate cache
+ * implementation: RedisCache if available or TtlCache otherwise.
+ */

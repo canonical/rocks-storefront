@@ -11,18 +11,18 @@ afterEach(() => {
 
 describe("TtlCache", () => {
   it("returns a value that was stored under a key", () => {
-    const cache = new TtlCache();
+    const cache = TtlCache.instance();
     cache.set("roundtrip", { name: "redis" });
 
     expect(cache.get("roundtrip")).toEqual({ name: "redis" });
   });
 
   it("returns undefined for an unknown key", () => {
-    expect(new TtlCache().get("never-set")).toBeUndefined();
+    expect(TtlCache.instance().get("never-set")).toBeUndefined();
   });
 
   it("keeps a value until its ttl elapses", () => {
-    const cache = new TtlCache();
+    const cache = TtlCache.instance();
     cache.set("still-fresh", "value", 1000);
 
     vi.advanceTimersByTime(999);
@@ -31,7 +31,7 @@ describe("TtlCache", () => {
   });
 
   it("expires a value once its ttl has passed", () => {
-    const cache = new TtlCache();
+    const cache = TtlCache.instance();
     cache.set("stale", "value", 1000);
 
     vi.advanceTimersByTime(1001);
@@ -40,7 +40,7 @@ describe("TtlCache", () => {
   });
 
   it("freezes cached objects (including nested properties)", () => {
-    const cache = new TtlCache();
+    const cache = TtlCache.instance();
     const value = {
       nested: { count: 2 },
     };
@@ -63,7 +63,7 @@ describe("TtlCache", () => {
   });
 
   it("does not freeze the original object, only the retrieved cached value", () => {
-    const cache = new TtlCache();
+    const cache = TtlCache.instance();
     const value = {
       nested: { count: 2 },
     };

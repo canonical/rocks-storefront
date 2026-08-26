@@ -1,6 +1,4 @@
 import { getRequestEvent, query } from "$app/server";
-import { memoizedAsync } from "$lib/utils/cache.server";
-import { expoBackoff, retry } from "$lib/utils/retry.server";
 import {
   ApiClient,
   getRockDetailsSchema,
@@ -17,26 +15,12 @@ function requestSignal(): AbortSignal {
   return getRequestEvent().request.signal;
 }
 
-export const getRocks = query(
-  getRocksSchema,
-  retry(
-    memoizedAsync(async (input) => {
-      const client = new ApiClient(requestSignal);
-      return await client.getRocks(input);
-    }),
-    3,
-    expoBackoff(100),
-  ),
-);
+export const getRocks = query(getRocksSchema, async (input) => {
+  const client = new ApiClient(requestSignal);
+  return await client.getRocks(input);
+});
 
-export const getRockDetails = query(
-  getRockDetailsSchema,
-  retry(
-    memoizedAsync(async (input) => {
-      const client = new ApiClient(requestSignal);
-      return await client.getRockDetails(input);
-    }),
-    3,
-    expoBackoff(100),
-  ),
-);
+export const getRockDetails = query(getRockDetailsSchema, async (input) => {
+  const client = new ApiClient(requestSignal);
+  return await client.getRockDetails(input);
+});
