@@ -1,0 +1,62 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - ps7-deployment
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (Production or Staging)'
+        required: true
+        type: choice
+        options:
+          - Production
+          - Staging
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.setup-vars.outputs.environment }}
+      terraform_dir: ${{ steps.setup-vars.outputs.terraform_dir }}
+    steps:
+      - name: Setup vars
+        id: setup-vars
+        run: |
+          export env_from_input="${{ github.event.inputs.environment != '' && github.event.inputs.environment }}"
+          export env_from_branch="${{ github.ref == 'refs/heads/main' && 'Production' }}"
+          export environment="${{ $env_from_input || ($env_from_branch || 'Staging') }}"
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+
+          if [ "$environment" = "Production" ]; then
+            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
+          else
+            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
+          fi;
+
+  deploy:
+    needs: setup
+    environment: ${{ needs.setup.outputs.environment }}
+    name: Deploy
+    uses: canonical/webteam-devops/.github/workflows/deploy.yaml@ps7-deployment
+    permissions:
+      packages: write
+      id-token: write
+      contents: read
+    with:
+      environment: ${{ needs.setup.outputs.environment }}
+      environment_url: ${{ vars.ENVIRONMENT_URL }}
+      charm_name: ${{ vars.CHARM_NAME }}
+      channel: ${{ vars.CHANNEL }}
+      deploy_method: terraform
+      terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
+    secrets:
+      VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
+      VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
+      CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
