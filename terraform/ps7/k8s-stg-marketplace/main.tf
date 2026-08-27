@@ -5,10 +5,11 @@ resource "juju_application" "rocks_storefront" {
   charm {
     name     = var.charm_name
     channel  = var.charm_channel
+    revision = tonumber(var.charm_revision)
   }
 
   resources = {
-    (var.resource_name) = tostring(var.resource_revision)
+    (var.resource_name) = var.resource_revision
   }
 
   expose {

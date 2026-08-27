@@ -28,6 +28,11 @@ variable "charm_channel" {
   default     = "latest/stable"
 }
 
+variable "charm_revision" {
+  description = "Revision number of the charm."
+  type        = string
+}
+
 variable "resource_name" {
   description = "Name of the resource used by the charmed application."
   type        = string
@@ -35,5 +40,5 @@ variable "resource_name" {
 }
 variable "resource_revision" {
   description = "Revision number for the resource used by the charmed application (OCI image)."
-  type        = number
+  type        = string
 }
