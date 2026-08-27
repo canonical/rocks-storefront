@@ -20,14 +20,13 @@ permissions:
   contents: read
 
 jobs:
-  setup:
+  setenv:
     runs-on: ubuntu-latest
     outputs:
-      environment: ${{ steps.setup-vars.outputs.environment }}
-      terraform_dir: ${{ steps.setup-vars.outputs.terraform_dir }}
+      environment: ${{ steps.setup-env.outputs.environment }}
     steps:
-      - name: Setup vars
-        id: setup-vars
+      - name: Setup environment
+        id: setup-env
         run: |
           env_from_input="${{ github.event.inputs.environment }}"
           env_from_branch=""
@@ -37,15 +36,34 @@ jobs:
           environment="${env_from_input:-${env_from_branch:-Staging}}"
           echo "environment=$environment" >> $GITHUB_OUTPUT
 
-          if [ "$environment" = "Production" ]; then
+  # We need to output here the environment variables because the "environment" can not
+  # be set in a reusable job (those with key "uses"), so we would not be able to retrieve
+  # any environment-dependent variable in there
+  setup:
+    runs-on: ubuntu-latest
+    needs: setenv
+    environment: ${{ needs.setenv.outputs.environment }}
+    outputs:
+      environment_url: ${{ steps.setup-vars.outputs.environment_url }}
+      charm_name: ${{ steps.setup-vars.outputs.charm_name }}
+      channel: ${{ steps.setup-vars.outputs.channel }}
+      terraform_dir: ${{ steps.setup-vars.outputs.terraform_dir }}
+    steps:
+      - name: Setup vars
+        id: setup-vars
+        run: |
+          if [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
             echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
           else
             echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
           fi;
 
+          echo "environment_url=${{ vars.ENVIRONMENT_URL }}" >> $GITHUB_OUTPUT
+          echo "charm_name=${{ vars.CHARM_NAME }}" >> $GITHUB_OUTPUT
+          echo "channel=${{ vars.CHANNEL }}" >> $GITHUB_OUTPUT
+
   deploy:
-    needs: setup
-    environment: ${{ needs.setup.outputs.environment }}
+    needs: [setenv, setup]
     name: Deploy
     uses: canonical/webteam-devops/.github/workflows/deploy.yaml@ps7-deployment
     permissions:
@@ -53,10 +71,10 @@ jobs:
       id-token: write
       contents: read
     with:
-      environment: ${{ needs.setup.outputs.environment }}
-      environment_url: ${{ vars.ENVIRONMENT_URL }}
-      charm_name: ${{ vars.CHARM_NAME }}
-      channel: ${{ vars.CHANNEL }}
+      environment: ${{ needs.setenv.outputs.environment }}
+      environment_url: ${{ needs.setup.outputs.environment_url }}
+      charm_name: ${{ needs.setup.outputs.charm_name }}
+      channel: ${{ needs.setup.outputs.channel }}
       deploy_method: terraform
       terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
     secrets:
