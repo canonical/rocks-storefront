@@ -15,6 +15,10 @@ on:
         options:
           - Production
           - Staging
+      force_charm_build:
+        description: 'True to force the charm build'
+        required: true
+        type: boolean
 
 permissions:
   contents: read
@@ -24,6 +28,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       environment: ${{ steps.setup-env.outputs.environment }}
+      force_charm_build: ${{ steps.setup-env.outputs.force_charm_build }}
     steps:
       - name: Setup environment
         id: setup-env
@@ -35,6 +40,7 @@ jobs:
           fi;
           environment="${env_from_input:-${env_from_branch:-Staging}}"
           echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "force_charm_build=${{ github.event.inputs.force_charm_build || false }}" >> $GITHUB_OUTPUT
 
   # We need to output here the environment variables because the "environment" can not
   # be set in a reusable job (those with key "uses"), so we would not be able to retrieve
@@ -77,6 +83,7 @@ jobs:
       channel: ${{ needs.setup.outputs.channel }}
       deploy_method: terraform
       terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build }}
     secrets:
       VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
       VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
