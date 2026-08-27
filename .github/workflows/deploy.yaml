@@ -83,7 +83,8 @@ jobs:
       channel: ${{ needs.setup.outputs.channel }}
       deploy_method: terraform
       terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
-      force_charm_build: ${{ needs.setenv.outputs.force_charm_build }}
+      # Force conversion to boolean
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
     secrets:
       VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
       VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
