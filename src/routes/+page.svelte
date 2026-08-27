@@ -87,6 +87,7 @@
       border: none;
       display: grid;
       row-gap: var(--y-gap);
+      margin-block-end: var(--space-400);
 
       label {
         display: grid;
