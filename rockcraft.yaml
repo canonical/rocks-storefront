@@ -43,6 +43,10 @@ parts:
 
       # apply the _daemon_ user ownership to the app
       chown -R 584792:584792 ${CRAFT_PART_INSTALL}/app
+    prime:
+      # the npm plugin adds node's C++ header files to the rock by default
+      # we don't need them, so we exclude them from the prime step
+      - -include/node
     plugin: npm
     source: .
     stage-packages:
