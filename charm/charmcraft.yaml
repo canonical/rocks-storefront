@@ -1,0 +1,29 @@
+name: rocks-storefront
+type: charm
+base: ubuntu@24.04
+assumes:
+  - k8s-api
+
+platforms:
+  amd64:
+  arm64:
+
+summary: The charm for the rocks-storefront website
+description: |
+  The charm for the rocks-storefront website, built with the PaaS charm.
+  It is a full Svelte application offering the possibility to search and
+  inspect Rocks stored in Canonical's registry.
+
+extensions:
+  - expressjs-framework
+
+config:
+  options:
+    node-env:
+      description: "Environment in which the application is running"
+      default: "production"
+      type: string
+    port:
+      description: "Port in which the application listens for connections"
+      default: 3000
+      type: int

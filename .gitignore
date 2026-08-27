@@ -32,3 +32,9 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# rocks and terraform
+*.rock
+.terraform
+.terraform.lock.hcl
+*.tfstate*
