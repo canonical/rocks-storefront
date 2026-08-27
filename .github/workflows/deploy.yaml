@@ -29,9 +29,12 @@ jobs:
       - name: Setup vars
         id: setup-vars
         run: |
-          export env_from_input="${{ github.event.inputs.environment != '' && github.event.inputs.environment }}"
-          export env_from_branch="${{ github.ref == 'refs/heads/main' && 'Production' }}"
-          export environment="${{ $env_from_input || ($env_from_branch || 'Staging') }}"
+          env_from_input="${{ github.event.inputs.environment }}"
+          env_from_branch=""
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            env_from_branch="Production"
+          fi;
+          environment="${env_from_input:-${env_from_branch:-Staging}}"
           echo "environment=$environment" >> $GITHUB_OUTPUT
 
           if [ "$environment" = "Production" ]; then
