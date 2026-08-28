@@ -1,5 +1,5 @@
 resource "juju_application" "rocks_storefront" {
-  model_uuid = juju_model.service_model.uuid
+  model_uuid = data.juju_model.service_model.uuid
   units      = var.units
 
   charm {
@@ -18,7 +18,7 @@ resource "juju_application" "rocks_storefront" {
 }
 
 resource "juju_application" "ingress_configurator" {
-  model_uuid  = juju_model.service_model.uuid
+  model_uuid  = data.juju_model.service_model.uuid
   units       = 1
 
   charm {
@@ -34,7 +34,7 @@ resource "juju_application" "ingress_configurator" {
 }
 
 resource "juju_integration" "ingress_app" {
-  model_uuid  = juju_model.service_model.uuid
+  model_uuid  = data.juju_model.service_model.uuid
 
   application {
     name      = juju_application.rocks_storefront.name
@@ -42,13 +42,13 @@ resource "juju_integration" "ingress_app" {
   }
 
   application {
-    name      = module.app_ps7.ingress_app_name
+    name      = juju_application.ingress_configurator.name
     endpoint  = var.ingress_endpoint
   }
 }
 
 resource "juju_integration" "ingress_haproxy" {
-  model_uuid  = juju_model.service_model.uuid
+  model_uuid  = data.juju_model.service_model.uuid
 
   application {
     name      = juju_application.ingress_configurator.name
