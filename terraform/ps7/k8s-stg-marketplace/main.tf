@@ -15,6 +15,10 @@ resource "juju_application" "rocks_storefront" {
   expose {
     cidrs = "10.0.0.0/8"
   }
+
+  config = {
+    "juju-external-hostname" = var.hostname
+  }
 }
 
 resource "juju_application" "ingress_configurator" {
