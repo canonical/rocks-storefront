@@ -71,7 +71,7 @@ jobs:
   deploy:
     needs: [setenv, setup]
     name: Deploy
-    uses: canonical/webteam-devops/.github/workflows/deploy.yaml@ps7-deployment
+    uses: canonical/webteam-devops/.github/workflows/terraform-deploy-ps7.yaml@ps7-deployment
     permissions:
       packages: write
       id-token: write
@@ -85,6 +85,10 @@ jobs:
       terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
       # Force conversion to boolean
       force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
+      # tmp
+      charm_revision: "1:
+      resource_name: app-image
+      resource_revision_number: "2"
     secrets:
       VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
       VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
