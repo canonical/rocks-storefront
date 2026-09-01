@@ -1,0 +1,58 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  setenv:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.setup-env.outputs.environment }}
+    steps:
+      - name: Setup environment
+        id: setup-env
+        run: |
+          env_from_input="${{ github.event.inputs.environment }}"
+          env_from_branch=""
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            env_from_branch="Production"
+          fi;
+          environment="${env_from_input:-${env_from_branch:-Staging}}"
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+
+  # We need to output here the environment variables because the "environment" can not
+  # be set in a reusable job (those with key "uses"), so we would not be able to retrieve
+  # any environment-dependent variable in there
+  setup:
+    runs-on: ubuntu-latest
+    needs: setenv
+    environment: ${{ needs.setenv.outputs.environment }}
+    outputs:
+      terraform_dir: ${{ steps.setup-vars.outputs.terraform_dir }}
+    steps:
+      - name: Setup vars
+        id: setup-vars
+        run: |
+          if [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
+            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
+          else
+            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
+          fi;
+
+  apply:
+    needs: [setenv, setup]
+    name: Terraform Apply
+    uses: canonical/webteam-devops/.github/workflows/terraform_apply.yaml
+    permissions:
+      packages: write
+      id-token: write
+      contents: read
+    with:
+      terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
+    secrets:
+      CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
+      VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
+      VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
