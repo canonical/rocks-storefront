@@ -1,0 +1,19 @@
+.ds.search-suggestions {
+  margin-block: var(--space-300);
+
+  .heading {
+    margin-block: var(--space-300);
+    color: var(--color-text);
+    font-family: var(--typography-text-primary-font-family);
+    font-size: var(--typography-text-primary-font-size);
+    font-weight: var(--typography-weight-semiBold);
+    letter-spacing: var(--typography-text-primary-letter-spacing);
+    line-height: var(--typography-text-primary-line-height);
+  }
+
+  .options {
+    ul {
+      padding-inline-start: var(--space-400);
+    }
+  }
+}

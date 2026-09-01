@@ -1,0 +1,23 @@
+.ds.split-layout {
+  --grid-column-gap: var(--space-600);
+}
+
+.ds.split-layout .split-layout__aside,
+.ds.split-layout .split-layout__main {
+  grid-column: span 4;
+}
+
+@media (min-width: 768px) {
+  .ds.split-layout .split-layout__aside {
+    grid-column: span 3;
+  }
+  .ds.split-layout .split-layout__main {
+    grid-column: span 5;
+  }
+}
+
+@media (min-width: 1280px) {
+  .ds.split-layout .split-layout__main {
+    grid-column: span 9;
+  }
+}

@@ -1,20 +1,29 @@
-name: rockstore-io
-
+name: rocks-storefront
 type: charm
+base: ubuntu@24.04
+assumes:
+  - k8s-api
 
-base: ubuntu@22.04
 platforms:
   amd64:
+  arm64:
 
-title: Rocks store
-summary: Charm for the Rocks Store
+summary: The charm for the rocks-storefront website
 description: |
-  This is the charmed Rocks Store. This charm deploys the rocks
-  storefront. It is a web application that allows users to view rocks.
-links:
-  contact: luke.wesley-holley@canonical.com
-  website:
-  - https://rocks.ubuntu.com
+  The charm for the rocks-storefront website, built with the PaaS charm.
+  It is a full Svelte application offering the possibility to search and
+  inspect Rocks stored in Canonical's registry.
 
 extensions:
-  - flask-framework
+  - expressjs-framework
+
+config:
+  options:
+    node-env:
+      description: "Environment in which the application is running"
+      default: "production"
+      type: string
+    port:
+      description: "Port in which the application listens for connections"
+      default: 3000
+      type: int

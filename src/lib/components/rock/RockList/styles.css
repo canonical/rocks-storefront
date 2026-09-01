@@ -1,0 +1,8 @@
+.ds.rocks-list {
+  list-style-type: "";
+  margin-block: 0 var(--dimension-800);
+
+  hr {
+    opacity: 30%;
+  }
+}

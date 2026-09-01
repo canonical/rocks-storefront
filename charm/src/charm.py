@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
-# Copyright 2025 Ubuntu
-# See LICENSE file for licensing details.
 
-"""Flask Charm entrypoint."""
+"""
+ExpressJS Charm entrypoint.
+This is just the name that the paas-charm gives to a NodeJS based environment.
+We are not using Express for this project.
+"""
 
 import logging
 import typing
 
 import ops
 
-import paas_charm.flask
+import paas_charm.expressjs
 
 logger = logging.getLogger(__name__)
 
 
-class RockstoreIoCharm(paas_charm.flask.Charm):
-    """Flask Charm service."""
+class NodeCharm(paas_charm.expressjs.Charm):
+    """ExpressJS Charm service."""
 
     def __init__(self, *args: typing.Any) -> None:
         """Initialize the instance.
@@ -27,4 +29,4 @@ class RockstoreIoCharm(paas_charm.flask.Charm):
 
 
 if __name__ == "__main__":
-    ops.main(RockstoreIoCharm)
+    ops.main.main(NodeCharm)

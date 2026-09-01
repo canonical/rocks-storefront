@@ -1,0 +1,9 @@
+.ds.rock-description .rock-description__summary {
+  margin-block: 0 var(--space-300);
+  color: var(--color-text);
+}
+
+.ds.rock-description .rock-description__empty {
+  margin-block: 0;
+  color: var(--color-text-muted);
+}

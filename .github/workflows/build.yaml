@@ -1,0 +1,76 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment (Production or Staging)'
+        required: true
+        type: choice
+        options:
+          - Production
+          - Staging
+      force_charm_build:
+        description: 'True to force the charm build'
+        required: true
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  setenv:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.setup-env.outputs.environment }}
+      force_charm_build: ${{ steps.setup-env.outputs.force_charm_build }}
+    steps:
+      - name: Setup environment
+        id: setup-env
+        run: |
+          env_from_input="${{ github.event.inputs.environment }}"
+          env_from_branch=""
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            env_from_branch="Production"
+          fi;
+          environment="${env_from_input:-${env_from_branch:-Staging}}"
+          echo "environment=$environment" >> $GITHUB_OUTPUT
+          echo "force_charm_build=${{ github.event.inputs.force_charm_build || false }}" >> $GITHUB_OUTPUT
+
+  # We need to output here the environment variables because the "environment" can not
+  # be set in a reusable job (those with key "uses"), so we would not be able to retrieve
+  # any environment-dependent variable in there
+  setup:
+    runs-on: ubuntu-latest
+    needs: setenv
+    environment: ${{ needs.setenv.outputs.environment }}
+    outputs:
+      charm_name: ${{ steps.setup-vars.outputs.charm_name }}
+      channel: ${{ steps.setup-vars.outputs.channel }}
+    steps:
+      - name: Setup vars
+        id: setup-vars
+        run: |
+          echo "charm_name=${{ vars.CHARM_NAME }}" >> $GITHUB_OUTPUT
+          echo "channel=${{ vars.CHANNEL }}" >> $GITHUB_OUTPUT
+
+  build:
+    needs: [setenv, setup]
+    name: Build
+    uses: canonical/webteam-devops/.github/workflows/pack_release.yaml@main
+    permissions:
+      packages: write
+      id-token: write
+      contents: read
+    with:
+      charm_name: ${{ needs.setup.outputs.charm_name }}
+      channel: ${{ needs.setup.outputs.channel }}
+      environment: ${{ needs.setenv.outputs.environment }}
+      # Force conversion to boolean
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
+    secrets:
+      CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
