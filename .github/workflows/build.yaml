@@ -1,4 +1,4 @@
-name: Deploy
+name: Build
 
 on:
   push:
@@ -68,29 +68,17 @@ jobs:
           echo "charm_name=${{ vars.CHARM_NAME }}" >> $GITHUB_OUTPUT
           echo "channel=${{ vars.CHANNEL }}" >> $GITHUB_OUTPUT
 
-  deploy:
+  build:
     needs: [setenv, setup]
-    name: Deploy
-    uses: canonical/webteam-devops/.github/workflows/terraform-deploy-ps7.yaml@ps7-deployment
+    name: Build
+    uses: canonical/webteam-devops/.github/workflows/terraform-deploy-ps7.yaml
     permissions:
       packages: write
       id-token: write
       contents: read
     with:
-      #environment: ${{ needs.setenv.outputs.environment }}
-      #environment_url: ${{ needs.setup.outputs.environment_url }}
       charm_name: ${{ needs.setup.outputs.charm_name }}
       channel: ${{ needs.setup.outputs.channel }}
-      #deploy_method: terraform
       terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
-      # Force conversion to boolean
-      #force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
-      # tmp for running the script of terraform-deploy-ps7 directly
-      # ver 6
-      charm_revision: "1"
-      resource_name: app-image
-      resource_revision_number: "2"
     secrets:
-      VAULT_APPROLE_ROLE_ID: ${{ secrets.VAULT_APPROLE_ROLE_ID }}
-      VAULT_APPROLE_SECRET_ID: ${{ secrets.VAULT_APPROLE_SECRET_ID }}
-      #CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
+      CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
