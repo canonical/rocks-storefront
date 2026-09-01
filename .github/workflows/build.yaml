@@ -5,7 +5,6 @@ on:
     branches:
       - main
       - staging
-      - ps7-deployment
   workflow_dispatch:
     inputs:
       environment:
@@ -50,28 +49,19 @@ jobs:
     needs: setenv
     environment: ${{ needs.setenv.outputs.environment }}
     outputs:
-      environment_url: ${{ steps.setup-vars.outputs.environment_url }}
       charm_name: ${{ steps.setup-vars.outputs.charm_name }}
       channel: ${{ steps.setup-vars.outputs.channel }}
-      terraform_dir: ${{ steps.setup-vars.outputs.terraform_dir }}
     steps:
       - name: Setup vars
         id: setup-vars
         run: |
-          if [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
-            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
-          else
-            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
-          fi;
-
-          echo "environment_url=${{ vars.ENVIRONMENT_URL }}" >> $GITHUB_OUTPUT
           echo "charm_name=${{ vars.CHARM_NAME }}" >> $GITHUB_OUTPUT
           echo "channel=${{ vars.CHANNEL }}" >> $GITHUB_OUTPUT
 
   build:
     needs: [setenv, setup]
     name: Build
-    uses: canonical/webteam-devops/.github/workflows/terraform-deploy-ps7.yaml
+    uses: canonical/webteam-devops/.github/workflows/pack_release.yaml@main
     permissions:
       packages: write
       id-token: write
@@ -79,6 +69,8 @@ jobs:
     with:
       charm_name: ${{ needs.setup.outputs.charm_name }}
       channel: ${{ needs.setup.outputs.channel }}
-      terraform_dir: ${{ needs.setup.outputs.terraform_dir }}
+      environment: ${{ needs.setenv.outputs.environment }}
+      # Force conversion to boolean
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
     secrets:
       CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}

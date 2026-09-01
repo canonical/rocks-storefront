@@ -1,4 +1,4 @@
-name: Build
+name: Terraform Apply
 
 on:
   workflow_dispatch:
@@ -45,7 +45,7 @@ jobs:
   apply:
     needs: [setenv, setup]
     name: Terraform Apply
-    uses: canonical/webteam-devops/.github/workflows/terraform_apply.yaml
+    uses: canonical/webteam-devops/.github/workflows/terraform_apply.yaml@main
     permissions:
       packages: write
       id-token: write
