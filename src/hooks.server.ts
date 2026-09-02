@@ -47,7 +47,7 @@ export const handle = createHandle(logger);
 
 /**
  * Build the `handleError` hook bound to a base logger. Uncaught server errors
- * are serialized (via pino's error serializer) and logged with the request's
+ * are serialized (via Pino's error serializer) and logged with the request's
  * correlation ids, reusing the child logger bound in `handle` when available.
  * The client only receives a generic message — never error internals.
  */

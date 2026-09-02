@@ -2,6 +2,7 @@
 
 """
 ExpressJS Charm entrypoint.
+
 This is just the name that the paas-charm gives to a NodeJS based environment.
 We are not using Express for this project.
 """
