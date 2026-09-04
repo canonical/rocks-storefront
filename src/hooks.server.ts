@@ -1,23 +1,11 @@
 import type { Handle, HandleServerError } from "@sveltejs/kit";
 import type { Logger } from "pino";
 import {
-  isEgressDebugEnabled,
-  logEgressStartupDiagnostics,
-} from "$lib/server/api/egress-diagnostics";
-import {
   REQUEST_ID_HEADER,
   resolveRequestId,
   resolveTraceId,
 } from "$lib/server/correlation";
 import { logger } from "$lib/server/logger";
-
-// One-shot egress diagnostics at boot, only when explicitly enabled via
-// `DEBUG_EGRESS`. Logs the proxy configuration, installs the undici connection
-// trace, and probes connectivity to the Store API — the tools for diagnosing a
-// "works locally, fails behind the cloud proxy/firewall" outage.
-if (isEgressDebugEnabled()) {
-  void logEgressStartupDiagnostics(logger);
-}
 
 /**
  * Build the `handle` hook bound to a base logger. A child logger carrying the
