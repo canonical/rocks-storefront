@@ -15,6 +15,7 @@ import {
 import { env } from "$env/dynamic/private";
 import { memoizedAsync } from "../utils/cache.server";
 import { expoBackoff, retry } from "../utils/retry.server";
+import { logUpstreamFetchError } from "./egress-diagnostics";
 import {
   StoreApiBadGatewayError,
   StoreApiConnectionError,
@@ -262,7 +263,15 @@ export class ApiClient {
     } catch (error) {
       // `AbortSignal.timeout()` rejects the fetch with a `TimeoutError`
       // DOMException; surface it as our dedicated timeout error. Genuine
-      // cancellations (`AbortError`) are rethrown untouched.
+      // cancellations (`AbortError`) are the client going away.
+      const isAbort =
+        error instanceof DOMException && error.name === "AbortError";
+      if (!isAbort) {
+        // Transport failures (DNS/TCP/TLS/proxy) arrive here as an opaque
+        // `TypeError: fetch failed`. Log the real cause + egress config at the
+        // one choke point before mapping/rethrowing.
+        await logUpstreamFetchError(input, error);
+      }
       if (error instanceof DOMException && error.name === "TimeoutError") {
         throw new StoreApiTimeoutError("Request to the store API timed out");
       }

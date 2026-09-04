@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createLogger, REDACT_PATHS } from "./logger";
+import { createLogger, REDACT_PATHS, serializeError } from "./logger";
 
 interface CollectingStream {
   write: (chunk: string) => void;
@@ -109,5 +109,99 @@ describe("createLogger", () => {
     expect(REDACT_PATHS).toEqual(
       expect.arrayContaining(["authorization", "cookie", "password"]),
     );
+  });
+});
+
+describe("serializeError", () => {
+  it("returns a plain message for non-error values", () => {
+    expect(serializeError("boom")).toEqual({ message: "boom" });
+    expect(serializeError(42)).toEqual({ message: "Unknown error" });
+  });
+
+  it("allowlists network fields on the error itself", () => {
+    const error = Object.assign(new Error("connect failed"), {
+      code: "ECONNREFUSED",
+      syscall: "connect",
+      address: "10.0.0.5",
+      port: 443,
+    });
+
+    expect(serializeError(error)).toMatchObject({
+      type: "Error",
+      message: "connect failed",
+      code: "ECONNREFUSED",
+      syscall: "connect",
+      address: "10.0.0.5",
+      port: 443,
+    });
+  });
+
+  it("surfaces the underlying cause of an undici 'fetch failed' error", () => {
+    // Shape mirrors Node's global fetch: opaque TypeError wrapping the syscall.
+    const cause = Object.assign(
+      new Error("connect ECONNREFUSED 10.0.0.5:443"),
+      {
+        code: "ECONNREFUSED",
+        syscall: "connect",
+        address: "10.0.0.5",
+        port: 443,
+      },
+    );
+    const error = Object.assign(new TypeError("fetch failed"), { cause });
+
+    const serialized = serializeError(error);
+
+    expect(serialized).toMatchObject({
+      type: "TypeError",
+      message: "fetch failed",
+    });
+    expect(serialized.cause).toMatchObject({
+      type: "Error",
+      code: "ECONNREFUSED",
+      address: "10.0.0.5",
+      port: 443,
+    });
+  });
+
+  it("follows an AggregateError's members when no cause is set", () => {
+    const inner = Object.assign(
+      new Error("getaddrinfo ENOTFOUND api.example"),
+      {
+        code: "ENOTFOUND",
+        hostname: "api.example",
+      },
+    );
+    const aggregate = new AggregateError([inner], "all attempts failed");
+    const error = Object.assign(new TypeError("fetch failed"), {
+      cause: aggregate,
+    });
+
+    const serialized = serializeError(error);
+
+    expect(serialized.cause).toMatchObject({ type: "AggregateError" });
+    expect((serialized.cause as Record<string, unknown>).cause).toMatchObject({
+      code: "ENOTFOUND",
+      hostname: "api.example",
+    });
+  });
+
+  it("stops walking a self-referential cause chain", () => {
+    const error = new Error("loop");
+    error.cause = error;
+
+    expect(() => serializeError(error)).not.toThrow();
+  });
+
+  it("does not leak secrets carried on the cause chain", () => {
+    const cause = Object.assign(new Error("bad"), {
+      config: { headers: { authorization: "Bearer super-secret-token" } },
+      code: "ECONNREFUSED",
+    });
+    const error = Object.assign(new TypeError("fetch failed"), { cause });
+
+    const raw = JSON.stringify(serializeError(error));
+
+    expect(raw).not.toContain("super-secret-token");
+    expect(raw).toContain("ECONNREFUSED");
   });
 });

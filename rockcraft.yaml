@@ -99,5 +99,6 @@ services:
     startup: enabled
     environment:
       NODE_ENV: production
+      NODE_USE_ENV_PROXY: 1
     user: _daemon_
     working-dir: /app
