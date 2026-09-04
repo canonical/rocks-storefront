@@ -95,7 +95,7 @@ services:
   # name must stay like this because the charm references it
   expressjs:
     override: replace
-    command: node build/index.js
+    command: NODE_USE_ENV_PROXY=1 node build/index.js
     startup: enabled
     environment:
       NODE_ENV: production
