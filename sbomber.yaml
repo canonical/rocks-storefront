@@ -1,0 +1,32 @@
+# SBOMber manifest file
+# https://github.com/canonical/sbomber
+
+clients:
+  sbom:
+    department: web_engineering
+    email: eduard.manta@canonical.com
+    team: store
+  secscan: {}
+
+# TODO: change channels to stable once we go live in prod
+artifacts:
+  - type: rock
+    name: rocks-storefront
+    base: bare
+    channel: latest/beta
+    version: "0"
+    source: ./rocks-storefront_1.1_amd64.rock
+    ssdlc_params:
+      name: rocks-storefront
+      channel: beta
+      version: "0"
+
+  - type: charm
+    name: rocks-storefront
+    charm: rocks-storefront
+    channel: latest/beta
+    version: "" # autodetect
+    ssdlc_params:
+      name: rocks-storefront
+      channel: beta
+      version: "" # autodetect
