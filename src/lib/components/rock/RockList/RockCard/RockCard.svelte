@@ -27,22 +27,21 @@
 <article class="ds rocks-list-card">
     <ImageWithFallback class="logo" src={iconUrl} alt="" fallback={FALLBACK_ICON} />
 
-    <Link class="name" href={`/${encodeURIComponent(rock.name)}`}>
+    <Link class="name" soft href={`/${encodeURIComponent(rock.name)}`}>
         <Heading level={3}>{rock.name}</Heading>
     </Link>
 
     {#if rock.metadata?.categories?.length}
         <div class="categories">
-            {#each rock.metadata?.categories as category}
-                <a href="/?category={encodeURIComponent(category.name)}"
-                    >{category.name}</a
-                >
-            {/each}
+            {#each rock.metadata?.categories as category, i}{#if i > 0}{", "}{/if}<Link
+                    href="/?category={encodeURIComponent(category.name)}"
+                    >{category.name}</Link
+                >{/each}
         </div>
     {/if}
 
-    <p class={["description", !rock.metadata?.description && "empty"]}>
-        {rock.metadata?.description || "No description"}
+    <p class={["summary", !rock.metadata?.summary && "empty"]}>
+        {rock.metadata?.summary || "No summary"}
     </p>
 
     <span class="revision small">

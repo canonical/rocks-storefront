@@ -53,12 +53,29 @@ const FIELDS = [
   "channel-map",
 ] as const;
 
+/**
+ * find and info endpoints use different fields.
+ */
+const FIND_FIELDS = [
+  "categories",
+  "contact",
+  "default-release",
+  "description",
+  "license",
+  "links",
+  "media",
+  "publisher",
+  "summary",
+  "title",
+  "website",
+] as const;
+
 const query = () => fallback(pipe(nullish(string(), ""), nonEmpty()), "%");
 export const getRocksSchema = object({
   query: query(),
   categories: optional(array(string()), []),
   architecture: optional(array(string()), []),
-  fields: optional(array(union(FIELDS.map((f) => literal(f)))), []),
+  fields: optional(array(union(FIND_FIELDS.map((f) => literal(f)))), []),
 });
 export type GetRocksInput = InferInput<typeof getRocksSchema>;
 
