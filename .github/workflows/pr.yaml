@@ -50,8 +50,7 @@ jobs:
 
   test:
     name: Tests (Vitest)
-    runs-on:
-      [self-hosted, self-hosted-linux-amd64-jammy-private-endpoint-medium]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
