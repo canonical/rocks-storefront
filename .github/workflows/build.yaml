@@ -71,6 +71,6 @@ jobs:
       channel: ${{ needs.setup.outputs.channel }}
       environment: ${{ needs.setenv.outputs.environment }}
       # Force conversion to boolean
-      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'false' }}
     secrets:
       CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
