@@ -1,5 +1,5 @@
 name: rocks-storefront
-version: '1.1'
+version: '1.2'
 summary: Rocked store page for rocks
 description: |
   This is the OCI image for the rocks storefront application.
@@ -16,8 +16,24 @@ platforms:
 # using it, as the project doesn't follow the required structure
 parts:
   expressjs-framework/install-app:
+    plugin: npm
+    source: .
     npm-node-version: lts/krypton
     npm-include-node: true
+    build-packages:
+    - rsync
+    override-pull: |
+      # The default local-source pull copies the whole project directory,
+      # including gitignored/generated dirs that contain root owned files
+      # unreadable inside the build instance, causing the copy step to fail.
+      rsync -a \
+        --exclude='/terraform' \
+        --exclude='node_modules' \
+        --exclude='/.git' \
+        --exclude='/build' \
+        --exclude='/.svelte-kit' \
+        --exclude='*.rock' \
+        "${CRAFT_PROJECT_DIR}/" "${CRAFT_PART_SRC}/"
     build-snaps:
     - node/24/stable
     override-build: |
@@ -43,16 +59,14 @@ parts:
 
       # apply the _daemon_ user ownership to the app
       chown -R 584792:584792 ${CRAFT_PART_INSTALL}/app
-    prime:
-      # the npm plugin adds node's C++ header files to the rock by default
-      # we don't need them, so we exclude them from the prime step
-      - -include/node
-    plugin: npm
-    source: .
     stage-packages:
     - bash_bins
     - ca-certificates_data
     - coreutils_bins
+    prime:
+      # the npm plugin adds node's C++ header files to the rock by default
+      # we don't need them, so we exclude them from the prime step
+      - -include/node
 
   expressjs-framework/runtime:
     plugin: nil
@@ -97,7 +111,5 @@ services:
     override: replace
     command: node build/index.js
     startup: enabled
-    environment:
-      NODE_ENV: production
     user: _daemon_
     working-dir: /app
