@@ -4,6 +4,7 @@
   --gap: var(--space-200);
   --half-gap-collapse: calc(-0.5 * var(--gap));
 
+  position: relative;
   padding: var(--padding);
   display: grid;
   grid-template-columns: var(--logo-size) auto 1fr auto;
@@ -11,7 +12,7 @@
   gap: 0 var(--gap);
   grid-template-areas:
     "logo name categories revision"
-    "logo description description last-update";
+    "logo summary summary last-update";
 
   .logo {
     grid-area: logo;
@@ -20,9 +21,15 @@
 
   .name {
     grid-area: name;
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
 
     .heading {
       font-size: var(--dimension-size-fontSize-400);
+      font-weight: var(--typography-weight-semiBold);
       margin-block: 0;
       padding-block: 0;
     }
@@ -30,11 +37,19 @@
 
   .categories {
     grid-area: categories;
+    font-size: var(--dimension-size-fontSize-350);
+    position: relative;
     margin-inline-start: var(--half-gap-collapse);
+
+    &::before {
+      content: "|";
+      margin-inline-end: var(--space-100);
+    }
   }
 
-  .description {
-    grid-area: description;
+  .summary {
+    grid-area: summary;
+    font-size: var(--dimension-size-fontSize-300);
     padding-block: 0;
 
     &.empty {

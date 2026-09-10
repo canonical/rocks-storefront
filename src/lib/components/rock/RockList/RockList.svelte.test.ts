@@ -56,20 +56,18 @@ describe("RockList.svelte", () => {
 });
 
 describe("RockList.svelte rock card", () => {
-  it("shows the description from metadata", async () => {
+  it("shows the summary from metadata", async () => {
     render(RockList, {
-      rocks: [
-        makeFindItem({ metadata: { description: "An in-memory store" } }),
-      ],
+      rocks: [makeFindItem({ metadata: { summary: "An in-memory store" } })],
     });
 
     await expect.element(page.getByText("An in-memory store")).toBeVisible();
   });
 
-  it("falls back to a placeholder when there is no description", async () => {
+  it("falls back to a placeholder when there is no summary", async () => {
     render(RockList, { rocks: [makeFindItem()] });
 
-    await expect.element(page.getByText("No description")).toBeVisible();
+    await expect.element(page.getByText("No summary")).toBeVisible();
   });
 
   it("shows the latest release version", async () => {

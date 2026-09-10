@@ -12,7 +12,7 @@
   let { name, value = $bindable(), loading }: Props = $props();
 </script>
 
-<form id="search-form" class="ds search-form" data-sveltekit-keepfocus>
+<form id="search-form" class="ds search-form" autocomplete="off" data-sveltekit-keepfocus>
     <label class="visually-hidden" for={name}>Search rocks</label>
     <SearchBox
         id={name}
@@ -20,6 +20,10 @@
         bind:value
         placeholder="Search for a rock"
         aria-label="Search rocks"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
     >
         <div class="ds search-box-children">
             {#if loading}
