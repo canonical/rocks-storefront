@@ -1,4 +1,8 @@
-import type { RockBase, RockInfoResponse } from "$lib/server/api/types";
+import type {
+  ChannelMapItem,
+  RockBase,
+  RockInfoResponse,
+} from "$lib/server/api/types";
 
 export const FALLBACK_ICON =
   "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
@@ -31,14 +35,19 @@ export function getImageReference(rock: RockInfoResponse): string {
   return `${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/${rock.name}:${getLatestTag(rock)}`;
 }
 
+function resolveArchitecture(item: ChannelMapItem): string {
+  return (
+    item.channel?.platform?.architecture ??
+    item.revision?.platforms?.[0]?.architecture ??
+    ""
+  );
+}
+
 export function getArchitectures(rock: RockInfoResponse): string[] {
   const set = new Set<string>();
   for (const item of rock["channel-map"] ?? []) {
-    const channelArch = item.channel?.platform?.architecture;
-    if (channelArch) set.add(channelArch);
-    for (const platform of item.revision?.platforms ?? []) {
-      if (platform.architecture) set.add(platform.architecture);
-    }
+    const architecture = resolveArchitecture(item);
+    if (architecture) set.add(architecture);
   }
   return [...set].sort();
 }
@@ -58,7 +67,7 @@ export function getChannelRows(rock: RockInfoResponse): ChannelRow[] {
     rows.push({
       channelTag: channel.name,
       version: item.revision?.version ?? "",
-      architecture: channel.platform?.architecture ?? "",
+      architecture: resolveArchitecture(item),
       lastUpdated: channel["released-at"] ?? null,
     });
   }
@@ -105,6 +114,7 @@ export function getGroupedChannelRows(
 
 export interface RevisionRow {
   revision: number | null;
+  risk: string;
   architecture: string;
   size: number | null;
   updated: string | null;
@@ -120,10 +130,8 @@ export function getChannelRevisions(
     if (item.channel?.name !== channelTag) continue;
     rows.push({
       revision: item.revision?.revision ?? null,
-      architecture:
-        item.revision?.platforms?.[0]?.architecture ??
-        item.channel?.platform?.architecture ??
-        "",
+      risk: item.channel?.risk ?? "",
+      architecture: resolveArchitecture(item),
       size: item.revision?.download?.size ?? null,
       updated:
         item.revision?.["created-at"] ?? item.channel?.["released-at"] ?? null,
