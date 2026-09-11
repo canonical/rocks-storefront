@@ -3,6 +3,7 @@
   import { RockChannels } from "$lib/components/rock/RockChannels";
   import { RockDescription } from "$lib/components/rock/RockDescription";
   import { RockFeedback } from "$lib/components/rock/RockFeedback";
+  import { RockGetInTouch } from "$lib/components/rock/RockGetInTouch";
   import { RockHero } from "$lib/components/rock/RockHero";
   import { RockSidebar } from "$lib/components/rock/RockSidebar";
   import { SplitLayout } from "$lib/components/ui/SplitLayout";
@@ -11,7 +12,17 @@
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
-  const rock = $derived(data.rock);
+
+  // TEMPORARY: no rock on the API carries categories yet. Fakes them so the
+  // hero chips are visible. Remove once the API serves real ones.
+  const FAKE_CATEGORIES = [
+    { name: "Databases", featured: true },
+    { name: "Observability", featured: false },
+  ];
+  const rock = $derived({
+    ...data.rock,
+    metadata: { ...data.rock.metadata, categories: FAKE_CATEGORIES },
+  });
 
   const tabs = [
     { id: "description", label: "Description", href: "?tab=description" },
@@ -47,7 +58,9 @@
     {/if}
   </div>
 
-  {#if activeTab !== "tags"}
+  {#if activeTab === "tags"}
+    <RockGetInTouch />
+  {:else}
     <RockFeedback />
   {/if}
 </div>

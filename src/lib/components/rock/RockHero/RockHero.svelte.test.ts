@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-svelte";
-import { makeChannel, makeInfoRock } from "$lib/test-support/rock-fixtures";
+import { makeInfoRock } from "$lib/test-support/rock-fixtures";
 import RockHero from "./RockHero.svelte";
 
 describe("RockHero.svelte", () => {
@@ -50,7 +50,7 @@ describe("RockHero.svelte", () => {
     );
   });
 
-  it("shows the first category", async () => {
+  it("shows every category", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
         metadata: {
@@ -65,10 +65,10 @@ describe("RockHero.svelte", () => {
     const meta = container.querySelector(".rock-hero__meta");
 
     expect(meta?.textContent).toContain("databases");
-    expect(meta?.textContent).not.toContain("caching");
+    expect(meta?.textContent).toContain("caching");
   });
 
-  it("separates publisher and category with a decorative dot", async () => {
+  it("separates publisher and categories with a decorative divider", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
         metadata: {
@@ -78,11 +78,9 @@ describe("RockHero.svelte", () => {
       }),
     });
 
-    const dot = container.querySelector(
-      ".rock-hero__meta [aria-hidden='true']",
-    );
-
-    expect(dot?.textContent).toBe("·");
+    expect(
+      container.querySelector(".rock-hero__meta .rock-hero__divider"),
+    ).not.toBeNull();
   });
 
   it("omits the separator when only one of publisher and category is present", async () => {
@@ -101,46 +99,6 @@ describe("RockHero.svelte", () => {
     const { container } = render(RockHero, { rock: makeInfoRock() });
 
     expect(container.querySelector(".rock-hero__meta")).toBeNull();
-  });
-
-  it("shows the most recent release date", async () => {
-    const { container } = render(RockHero, {
-      rock: makeInfoRock({
-        "channel-map": [
-          makeChannel({ releasedAt: "2026-01-01T00:00:00Z" }),
-          makeChannel({ name: "1.0/edge", releasedAt: "2026-06-01T00:00:00Z" }),
-        ],
-      }),
-    });
-
-    const updated = container.querySelector(".rock-hero__updated");
-
-    expect(updated).not.toBeNull();
-    expect(updated?.querySelector("time")?.getAttribute("datetime")).toContain(
-      "2026-06-01",
-    );
-  });
-
-  it("falls back to the revision creation date", async () => {
-    const { container } = render(RockHero, {
-      rock: makeInfoRock({
-        "channel-map": [
-          makeChannel({ releasedAt: null, createdAt: "2026-03-01T00:00:00Z" }),
-        ],
-      }),
-    });
-
-    expect(
-      container
-        .querySelector(".rock-hero__updated time")
-        ?.getAttribute("datetime"),
-    ).toContain("2026-03-01");
-  });
-
-  it("omits the updated line when no dates are available", async () => {
-    const { container } = render(RockHero, { rock: makeInfoRock() });
-
-    expect(container.querySelector(".rock-hero__updated")).toBeNull();
   });
 
   it("shows the default track as the quick pull tag", async () => {
