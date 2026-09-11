@@ -13,16 +13,7 @@
 
   let { data }: PageProps = $props();
 
-  // TEMPORARY: no rock on the API carries categories yet. Fakes them so the
-  // hero chips are visible. Remove once the API serves real ones.
-  const FAKE_CATEGORIES = [
-    { name: "Databases", featured: true },
-    { name: "Observability", featured: false },
-  ];
-  const rock = $derived({
-    ...data.rock,
-    metadata: { ...data.rock.metadata, categories: FAKE_CATEGORIES },
-  });
+  const rock = $derived(data.rock);
 
   const tabs = [
     { id: "description", label: "Description", href: "?tab=description" },
