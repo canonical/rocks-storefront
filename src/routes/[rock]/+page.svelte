@@ -3,6 +3,7 @@
   import { RockChannels } from "$lib/components/rock/RockChannels";
   import { RockDescription } from "$lib/components/rock/RockDescription";
   import { RockFeedback } from "$lib/components/rock/RockFeedback";
+  import { RockGetInTouch } from "$lib/components/rock/RockGetInTouch";
   import { RockHero } from "$lib/components/rock/RockHero";
   import { RockSidebar } from "$lib/components/rock/RockSidebar";
   import { SplitLayout } from "$lib/components/ui/SplitLayout";
@@ -11,6 +12,7 @@
   import type { PageProps } from "./$types";
 
   let { data }: PageProps = $props();
+
   const rock = $derived(data.rock);
 
   const tabs = [
@@ -47,7 +49,9 @@
     {/if}
   </div>
 
-  {#if activeTab !== "tags"}
+  {#if activeTab === "tags"}
+    <RockGetInTouch />
+  {:else}
     <RockFeedback />
   {/if}
 </div>

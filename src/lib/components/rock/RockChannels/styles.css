@@ -10,6 +10,10 @@
   gap: var(--space-300);
 }
 
+.ds.rock-channels .rock-channels__section > .ds.heading {
+  margin-block: 0;
+}
+
 .ds.rock-channels .rock-channels__cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
@@ -28,6 +32,11 @@
 .ds.rock-channels .rock-channels__card p {
   margin: 0;
   color: var(--color-text);
+  font-family: var(--typography-text-secondary-font-family);
+  font-size: var(--typography-text-secondary-font-size);
+  font-weight: var(--typography-text-secondary-font-weight);
+  letter-spacing: var(--typography-text-secondary-letter-spacing);
+  line-height: var(--typography-text-secondary-line-height);
 }
 
 .ds.rock-channels .rock-channels__card-header {
@@ -38,26 +47,8 @@
 
 .ds.rock-channels .rock-channels__card-header .ds.heading {
   margin-block: 0;
-}
-
-.ds.rock-channels .rock-channels__pull {
-  position: relative;
-}
-
-.ds.rock-channels .rock-channels__pull .ds.code {
-  display: block;
-  padding-inline-end: var(--space-400);
-}
-
-.ds.rock-channels .rock-channels__copy {
-  position: absolute;
-  inset-block-start: var(--space-100);
-  inset-inline-end: var(--space-100);
-  padding: var(--space-050);
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  line-height: 1;
+  font-size: var(--dimension-size-fontSize-350);
+  font-weight: var(--typography-weight-medium);
 }
 
 .ds.rock-channels .rock-channels__card-links {
@@ -70,6 +61,20 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-050);
+}
+
+.ds.rock-channels .rock-channels__card-links a .svelte-icon {
+  font-size: var(--dimension-size-fontSize-250);
+}
+
+.ds.rock-channels .rock-channels__channel-tag {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-link);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
 }
 
 .ds.rock-channels .rock-channels__filters {

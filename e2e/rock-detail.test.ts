@@ -68,7 +68,6 @@ test.describe("rock detail page", () => {
 
     await page.goto(path);
 
-    await expect(page.getByText("Quick pull")).toBeVisible();
     await expect(page.locator("code").first()).toBeVisible();
   });
 
@@ -102,7 +101,7 @@ test.describe("rock detail page without javascript", () => {
     await expect(
       page.getByRole("navigation", { name: "Rock details" }),
     ).toBeVisible();
-    await expect(page.getByText("Quick pull")).toBeVisible();
+    await expect(page.locator("code").first()).toBeVisible();
   });
 
   test("server renders the tags tab", async ({ page, request }) => {

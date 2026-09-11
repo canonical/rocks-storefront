@@ -8,26 +8,22 @@
   } from "@canonical/svelte-ds-app-launchpad";
   import {
     BookIcon,
-    CheckmarkIcon,
     ChevronRightIcon,
-    CopyIcon,
     OpenTerminalIcon,
   } from "@canonical/svelte-icons";
-  import { onDestroy } from "svelte";
-  import { Code } from "$lib/components/ui/Code";
+  import { RockChannelPanel } from "$lib/components/rock/RockChannelPanel";
+  import { CopyableCode } from "$lib/components/ui/CopyableCode";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import {
     getArchitectures,
-    getChannelRows,
-    getLatestTag,
+    getGroupedChannelRows,
+    getImageReference,
     getVersions,
   } from "$lib/utils/rock";
   import "./styles.css";
   import type { RockChannelsProps } from "./types.js";
 
-  const REGISTRY_HOST = "rockstore.canonical.com";
-  const REGISTRY_NAMESPACE = "canonical";
   const LEARN_USE_HREF =
     "https://documentation.ubuntu.com/rockcraft/en/stable/tutorial/";
   const LEARN_CHISEL_HREF =
@@ -39,39 +35,30 @@
 
   let { rock }: RockChannelsProps = $props();
 
-  const latestTag = $derived(getLatestTag(rock));
-  const pullCommand = $derived(
-    `docker pull ${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/${rock.name}:${latestTag}`,
-  );
+  const imageReference = $derived(getImageReference(rock));
 
-  const rows = $derived(getChannelRows(rock));
+  const rows = $derived(getGroupedChannelRows(rock));
   const versions = $derived(getVersions(rock));
+  const latestVersion = $derived(rows.find((r) => r.version)?.version);
   const architectures = $derived(getArchitectures(rock));
+
+  let panel = $state<ReturnType<typeof RockChannelPanel> | undefined>();
+  let selectedChannelTag = $state<string | null>(null);
+
+  function openChannel(channelTag: string) {
+    selectedChannelTag = channelTag;
+    panel?.showModal();
+  }
 
   let versionFilter = $state("");
   let architectureFilter = $state("");
   let currentPage = $state(1);
-  let copied = $state(false);
-  let copyResetTimer: ReturnType<typeof setTimeout>;
-
-  async function copyPullCommand() {
-    try {
-      await navigator.clipboard.writeText(pullCommand);
-      copied = true;
-      clearTimeout(copyResetTimer);
-      copyResetTimer = setTimeout(() => (copied = false), 2000);
-    } catch {
-      // Clipboard API unavailable do nothing
-    }
-  }
-
-  onDestroy(() => clearTimeout(copyResetTimer));
 
   const filteredRows = $derived(
     rows.filter(
       (r) =>
         (!versionFilter || r.version === versionFilter) &&
-        (!architectureFilter || r.architecture === architectureFilter),
+        (!architectureFilter || r.architectures.includes(architectureFilter)),
     ),
   );
 
@@ -90,25 +77,19 @@
 
 <div class={componentCssClassName}>
   <section class="rock-channels__section">
-    <Heading level={2}>Get started</Heading>
+    <Heading level={3}>Get started</Heading>
     <div class="rock-channels__cards">
       <article class="rock-channels__card">
         <div class="rock-channels__card-header">
           <OpenTerminalIcon />
-          <Heading level={3}>Pull the image</Heading>
+          <Heading level={3}>Get a rock</Heading>
         </div>
-        <p>Copy the channel tag and use the tool of your choice to pull an image.</p>
-        <div class="rock-channels__pull">
-          <Code>{pullCommand}</Code>
-          <button
-            type="button"
-            class="rock-channels__copy"
-            onclick={copyPullCommand}
-            aria-label={copied ? "Copied to clipboard" : "Copy to clipboard"}
-          >
-            {#if copied}<CheckmarkIcon />{:else}<CopyIcon />{/if}
-          </button>
-        </div>
+        <p>
+          Rocks are compatible with a wide variety of tools. To get a rock,
+          choose a channel tag, add it to the registry address, and use the
+          tool of your choice to access the image.
+        </p>
+        <CopyableCode value={imageReference} />
       </article>
       <article class="rock-channels__card">
         <div class="rock-channels__card-header">
@@ -121,7 +102,7 @@
         </p>
         <p class="rock-channels__card-links">
           <Link href={LEARN_USE_HREF} target="_blank" rel="noopener">
-            Learn how to use a rock
+            Learn how to build a rock
             <ChevronRightIcon />
           </Link>
           <Link href={LEARN_CHISEL_HREF} target="_blank" rel="noopener">
@@ -133,14 +114,20 @@
     </div>
   </section>
 
+  <RockChannelPanel bind:this={panel} {rock} channelTag={selectedChannelTag} />
+
   <section class="rock-channels__section">
+    <Heading level={3}>Tags and channels</Heading>
+
     <div class="rock-channels__filters">
       <label class="rock-channels__filter">
         <span>Version</span>
         <Select bind:value={versionFilter} onchange={resetPage}>
           <option value="">All</option>
           {#each versions as version (version)}
-            <option value={version}>{version}</option>
+            <option value={version}>
+              {version === latestVersion ? `${version} (latest)` : version}
+            </option>
           {/each}
         </Select>
       </label>
@@ -164,15 +151,23 @@
             <th scope="col"><SmallCaps>Channel tag</SmallCaps></th>
             <th scope="col"><SmallCaps>Version</SmallCaps></th>
             <th scope="col"><SmallCaps>Architecture</SmallCaps></th>
-            <th scope="col"><SmallCaps>Last updated</SmallCaps></th>
+            <th scope="col"><SmallCaps>Updated</SmallCaps></th>
           </tr>
         </thead>
         <tbody>
-          {#each pagedRows as row (`${row.channelTag}|${row.architecture}|${row.version}|${row.lastUpdated ?? ""}`)}
+          {#each pagedRows as row (row.channelTag)}
             <tr>
-              <td>{row.channelTag}</td>
+              <td>
+                <button
+                  type="button"
+                  class="rock-channels__channel-tag"
+                  onclick={() => openChannel(row.channelTag)}
+                >
+                  {row.channelTag}
+                </button>
+              </td>
               <td>{row.version || "—"}</td>
-              <td>{row.architecture || "—"}</td>
+              <td>{row.architectures.join(", ") || "—"}</td>
               <td>
                 {#if row.lastUpdated}
                   <RelativeDateTime date={row.lastUpdated} />
