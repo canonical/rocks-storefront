@@ -33,6 +33,12 @@
   const revisions = $derived(
     channelTag ? getChannelRevisions(rock, channelTag) : [],
   );
+
+  const description = $derived(
+    revisions[0]?.risk === "stable"
+      ? "Stable channels receive regular updates that are maintained by Canonical."
+      : "This channel's revisions are maintained by Canonical.",
+  );
   const architectures = $derived(
     [...new Set(revisions.map((r) => r.architecture).filter(Boolean))].sort(),
   );
@@ -65,10 +71,7 @@
 
       <div class="rock-channel-panel__intro-group">
         <Heading level={5}>Channel information</Heading>
-        <p class="rock-channel-panel__intro">
-          Stable channels receive regular update that are maintained by
-          Canonical.
-        </p>
+        <p class="rock-channel-panel__intro">{description}</p>
       </div>
 
       {#if architectures.length > 1}
