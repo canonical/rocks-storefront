@@ -34,13 +34,11 @@ export function makeChannel({
   version = "1.0.0",
   architecture = "amd64",
   releasedAt = "2026-01-01T00:00:00Z",
-  createdAt,
 }: {
   name?: string;
   version?: string;
   architecture?: string;
   releasedAt?: string | null;
-  createdAt?: string;
 } = {}): ChannelMapItem {
   return {
     channel: {
@@ -50,6 +48,6 @@ export function makeChannel({
       platform: { architecture },
       "released-at": releasedAt,
     },
-    revision: { version, ...(createdAt ? { "created-at": createdAt } : {}) },
+    revision: { version },
   };
 }
