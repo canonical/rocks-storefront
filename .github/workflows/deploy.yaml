@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - staging
-      - action-test
+#      - action-test
   workflow_dispatch:
     inputs:
       environment:
