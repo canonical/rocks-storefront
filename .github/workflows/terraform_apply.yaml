@@ -48,7 +48,7 @@ jobs:
   apply:
     needs: [setenv, setup]
     name: Terraform Apply
-    uses: canonical/webteam-devops/.github/workflows/terraform_apply.yaml@main
+    uses: canonical/webteam-devops/.github/workflows/terraform_apply.yaml@ps7-deployment
     permissions:
       packages: write
       id-token: write
