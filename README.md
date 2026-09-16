@@ -56,4 +56,4 @@ If you have found a bug on the site or have an idea for a new feature, feel free
 
 With ♥ from Canonical
 
-Deploy 1
+Deploy 2
