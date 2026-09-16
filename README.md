@@ -55,3 +55,5 @@ Remember to clear the session after you are done with the feature to empty the a
 If you have found a bug on the site or have an idea for a new feature, feel free to [create a new issue](https://github.com/canonical/rocks-storefront/issues/new), or suggest a fix by [creating a pull request](https://help.github.com/articles/creating-a-pull-request/). You can also find a link to create issues in the footer of every page of the site itself.
 
 With ♥ from Canonical
+
+Deploy 1
