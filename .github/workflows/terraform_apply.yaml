@@ -1,9 +1,6 @@
 name: Terraform Apply
 
 on:
-  push:
-    branches:
-      - action-test
   workflow_dispatch:
 
 permissions:
