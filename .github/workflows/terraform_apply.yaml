@@ -40,9 +40,9 @@ jobs:
         id: setup-vars
         run: |
           if [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
-            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace-rocks" >> $GITHUB_OUTPUT
           else
-            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace-rocks" >> $GITHUB_OUTPUT
           fi;
 
   apply:
