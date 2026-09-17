@@ -19,7 +19,6 @@
         {#each rocks as rock (rock.name)}
             <li>
                 <RockCard {rock} />
-                <hr />
             </li>
         {/each}
     </ul>

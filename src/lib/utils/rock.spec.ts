@@ -1,9 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { ChannelMapItem, RockInfoResponse } from "$lib/server/api/types";
 import {
+  FALLBACK_ICON,
   getArchitectures,
   getChannelRows,
   getLatestTag,
+  getRockIconUrl,
+  getRockPublisher,
   getRockTitle,
   getVersions,
 } from "./rock";
@@ -29,6 +32,63 @@ function channel(overrides: Partial<ChannelMapItem> = {}): ChannelMapItem {
     ...overrides,
   };
 }
+
+describe("getRockPublisher", () => {
+  it("prefers the display name over the username", () => {
+    expect(
+      getRockPublisher(
+        makeRock({
+          metadata: {
+            publisher: { "display-name": "Canonical", username: "canonical" },
+          },
+        }),
+      ),
+    ).toBe("Canonical");
+  });
+
+  it("falls back to the username", () => {
+    expect(
+      getRockPublisher(
+        makeRock({ metadata: { publisher: { username: "jdoe" } } }),
+      ),
+    ).toBe("jdoe");
+  });
+
+  it("is undefined when there is no publisher", () => {
+    expect(getRockPublisher(makeRock())).toBeUndefined();
+  });
+});
+
+describe("getRockIconUrl", () => {
+  it("uses the icon from metadata media", () => {
+    expect(
+      getRockIconUrl(
+        makeRock({
+          metadata: {
+            media: [
+              {
+                type: "screenshot",
+                url: "https://x/s.png",
+                height: null,
+                width: null,
+              },
+              {
+                type: "icon",
+                url: "https://x/i.png",
+                height: null,
+                width: null,
+              },
+            ],
+          },
+        }),
+      ),
+    ).toBe("https://x/i.png");
+  });
+
+  it("falls back to the placeholder icon", () => {
+    expect(getRockIconUrl(makeRock())).toBe(FALLBACK_ICON);
+  });
+});
 
 describe("getRockTitle", () => {
   it("prefers the metadata title", () => {

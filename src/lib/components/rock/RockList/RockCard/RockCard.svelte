@@ -1,61 +1,101 @@
 <script lang="ts">
-  import { Link, RelativeDateTime } from "@canonical/svelte-ds-app-launchpad";
+  import {
+    Chip,
+    Link,
+    RelativeDateTime,
+  } from "@canonical/svelte-ds-app-launchpad";
   import { RevisionsIcon } from "@canonical/svelte-icons";
   import { Heading } from "$lib/components/ui/Heading";
   import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import type { RockFindResultItem } from "$lib/server/api/types";
+  import {
+    FALLBACK_ICON,
+    getRockIconUrl,
+    getRockPublisher,
+    getRockTitle,
+  } from "$lib/utils/rock";
   import "./styles.css";
 
   type Props = {
     rock: RockFindResultItem;
   };
 
-  const FALLBACK_ICON =
-    "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
+  const VERIFIED_ICON = "https://assets.ubuntu.com/v1/ba8a4b7b-Verified.svg";
 
   const { rock }: Props = $props();
 
-  const latestRevision = $derived(rock["default-release"]?.version || "?");
+  const publisher = $derived(getRockPublisher(rock));
+  const verified = $derived(
+    rock.metadata?.publisher?.validation === "verified",
+  );
+  const channel = $derived(rock["default-release"]?.channel.name);
   const latestUpdate = $derived(
     rock["default-release"]?.channel["released-at"],
   );
-  const iconUrl = $derived(
-    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON,
+  const [primaryCategory, ...otherCategories] = $derived(
+    rock.metadata?.categories ?? [],
   );
 </script>
 
 <article class="ds rocks-list-card">
-    <ImageWithFallback class="logo" src={iconUrl} alt="" fallback={FALLBACK_ICON} />
+    <div class="body">
+        <ImageWithFallback class="logo" src={getRockIconUrl(rock)} alt="" fallback={FALLBACK_ICON} />
 
-    <Link class="name" href={`/${encodeURIComponent(rock.name)}`}>
-        <Heading level={3}>{rock.name}</Heading>
-    </Link>
+        <div class="identity">
+            <Link class="name" soft href={`/${encodeURIComponent(rock.name)}`}>
+                <Heading level={5}>{getRockTitle(rock)}</Heading>
+            </Link>
 
-    {#if rock.metadata?.categories?.length}
-        <div class="categories">
-            {#each rock.metadata?.categories as category}
-                <a href="/?category={encodeURIComponent(category.name)}"
-                    >{category.name}</a
-                >
-            {/each}
+            {#if publisher}
+                <span class="publisher">
+                    {publisher}
+                    {#if verified}
+                        <img
+                            class="verified"
+                            src={VERIFIED_ICON}
+                            alt="Verified account"
+                            title="Verified account"
+                            width="14"
+                            height="14"
+                        />
+                    {/if}
+                </span>
+            {/if}
         </div>
-    {/if}
 
-    <p class={["description", !rock.metadata?.description && "empty"]}>
-        {rock.metadata?.description || "No description"}
-    </p>
+        <p class={["summary", !rock.metadata?.summary && "empty"]}>
+            {rock.metadata?.summary || "No summary"}
+        </p>
+    </div>
 
-    <span class="revision small">
-        Latest: {latestRevision}
-    </span>
+    <footer class="footer">
+        <div class="categories">
+            {#if primaryCategory}
+                <Chip readonly density="dense" value={primaryCategory.name} />
+            {/if}
+            {#if otherCategories.length > 0}
+                <Chip
+                    readonly
+                    density="dense"
+                    value={`+${otherCategories.length}`}
+                    title={otherCategories.map((c) => c.name).join(", ")}
+                />
+            {/if}
+        </div>
 
-    <span class="last-update small">
-        {@render latestUpdateText(latestUpdate)}
-    </span>
+        <div class="meta">
+            {#if channel}
+                <span class="channel" title="Default channel {channel}">{channel}</span>
+            {/if}
+            <span class="last-update">
+                {@render latestUpdateText(latestUpdate)}
+            </span>
+        </div>
+    </footer>
 </article>
 
 {#snippet latestUpdateText(latestUpdate?: string | null)}
-    <RevisionsIcon aria-label="{rock.name} last updated" />&nbsp;
+    <RevisionsIcon aria-label="{rock.name} last updated" />
     {#if !isNaN(Date.parse(latestUpdate!))}
         <RelativeDateTime date={latestUpdate!} />
     {:else}
