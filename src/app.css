@@ -17,6 +17,10 @@
      one named layout constant — matches Vanilla's $grid-max-width so the
      centered side spacing lines up with the vanilla design. */
   --app-content-max-width: 72rem;
+
+  /* Package icon size in list cards (44px). Matches the charmhub CharmCard in
+     store-components; Pragma's dimension scale has no 2.75rem step. */
+  --app-package-icon-size: 2.75rem;
 }
 
 /* Centered content column: Pragma token gutter on small screens, symmetric

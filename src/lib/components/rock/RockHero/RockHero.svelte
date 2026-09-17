@@ -9,12 +9,16 @@
   import { Heading } from "$lib/components/ui/Heading";
   import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
-  import { getLatestTag, getRockTitle } from "$lib/utils/rock";
+  import {
+    FALLBACK_ICON,
+    getLatestTag,
+    getRockIconUrl,
+    getRockPublisher,
+    getRockTitle,
+  } from "$lib/utils/rock";
   import "./styles.css";
   import type { RockHeroProps } from "./types.js";
 
-  const FALLBACK_ICON =
-    "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
   const SEE_ALL_TAGS_HREF = "?tab=tags";
   const LEARN_MORE_HREF = "https://documentation.ubuntu.com/rockcraft/";
 
@@ -23,14 +27,9 @@
   let { rock }: RockHeroProps = $props();
 
   const title = $derived(getRockTitle(rock));
-  const publisher = $derived(
-    rock.metadata?.publisher?.["display-name"] ??
-      rock.metadata?.publisher?.username,
-  );
+  const publisher = $derived(getRockPublisher(rock));
   const category = $derived(rock.metadata?.categories?.[0]?.name);
-  let iconUrl = $derived(
-    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON,
-  );
+  const iconUrl = $derived(getRockIconUrl(rock));
   const publishedAt = $derived.by(() => {
     const dates = (rock["channel-map"] ?? [])
       .map((c) => c.channel?.["released-at"] ?? c.revision?.["created-at"])

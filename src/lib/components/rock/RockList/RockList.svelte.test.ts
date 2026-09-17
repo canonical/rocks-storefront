@@ -11,10 +11,10 @@ describe("RockList.svelte", () => {
     });
 
     await expect
-      .element(page.getByRole("heading", { name: "redis", level: 3 }))
+      .element(page.getByRole("heading", { name: "redis", level: 5 }))
       .toBeVisible();
     await expect
-      .element(page.getByRole("heading", { name: "nginx", level: 3 }))
+      .element(page.getByRole("heading", { name: "nginx", level: 5 }))
       .toBeVisible();
   });
 
@@ -70,7 +70,7 @@ describe("RockList.svelte rock card", () => {
     await expect.element(page.getByText("No summary")).toBeVisible();
   });
 
-  it("shows the latest release version", async () => {
+  it("shows the default release channel", async () => {
     render(RockList, {
       rocks: [
         makeFindItem({
@@ -89,13 +89,13 @@ describe("RockList.svelte rock card", () => {
       ],
     });
 
-    await expect.element(page.getByText("Latest: 7.2.1")).toBeVisible();
+    await expect.element(page.getByText("latest/stable")).toBeVisible();
   });
 
-  it("falls back to a question mark when there is no release", async () => {
-    render(RockList, { rocks: [makeFindItem()] });
+  it("omits the channel when there is no release", async () => {
+    const { container } = render(RockList, { rocks: [makeFindItem()] });
 
-    await expect.element(page.getByText("Latest: ?")).toBeVisible();
+    expect(container.querySelector(".channel")).toBeNull();
   });
 
   it("shows unknown when the release date is missing", async () => {
@@ -106,7 +106,7 @@ describe("RockList.svelte rock card", () => {
     );
   });
 
-  it("renders category links pointing at the filtered home page", async () => {
+  it("renders the first category as a chip", async () => {
     const { container } = render(RockList, {
       rocks: [
         makeFindItem({
@@ -117,16 +117,108 @@ describe("RockList.svelte rock card", () => {
       ],
     });
 
-    const link = container.querySelector<HTMLAnchorElement>(".categories a");
+    const chips = container.querySelectorAll(".categories .chip");
 
-    expect(link?.textContent?.trim()).toBe("databases");
-    expect(link?.getAttribute("href")).toBe("/?category=databases");
+    expect(chips).toHaveLength(1);
+    expect(chips[0].textContent?.trim()).toBe("databases");
   });
 
-  it("omits the categories block when there are none", async () => {
+  it("collapses extra categories into a +N chip listing them", async () => {
+    const { container } = render(RockList, {
+      rocks: [
+        makeFindItem({
+          metadata: {
+            categories: [
+              { name: "databases", featured: false },
+              { name: "web", featured: false },
+              { name: "featured", featured: true },
+            ],
+          },
+        }),
+      ],
+    });
+
+    const chips = container.querySelectorAll(".categories .chip");
+
+    expect(chips).toHaveLength(2);
+    expect(chips[1].textContent?.trim()).toBe("+2");
+    expect(chips[1].getAttribute("title")).toBe("web, featured");
+  });
+
+  it("renders no chips when there are no categories", async () => {
     const { container } = render(RockList, { rocks: [makeFindItem()] });
 
-    expect(container.querySelector(".categories")).toBeNull();
+    expect(container.querySelectorAll(".categories .chip")).toHaveLength(0);
+  });
+
+  it("prefers the metadata title over the rock name", async () => {
+    render(RockList, {
+      rocks: [
+        makeFindItem({ name: "prometheus", metadata: { title: "Prometheus" } }),
+      ],
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Prometheus", level: 5 }))
+      .toBeVisible();
+  });
+
+  it("shows the publisher display name", async () => {
+    render(RockList, {
+      rocks: [
+        makeFindItem({
+          metadata: {
+            publisher: { "display-name": "Canonical", username: "canonical" },
+          },
+        }),
+      ],
+    });
+
+    await expect.element(page.getByText("Canonical")).toBeVisible();
+  });
+
+  it("falls back to the publisher username", async () => {
+    render(RockList, {
+      rocks: [makeFindItem({ metadata: { publisher: { username: "jdoe" } } })],
+    });
+
+    await expect.element(page.getByText("jdoe")).toBeVisible();
+  });
+
+  it("omits the publisher line when there is no publisher", async () => {
+    const { container } = render(RockList, { rocks: [makeFindItem()] });
+
+    expect(container.querySelector(".publisher")).toBeNull();
+  });
+
+  it("marks verified publishers with a badge", async () => {
+    const { container } = render(RockList, {
+      rocks: [
+        makeFindItem({
+          metadata: {
+            publisher: { "display-name": "Canonical", validation: "verified" },
+          },
+        }),
+      ],
+    });
+
+    expect(container.querySelector("img.verified")?.getAttribute("alt")).toBe(
+      "Verified account",
+    );
+  });
+
+  it("shows no badge for unverified publishers", async () => {
+    const { container } = render(RockList, {
+      rocks: [
+        makeFindItem({
+          metadata: {
+            publisher: { "display-name": "Someone", validation: "unproven" },
+          },
+        }),
+      ],
+    });
+
+    expect(container.querySelector("img.verified")).toBeNull();
   });
 
   it("uses the icon from metadata media", async () => {

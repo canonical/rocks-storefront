@@ -1,7 +1,23 @@
-import type { RockInfoResponse } from "$lib/server/api/types";
+import type { RockBase, RockInfoResponse } from "$lib/server/api/types";
 
-export function getRockTitle(rock: RockInfoResponse): string {
+export const FALLBACK_ICON =
+  "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
+
+export function getRockTitle(rock: RockBase): string {
   return rock.metadata?.title ?? rock.name;
+}
+
+export function getRockPublisher(rock: RockBase): string | undefined {
+  return (
+    rock.metadata?.publisher?.["display-name"] ??
+    rock.metadata?.publisher?.username
+  );
+}
+
+export function getRockIconUrl(rock: RockBase): string {
+  return (
+    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON
+  );
 }
 
 export function getLatestTag(rock: RockInfoResponse): string {

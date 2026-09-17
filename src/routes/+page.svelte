@@ -30,7 +30,14 @@
     return getRocks({
       query: query(),
       categories: params.category,
-      fields: ["summary", "media", "categories", "default-release"],
+      fields: [
+        "summary",
+        "title",
+        "publisher",
+        "media",
+        "categories",
+        "default-release",
+      ],
     });
   });
 </script>
