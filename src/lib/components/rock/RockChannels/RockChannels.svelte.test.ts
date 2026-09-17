@@ -10,6 +10,14 @@ function entry(
     version = "1.0",
     architecture = "amd64",
     releasedAt = "2026-01-01T00:00:00Z",
+    revision,
+    digest,
+  }: {
+    version?: string;
+    architecture?: string;
+    releasedAt?: string;
+    revision?: number;
+    digest?: string;
   } = {},
 ): ChannelMapItem {
   return {
@@ -20,7 +28,11 @@ function entry(
       platform: { architecture },
       "released-at": releasedAt,
     },
-    revision: { version },
+    revision: {
+      version,
+      ...(revision !== undefined ? { revision } : {}),
+      ...(digest ? { download: { "sha-256": digest, url: "registry/x" } } : {}),
+    },
   };
 }
 
@@ -38,14 +50,12 @@ function makeRock(
 }
 
 describe("RockChannels.svelte", () => {
-  it("renders the docker pull command for the latest tag", async () => {
+  it("renders the image reference for the latest tag", async () => {
     render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
 
     await expect
       .element(
-        page.getByText(
-          "docker pull rockstore.canonical.com/canonical/test-rock:1.0",
-        ),
+        page.getByText("rockstore.canonical.com/canonical/test-rock:1.0"),
       )
       .toBeVisible();
   });
@@ -92,6 +102,39 @@ describe("RockChannels.svelte", () => {
       .not.toBeInTheDocument();
   });
 
+  it("opens the channel panel for the tag that was clicked", async () => {
+    render(RockChannels, {
+      rock: makeRock([
+        entry("2.0/stable", { revision: 7, digest: "aaaaaaaaaaaaaaaaaaaa" }),
+        entry("1.0/edge", {
+          releasedAt: "2025-01-01T00:00:00Z",
+          revision: 3,
+          digest: "bbbbbbbbbbbbbbbbbbbb",
+        }),
+      ]),
+    });
+
+    await userEvent.click(page.getByRole("button", { name: "2.0/stable" }));
+
+    const panel = page.getByRole("dialog");
+    await expect.element(panel.getByText("2.0/stable")).toBeVisible();
+    await expect.element(panel.getByText("7")).toBeVisible();
+    await expect
+      .element(panel.getByText(/Stable channels receive regular updates/))
+      .toBeVisible();
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Close the channel panel" }),
+    );
+    await userEvent.click(page.getByRole("button", { name: "1.0/edge" }));
+
+    await expect.element(panel.getByText("1.0/edge")).toBeVisible();
+    await expect.element(panel.getByText("3")).toBeVisible();
+    await expect
+      .element(panel.getByText(/revisions are maintained by Canonical/))
+      .toBeVisible();
+  });
+
   it("paginates when there are more rows than the page size", async () => {
     const channels = Array.from({ length: 12 }, (_, i) =>
       entry(`c${i}/stable`, {
@@ -128,7 +171,7 @@ describe("RockChannels.svelte", () => {
     );
 
     expect(writeText).toHaveBeenCalledWith(
-      "docker pull rockstore.canonical.com/canonical/test-rock:1.0",
+      "rockstore.canonical.com/canonical/test-rock:1.0",
     );
     await expect
       .element(page.getByRole("button", { name: "Copied to clipboard" }))

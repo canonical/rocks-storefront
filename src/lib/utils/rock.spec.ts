@@ -58,7 +58,7 @@ describe("getLatestTag", () => {
 });
 
 describe("getArchitectures", () => {
-  it("collects from both channel platform and revision platforms, deduped and sorted", () => {
+  it("prefers the channel platform, deduped and sorted", () => {
     const rock = makeRock({
       "channel-map": [
         channel({
@@ -72,7 +72,20 @@ describe("getArchitectures", () => {
       ],
     });
 
-    expect(getArchitectures(rock)).toEqual(["amd64", "arm64", "riscv64"]);
+    expect(getArchitectures(rock)).toEqual(["amd64", "arm64"]);
+  });
+
+  it("falls back to the revision platform when the channel omits one", () => {
+    const rock = makeRock({
+      "channel-map": [
+        channel({
+          channel: { name: "a" },
+          revision: { platforms: [{ architecture: "s390x" }] },
+        }),
+      ],
+    });
+
+    expect(getArchitectures(rock)).toEqual(["s390x"]);
   });
 
   it("returns an empty array when there is no channel map", () => {

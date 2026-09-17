@@ -1,0 +1,18 @@
+.ds.rock-get-in-touch {
+  margin-block-start: var(--space-400);
+  padding-block-start: var(--space-400);
+  border-block-start: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
+}
+
+.ds.rock-get-in-touch .rock-get-in-touch__text {
+  margin: 0;
+}
+
+/* Separates the two messages from each other. */
+.ds.rock-get-in-touch .rock-get-in-touch__text + .rock-get-in-touch__text {
+  margin-block-start: var(--space-300);
+  padding-block-start: var(--space-300);
+  border-block-start: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
+}
