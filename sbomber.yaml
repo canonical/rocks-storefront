@@ -1,10 +1,12 @@
 # SBOMber manifest file
 # https://github.com/canonical/sbomber
 
+# WARNING: This manifest uses experimental functionality currently only implemented in https://github.com/edisile/sbomber
+
 clients:
   sbom:
     department: web_engineering
-    email: eduard.manta@canonical.com
+    email: snapcraftweb@groups.canonical.com
     team: store
   secscan: {}
 
@@ -12,19 +14,19 @@ clients:
 artifacts:
   - type: rock
     name: rocks-storefront
-    base: bare
-    channel: latest/beta
-    version: "0"
-    source: ./rocks-storefront_1.1_amd64.rock
+    charm_resource: app-image
+    charm: rocks-storefront
+    channel: beta
+    version: "" # autodetect
     ssdlc_params:
       name: rocks-storefront
       channel: beta
-      version: "0"
+      version: "" # autodetect
 
   - type: charm
     name: rocks-storefront
     charm: rocks-storefront
-    channel: latest/beta
+    channel: beta
     version: "" # autodetect
     ssdlc_params:
       name: rocks-storefront
