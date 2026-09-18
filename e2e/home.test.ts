@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { firstRockPath } from "./helpers";
+import { firstRockPath, setUpCspWatcher } from "./helpers";
 
 test.describe("home page", () => {
   test("renders the welcome heading", async ({ page }) => {
@@ -50,5 +50,14 @@ test.describe("home page without javascript", () => {
     await page.goto("/");
 
     await expect(page.locator("a.name").first()).toBeVisible();
+  });
+});
+
+test.describe("CSP headers", () => {
+  test("there are no CSP-related errors in console", async ({ page }) => {
+    const cspErrors = await setUpCspWatcher(page);
+    await page.goto("/");
+
+    expect(cspErrors).toEqual([]);
   });
 });

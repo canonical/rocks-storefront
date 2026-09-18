@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { firstRockPath } from "./helpers";
+import { firstRockPath, setUpCspWatcher } from "./helpers";
 
 test.describe("rock detail page", () => {
   test("shows the rock name as the page heading", async ({ page, request }) => {
@@ -115,5 +115,19 @@ test.describe("rock detail page without javascript", () => {
         .getByRole("navigation", { name: "Rock details" })
         .getByRole("link", { name: "Tags and channels" }),
     ).toHaveAttribute("aria-current", "page");
+  });
+});
+
+test.describe("CSP headers", () => {
+  test("there are no CSP-related errors in console", async ({
+    page,
+    request,
+  }) => {
+    const cspErrors = await setUpCspWatcher(page);
+
+    const path = await firstRockPath(request);
+    await page.goto(path);
+
+    expect(cspErrors).toEqual([]);
   });
 });

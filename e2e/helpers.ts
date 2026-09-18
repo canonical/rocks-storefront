@@ -1,4 +1,4 @@
-import type { APIRequestContext } from "@playwright/test";
+import type { APIRequestContext, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
 
 /**
@@ -37,4 +37,39 @@ async function discoverFirstRockPath(
   }
 
   return match[1];
+} /**
+ * Set up a listener for "securitypolicyviolation" events; call this *before* the
+ * `page.goto(...)` call.
+ *
+ * @param page the Playwright `page` object
+ * @returns a reference to an array that will be populated with any CSP violation events
+ */
+export async function setUpCspWatcher(
+  page: Page,
+): Promise<SecurityPolicyViolationEvent[]> {
+  const errors: SecurityPolicyViolationEvent[] = [];
+
+  // We can't listen to "securitypolicyviolation" events on the page directly
+  // via Playwright. We work around this issue by exposing a function to the
+  // browser window and creating an event listener that calls it.
+  await page.exposeFunction(
+    "recordCspViolation",
+    (event: SecurityPolicyViolationEvent) => errors.push(event),
+  );
+
+  await page.addInitScript(() => {
+    document.addEventListener("securitypolicyviolation", (event) => {
+      // @ts-expect-error we just added it
+      window.recordCspViolation({
+        blockedURI: event.blockedURI,
+        violatedDirective: event.violatedDirective,
+        originalPolicy: event.originalPolicy,
+        documentURI: event.documentURI,
+        sourceFile: event.sourceFile,
+        lineNumber: event.lineNumber,
+      });
+    });
+  });
+
+  return errors;
 }
