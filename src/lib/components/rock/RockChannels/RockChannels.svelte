@@ -89,7 +89,9 @@
           choose a channel tag, add it to the registry address, and use the
           tool of your choice to access the image.
         </p>
-        <CopyableCode value={imageReference} />
+        {#if imageReference}
+          <CopyableCode value={imageReference} />
+        {/if}
       </article>
       <article class="rock-channels__card">
         <div class="rock-channels__card-header">

@@ -48,7 +48,9 @@
 
       <div class="rock-hero__quick-pull">
         <div class="rock-hero__quick-pull-row">
-          <CopyableCode value={imageReference} />
+          {#if imageReference}
+            <CopyableCode value={imageReference} />
+          {/if}
           <Button href={SEE_ALL_TAGS_HREF} data-sveltekit-noscroll>See all tags</Button>
           <Link
             class="rock-hero__learn"

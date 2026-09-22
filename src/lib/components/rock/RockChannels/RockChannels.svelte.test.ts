@@ -31,7 +31,10 @@ function entry(
     revision: {
       version,
       ...(revision !== undefined ? { revision } : {}),
-      ...(digest ? { download: { "sha-256": digest, url: "registry/x" } } : {}),
+      download: {
+        "sha-256": digest ?? "deadbeef",
+        url: `rocks.pkg.store/ubuntu/test-rock@sha256:${digest ?? "deadbeef"}`,
+      },
     },
   };
 }
@@ -54,9 +57,7 @@ describe("RockChannels.svelte", () => {
     render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
 
     await expect
-      .element(
-        page.getByText("rockstore.canonical.com/canonical/test-rock:1.0"),
-      )
+      .element(page.getByText("rocks.pkg.store/ubuntu/test-rock:1.0_stable"))
       .toBeVisible();
   });
 
@@ -171,7 +172,7 @@ describe("RockChannels.svelte", () => {
     );
 
     expect(writeText).toHaveBeenCalledWith(
-      "rockstore.canonical.com/canonical/test-rock:1.0",
+      "rocks.pkg.store/ubuntu/test-rock:1.0_stable",
     );
     await expect
       .element(page.getByRole("button", { name: "Copied to clipboard" }))

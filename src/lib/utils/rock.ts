@@ -24,15 +24,47 @@ export function getRockIconUrl(rock: RockBase): string {
   );
 }
 
-export function getLatestTag(rock: RockInfoResponse): string {
-  return rock["default-track"] || "latest";
+const RISK_ORDER = ["stable", "candidate", "beta", "edge"];
+
+function riskRank(risk: string): number {
+  const index = RISK_ORDER.indexOf(risk);
+  return index === -1 ? RISK_ORDER.length : index;
 }
 
-const REGISTRY_HOST = "rockstore.canonical.com";
-const REGISTRY_NAMESPACE = "canonical";
+export function getLatestTag(rock: RockInfoResponse): string | null {
+  const defaultTrack = rock["default-track"];
+  const channels = (rock["channel-map"] ?? [])
+    .map((item) => item.channel)
+    .filter((channel) => channel?.track && channel?.risk);
 
-export function getImageReference(rock: RockInfoResponse): string {
-  return `${REGISTRY_HOST}/${REGISTRY_NAMESPACE}/${rock.name}:${getLatestTag(rock)}`;
+  const onDefaultTrack = channels.filter(
+    (channel) => channel?.track === defaultTrack,
+  );
+  const candidates = onDefaultTrack.length ? onDefaultTrack : channels;
+
+  const best = candidates.reduce<(typeof candidates)[number] | null>(
+    (winner, channel) =>
+      !winner || riskRank(channel?.risk ?? "") < riskRank(winner.risk ?? "")
+        ? channel
+        : winner,
+    null,
+  );
+
+  return best ? `${best.track}_${best.risk}` : null;
+}
+
+function getRepository(rock: RockInfoResponse): string | null {
+  for (const item of rock["channel-map"] ?? []) {
+    const url = item.revision?.download?.url;
+    if (url) return url.split("@")[0];
+  }
+  return null;
+}
+
+export function getImageReference(rock: RockInfoResponse): string | null {
+  const repository = getRepository(rock);
+  const tag = getLatestTag(rock);
+  return repository && tag ? `${repository}:${tag}` : null;
 }
 
 function resolveArchitecture(item: ChannelMapItem): string {

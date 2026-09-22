@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { page } from "vitest/browser";
 import { render } from "vitest-browser-svelte";
-import { makeInfoRock } from "$lib/test-support/rock-fixtures";
+import { makeChannel, makeInfoRock } from "$lib/test-support/rock-fixtures";
 import RockHero from "./RockHero.svelte";
 
 describe("RockHero.svelte", () => {
@@ -101,18 +101,31 @@ describe("RockHero.svelte", () => {
     expect(container.querySelector(".rock-hero__meta")).toBeNull();
   });
 
-  it("shows the default track as the quick pull tag", async () => {
+  it("tags the quick pull reference with the default track channel", async () => {
     const { container } = render(RockHero, {
-      rock: makeInfoRock({ "default-track": "7.2" }),
+      rock: makeInfoRock({
+        "default-track": "7.2",
+        "channel-map": [makeChannel({ name: "7.2/edge" })],
+      }),
     });
 
-    expect(container.querySelector("code")?.textContent).toContain("7.2");
+    expect(container.querySelector("code")?.textContent).toContain("7.2_edge");
   });
 
-  it("falls back to latest when there is no default track", async () => {
+  it("uses an available channel when there is no default track", async () => {
+    const { container } = render(RockHero, {
+      rock: makeInfoRock({
+        "channel-map": [makeChannel({ name: "7.2/edge" })],
+      }),
+    });
+
+    expect(container.querySelector("code")?.textContent).toContain("7.2_edge");
+  });
+
+  it("omits the quick pull reference when no revision is downloadable", async () => {
     const { container } = render(RockHero, { rock: makeInfoRock() });
 
-    expect(container.querySelector("code")?.textContent).toContain("latest");
+    expect(container.querySelector("code")).toBeNull();
   });
 
   it("links to the tags tab", async () => {
