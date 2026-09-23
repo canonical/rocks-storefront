@@ -1,64 +1,99 @@
 .ds.rocks-list-card {
-  --logo-size: 40px;
-  --padding: var(--space-200);
-  --gap: var(--space-200);
-  --half-gap-collapse: calc(-0.5 * var(--gap));
+  --border: var(--dimension-stroke-thickness-medium) solid
+    var(--color-border-muted);
 
-  padding: var(--padding);
-  display: grid;
-  grid-template-columns: var(--logo-size) auto 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 0 var(--gap);
-  grid-template-areas:
-    "logo name categories revision"
-    "logo description description last-update";
+  position: relative;
+  border: var(--border);
+
+  :is(h1, h2, h3, h4, h5, h6, p) {
+    padding-block: 0;
+    margin-block: 0;
+  }
+
+  .body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "logo identity"
+      "summary summary";
+    gap: var(--container-gap-tight) var(--space-100);
+    padding: var(--space-200);
+  }
 
   .logo {
     grid-area: logo;
-    margin-block: auto;
+    inline-size: var(--app-package-icon-size);
+    block-size: var(--app-package-icon-size);
   }
 
-  .name {
-    grid-area: name;
-
-    .heading {
-      font-size: var(--dimension-size-fontSize-400);
-      margin-block: 0;
-      padding-block: 0;
-    }
+  .identity {
+    grid-area: identity;
+    display: grid;
+    align-content: start;
+    gap: var(--space-025);
   }
 
-  .categories {
-    grid-area: categories;
-    margin-inline-start: var(--half-gap-collapse);
+  .name::after {
+    content: "";
+    position: absolute;
+    inset: 0;
   }
 
-  .description {
-    grid-area: description;
-    padding-block: 0;
+  .publisher {
+    display: flex;
+    align-items: center;
+    gap: var(--container-gap-tight);
+    font-size: var(--typography-text-secondary-font-size);
+    color: var(--color-text-muted);
+  }
+
+  .summary {
+    grid-area: summary;
+    --font-size: var(--typography-text-secondary-prose-font-size);
 
     &.empty {
       color: var(--color-text-muted);
     }
   }
 
-  .small {
-    font-size: var(--dimension-size-fontSize-250);
-    color: var(--color-text-muted);
-    text-align: right;
+  .footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--container-gap-tight) var(--container-gap-default);
+    border-block-start: var(--border);
+    padding: var(--space-100);
+    font-size: var(--typography-text-secondary-prose-font-size);
   }
 
-  .revision {
-    grid-area: revision;
-    margin-top: auto;
-  }
-
+  .categories,
   .last-update {
-    grid-area: last-update;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: var(--container-gap-tight);
+  }
 
-    svg {
-      display: inline;
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-100);
+    margin-inline-start: auto;
+
+    > * + * {
+      border-inline-start: var(--border);
+      padding-inline-start: var(--space-100);
     }
+  }
+}
+
+/* show description inline on wider screens*/
+@container rocks-list (min-width: 36rem) {
+  .ds.rocks-list-card .body {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 3fr);
+    grid-template-areas: "logo identity summary";
+  }
+
+  .ds.rocks-list-card .summary {
+    margin-inline-start: var(--space-100);
   }
 }

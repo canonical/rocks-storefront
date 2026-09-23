@@ -30,6 +30,14 @@
     return getRocks({
       query: query(),
       categories: params.category,
+      fields: [
+        "summary",
+        "title",
+        "publisher",
+        "media",
+        "categories",
+        "default-release",
+      ],
     });
   });
 </script>
@@ -50,6 +58,12 @@
     <Heading class="visually-hidden" level={1}>Rocks store</Heading>
 
     <div class="grid responsive">
+        <div style="grid-column: span 3"></div>
+
+        <div style="grid-column: span 9">
+            <SearchForm name="q" bind:value={params.q} loading={$effect.pending() > 0} />
+        </div>
+
         <aside style="grid-column: span 3">
             <Heading level={2}><SmallCaps>Categories</SmallCaps></Heading>
 
@@ -67,8 +81,6 @@
         </aside>
 
         <section style="grid-column: span 9">
-            <SearchForm name="q" bind:value={params.q} loading={$effect.pending() > 0} />
-
             <RockList rocks={(await rocksRequest).results} />
         </section>
     </div>

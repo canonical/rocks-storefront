@@ -38,7 +38,7 @@ test.describe("home page", () => {
 
     await expect(page).toHaveURL(/[?&]q=/);
     await expect(
-      page.getByRole("heading", { name, level: 3, exact: true }),
+      page.getByRole("heading", { name, level: 5, exact: true }),
     ).toBeVisible();
   });
 });
