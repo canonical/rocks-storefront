@@ -16,6 +16,7 @@
   import { CloseIcon } from "@canonical/svelte-icons";
   import { Table } from "@canonical/svelte-ds-app-launchpad";
   import { CopyButton } from "$lib/components/ui/CopyButton";
+  import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import { formatFileSize, truncateDigest } from "$lib/utils/format";
@@ -102,21 +103,31 @@
           <tbody>
             {#each visibleRevisions as row (`${row.revision}|${row.architecture}`)}
               <tr>
-                <td>{row.revision ?? "—"}</td>
-                <td>{row.architecture || "—"}</td>
-                <td>{formatFileSize(row.size)}</td>
+                <td>
+                  {#if row.revision != null}{row.revision}{:else}<EmptyCell />{/if}
+                </td>
+                <td>
+                  {#if row.architecture}{row.architecture}{:else}<EmptyCell />{/if}
+                </td>
+                <td>
+                  {#if row.size != null}
+                    {formatFileSize(row.size)}
+                  {:else}
+                    <EmptyCell />
+                  {/if}
+                </td>
                 <td>
                   {#if row.updated}
                     <DateTime date={row.updated} formatter={DATE_FORMATTER} />
                   {:else}
-                    —
+                    <EmptyCell />
                   {/if}
                 </td>
                 <td>
                   {#if row.digest}
                     {@render digestCell(row.digest, row.revision)}
                   {:else}
-                    —
+                    <EmptyCell />
                   {/if}
                 </td>
               </tr>

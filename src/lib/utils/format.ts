@@ -2,9 +2,7 @@ const SIZE_UNITS = ["B", "kB", "MB", "GB", "TB"] as const;
 const SIZE_STEP = 1000;
 const DIGEST_CHARS = 12;
 
-export function formatFileSize(bytes: number | null | undefined): string {
-  if (bytes == null) return "—";
-
+export function formatFileSize(bytes: number): string {
   let value = bytes;
   let unit = 0;
   while (value >= SIZE_STEP && unit < SIZE_UNITS.length - 1) {

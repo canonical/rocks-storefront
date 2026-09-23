@@ -61,6 +61,19 @@ describe("RockChannels.svelte", () => {
       .toBeVisible();
   });
 
+  it("hides the placeholder in empty cells from assistive technology", async () => {
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("1.0/stable", { version: "" })]),
+    });
+
+    const cell = container.querySelectorAll("tbody td")[1];
+
+    expect(cell?.querySelector("[aria-hidden='true']")?.textContent).toBe("—");
+    expect(cell?.querySelector(".visually-hidden")?.textContent).toBe(
+      "Not available",
+    );
+  });
+
   it("shows the empty state when there are no channels", async () => {
     render(RockChannels, { rock: makeRock([]) });
 

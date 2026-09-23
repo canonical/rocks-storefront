@@ -13,6 +13,7 @@
   } from "@canonical/svelte-icons";
   import { RockChannelPanel } from "$lib/components/rock/RockChannelPanel";
   import { CopyableCode } from "$lib/components/ui/CopyableCode";
+  import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import {
@@ -168,13 +169,21 @@
                   {row.channelTag}
                 </button>
               </td>
-              <td>{row.version || "—"}</td>
-              <td>{row.architectures.join(", ") || "—"}</td>
+              <td>
+                {#if row.version}{row.version}{:else}<EmptyCell />{/if}
+              </td>
+              <td>
+                {#if row.architectures.length}
+                  {row.architectures.join(", ")}
+                {:else}
+                  <EmptyCell />
+                {/if}
+              </td>
               <td>
                 {#if row.lastUpdated}
                   <RelativeDateTime date={row.lastUpdated} />
                 {:else}
-                  -
+                  <EmptyCell />
                 {/if}
               </td>
             </tr>
