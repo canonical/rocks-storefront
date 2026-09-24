@@ -1,8 +1,6 @@
 # SBOMber manifest file
 # https://github.com/canonical/sbomber
 
-# WARNING: This manifest uses experimental functionality currently only implemented in https://github.com/edisile/sbomber
-
 clients:
   sbom:
     department: web_engineering
