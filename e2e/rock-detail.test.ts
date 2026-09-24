@@ -87,6 +87,27 @@ test.describe("rock detail page", () => {
   });
 });
 
+test.describe("site header", () => {
+  test("starts the nav on the app's main column", async ({ page, request }) => {
+    const path = await firstRockPath(request);
+
+    await page.goto(path);
+
+    const [nav, main] = await Promise.all([
+      page.getByRole("navigation", { name: "Main" }).boundingBox(),
+      page.locator("main .app-columns__main").first().boundingBox(),
+    ]);
+
+    if (!nav || !main) {
+      throw new Error(
+        "expected the header nav and the main column to be visible",
+      );
+    }
+
+    expect(nav.x).toBeCloseTo(main.x, 0);
+  });
+});
+
 test.describe("rock detail page without javascript", () => {
   test.use({ javaScriptEnabled: false });
 
