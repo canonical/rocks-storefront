@@ -2,6 +2,14 @@ name: Terraform Apply
 
 on:
   workflow_dispatch:
+    target:
+      description: "Target environment"
+      type: choice
+      options:
+        - Staging
+        - Production
+        - Auto
+      default: Auto
 
 permissions:
   contents: read
@@ -36,10 +44,16 @@ jobs:
       - name: Setup vars
         id: setup-vars
         run: |
-          if [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
-            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace" >> $GITHUB_OUTPUT
+          if [ -n "${{ inputs.target }}" ]; then
+            if [ "${{ inputs.target }}" = "Production" ]; then
+              echo "terraform_dir=terraform/ps7/k8s-prod-marketplace-rocks" >> $GITHUB_OUTPUT
+            else
+              echo "terraform_dir=terraform/ps7/k8s-stg-marketplace-rocks" >> $GITHUB_OUTPUT
+            fi;
+          elif [ "${{ needs.setenv.outputs.environment }}" = "Production" ]; then
+            echo "terraform_dir=terraform/ps7/k8s-prod-marketplace-rocks" >> $GITHUB_OUTPUT
           else
-            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace" >> $GITHUB_OUTPUT
+            echo "terraform_dir=terraform/ps7/k8s-stg-marketplace-rocks" >> $GITHUB_OUTPUT
           fi;
 
   apply:
