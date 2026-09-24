@@ -50,7 +50,7 @@ describe("RockHero.svelte", () => {
     );
   });
 
-  it("shows the first category", async () => {
+  it("shows every category", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
         metadata: {
@@ -65,10 +65,10 @@ describe("RockHero.svelte", () => {
     const meta = container.querySelector(".rock-hero__meta");
 
     expect(meta?.textContent).toContain("databases");
-    expect(meta?.textContent).not.toContain("caching");
+    expect(meta?.textContent).toContain("caching");
   });
 
-  it("separates publisher and category with a decorative dot", async () => {
+  it("separates publisher and categories with a decorative divider", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
         metadata: {
@@ -78,11 +78,9 @@ describe("RockHero.svelte", () => {
       }),
     });
 
-    const dot = container.querySelector(
-      ".rock-hero__meta [aria-hidden='true']",
-    );
-
-    expect(dot?.textContent).toBe("·");
+    expect(
+      container.querySelector(".rock-hero__meta .rock-hero__divider"),
+    ).not.toBeNull();
   });
 
   it("omits the separator when only one of publisher and category is present", async () => {
@@ -103,58 +101,31 @@ describe("RockHero.svelte", () => {
     expect(container.querySelector(".rock-hero__meta")).toBeNull();
   });
 
-  it("shows the most recent release date", async () => {
+  it("tags the quick pull reference with the default track channel", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
-        "channel-map": [
-          makeChannel({ releasedAt: "2026-01-01T00:00:00Z" }),
-          makeChannel({ name: "1.0/edge", releasedAt: "2026-06-01T00:00:00Z" }),
-        ],
+        "default-track": "7.2",
+        "channel-map": [makeChannel({ name: "7.2/edge" })],
       }),
     });
 
-    const updated = container.querySelector(".rock-hero__updated");
-
-    expect(updated).not.toBeNull();
-    expect(updated?.querySelector("time")?.getAttribute("datetime")).toContain(
-      "2026-06-01",
-    );
+    expect(container.querySelector("code")?.textContent).toContain("7.2_edge");
   });
 
-  it("falls back to the revision creation date", async () => {
+  it("uses an available channel when there is no default track", async () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
-        "channel-map": [
-          makeChannel({ releasedAt: null, createdAt: "2026-03-01T00:00:00Z" }),
-        ],
+        "channel-map": [makeChannel({ name: "7.2/edge" })],
       }),
     });
 
-    expect(
-      container
-        .querySelector(".rock-hero__updated time")
-        ?.getAttribute("datetime"),
-    ).toContain("2026-03-01");
+    expect(container.querySelector("code")?.textContent).toContain("7.2_edge");
   });
 
-  it("omits the updated line when no dates are available", async () => {
+  it("omits the quick pull reference when no revision is downloadable", async () => {
     const { container } = render(RockHero, { rock: makeInfoRock() });
 
-    expect(container.querySelector(".rock-hero__updated")).toBeNull();
-  });
-
-  it("shows the default track as the quick pull tag", async () => {
-    const { container } = render(RockHero, {
-      rock: makeInfoRock({ "default-track": "7.2" }),
-    });
-
-    expect(container.querySelector("code")?.textContent).toContain("7.2");
-  });
-
-  it("falls back to latest when there is no default track", async () => {
-    const { container } = render(RockHero, { rock: makeInfoRock() });
-
-    expect(container.querySelector("code")?.textContent).toContain("latest");
+    expect(container.querySelector("code")).toBeNull();
   });
 
   it("links to the tags tab", async () => {

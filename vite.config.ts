@@ -3,6 +3,16 @@ import { sveltekit } from "@sveltejs/kit/vite";
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
+// SvelteKit injects onload and onerror event handlers on all img tags with the
+// content being "this.__e=event"; the hash of this script must be added to the
+// CSP header as a script-src-attr, otherwise it will trigger errors.
+// See: https://github.com/sveltejs/svelte/issues/14014
+const EVENT_HANDLER_HASH =
+  "sha256-7dQwUgLau1NFCCGjfn9FsYptB6ZtWxJin6VohGIu20I=";
+
+// check if running the dev command or a prod build
+const isDev = process.env.NODE_ENV === "development";
+
 export default defineConfig({
   plugins: [
     sveltekit({
@@ -17,6 +27,20 @@ export default defineConfig({
       adapter: adapter(),
       experimental: {
         remoteFunctions: true,
+      },
+      csp: {
+        directives: {
+          "default-src": ["self"], // anything unset falls back to this
+          "script-src-attr": ["self", "unsafe-hashes", EVENT_HANDLER_HASH],
+          "font-src": ["self", "assets.ubuntu.com"],
+          "img-src": ["self", "assets.ubuntu.com"],
+          "frame-ancestors": ["self"],
+          "form-action": ["self"],
+          // SvelteKit injects a worker as a blob when running in dev mode
+          "worker-src": isDev ? ["blob:"] : [],
+          // TODO: remove inline styles so we can skip unsafe-inline here
+          "style-src": ["self", "unsafe-inline"],
+        },
       },
     }),
   ],

@@ -1,0 +1,7 @@
+.ds.copy-button {
+  padding: var(--space-050);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 1;
+}

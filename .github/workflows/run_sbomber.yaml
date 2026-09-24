@@ -1,0 +1,43 @@
+name: Run sbomber action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  run-sbomber:
+    runs-on:
+      [self-hosted, self-hosted-linux-amd64-jammy-private-endpoint-medium]
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@20cfd1bf945f4377ade1205e4dbc17946fc9a30d # v10.0.1
+
+      - name: Download latest rock
+        run: |
+          TOKEN=$(curl -fsSL \
+              "https://ghcr.io/token?scope=repository:${GITHUB_REPOSITORY}:pull" \
+            | jq -r .token)
+          TAG=$(curl -fsSL \
+              -H "Authorization: Bearer ${TOKEN}" \
+              "https://ghcr.io/v2/${GITHUB_REPOSITORY}/tags/list" \
+            | jq -r ".tags | last")
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY}:${TAG}"
+
+          # download image
+          sudo apt install -y skopeo
+          skopeo copy \
+            --insecure-policy \
+            docker://${IMAGE} \
+            oci-archive:rocks-storefront_1.1_amd64.rock
+
+      - name: Run sbomber composite action (SHA-pinned)
+        uses: canonical/sbomber/.github/actions/run@feat/reusable-workflow
+        with:
+          manifest: ${{ github.workspace }}/sbomber.yaml
+          artifact-name: sbomber-${{ github.run_id }}
+          sbomber-ref: 9a2491ce50947009415e286a049d438a5363a264

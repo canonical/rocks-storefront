@@ -38,3 +38,8 @@ vite.config.ts.timestamp-*
 .terraform
 .terraform.lock.hcl
 *.tfstate*
+
+# sbomber artifacts
+pkgs/
+reports/
+.statefile.yaml

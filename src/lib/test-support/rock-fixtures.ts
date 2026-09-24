@@ -34,13 +34,13 @@ export function makeChannel({
   version = "1.0.0",
   architecture = "amd64",
   releasedAt = "2026-01-01T00:00:00Z",
-  createdAt,
+  downloadUrl = "rocks.pkg.store/ubuntu/test-rock@sha256:deadbeef",
 }: {
   name?: string;
   version?: string;
   architecture?: string;
   releasedAt?: string | null;
-  createdAt?: string;
+  downloadUrl?: string;
 } = {}): ChannelMapItem {
   return {
     channel: {
@@ -50,6 +50,9 @@ export function makeChannel({
       platform: { architecture },
       "released-at": releasedAt,
     },
-    revision: { version, ...(createdAt ? { "created-at": createdAt } : {}) },
+    revision: {
+      version,
+      download: { "sha-256": "deadbeef", url: downloadUrl },
+    },
   };
 }

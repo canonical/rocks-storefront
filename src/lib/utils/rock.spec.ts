@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import type { ChannelMapItem, RockInfoResponse } from "$lib/server/api/types";
 import {
+  FALLBACK_ICON,
   getArchitectures,
   getChannelRows,
+  getImageReference,
   getLatestTag,
+  getRockIconUrl,
+  getRockPublisher,
   getRockTitle,
   getVersions,
 } from "./rock";
@@ -30,6 +34,63 @@ function channel(overrides: Partial<ChannelMapItem> = {}): ChannelMapItem {
   };
 }
 
+describe("getRockPublisher", () => {
+  it("prefers the display name over the username", () => {
+    expect(
+      getRockPublisher(
+        makeRock({
+          metadata: {
+            publisher: { "display-name": "Canonical", username: "canonical" },
+          },
+        }),
+      ),
+    ).toBe("Canonical");
+  });
+
+  it("falls back to the username", () => {
+    expect(
+      getRockPublisher(
+        makeRock({ metadata: { publisher: { username: "jdoe" } } }),
+      ),
+    ).toBe("jdoe");
+  });
+
+  it("is undefined when there is no publisher", () => {
+    expect(getRockPublisher(makeRock())).toBeUndefined();
+  });
+});
+
+describe("getRockIconUrl", () => {
+  it("uses the icon from metadata media", () => {
+    expect(
+      getRockIconUrl(
+        makeRock({
+          metadata: {
+            media: [
+              {
+                type: "screenshot",
+                url: "https://x/s.png",
+                height: null,
+                width: null,
+              },
+              {
+                type: "icon",
+                url: "https://x/i.png",
+                height: null,
+                width: null,
+              },
+            ],
+          },
+        }),
+      ),
+    ).toBe("https://x/i.png");
+  });
+
+  it("falls back to the placeholder icon", () => {
+    expect(getRockIconUrl(makeRock())).toBe(FALLBACK_ICON);
+  });
+});
+
 describe("getRockTitle", () => {
   it("prefers the metadata title", () => {
     expect(getRockTitle(makeRock({ metadata: { title: "Pretty" } }))).toBe(
@@ -43,22 +104,102 @@ describe("getRockTitle", () => {
 });
 
 describe("getLatestTag", () => {
-  it("returns the default track when present", () => {
-    expect(getLatestTag(makeRock({ "default-track": "24.04" }))).toBe("24.04");
+  const on = (track: string, risk: string) =>
+    channel({
+      channel: {
+        name: `${track}/${risk}`,
+        track,
+        risk,
+        platform: { architecture: "amd64" },
+        "released-at": "2026-01-01T00:00:00Z",
+      },
+    });
+
+  it("renders the registry tag as track_risk", () => {
+    const rock = makeRock({
+      "default-track": "24.04",
+      "channel-map": [on("24.04", "edge")],
+    });
+
+    expect(getLatestTag(rock)).toBe("24.04_edge");
   });
 
-  it("falls back to 'latest' when the default track is absent", () => {
-    expect(getLatestTag(makeRock())).toBe("latest");
+  it("prefers the most stable risk on the default track", () => {
+    const rock = makeRock({
+      "default-track": "24.04",
+      "channel-map": [
+        on("24.04", "edge"),
+        on("24.04", "stable"),
+        on("24.04", "beta"),
+      ],
+    });
+
+    expect(getLatestTag(rock)).toBe("24.04_stable");
   });
 
-  it("falls back to 'latest' when the default track is empty or null", () => {
-    expect(getLatestTag(makeRock({ "default-track": "" }))).toBe("latest");
-    expect(getLatestTag(makeRock({ "default-track": null }))).toBe("latest");
+  it("ignores channels on other tracks", () => {
+    const rock = makeRock({
+      "default-track": "24.04",
+      "channel-map": [on("22.04", "stable"), on("24.04", "edge")],
+    });
+
+    expect(getLatestTag(rock)).toBe("24.04_edge");
+  });
+
+  it("falls back to any channel when no default track is set", () => {
+    const rock = makeRock({ "channel-map": [on("24.04", "edge")] });
+
+    expect(getLatestTag(rock)).toBe("24.04_edge");
+  });
+
+  it("returns null when there are no channels", () => {
+    expect(getLatestTag(makeRock())).toBeNull();
+  });
+});
+
+describe("getImageReference", () => {
+  const withDownload = (url: string) =>
+    channel({
+      revision: { version: "1.0.0", download: { "sha-256": "d", url } },
+    });
+
+  it("derives the repository from the revision download url", () => {
+    const rock = makeRock({
+      "default-track": "1.0",
+      "channel-map": [
+        withDownload("rocks.pkg.store/ubuntu/test-rock@sha256:d"),
+      ],
+    });
+
+    expect(getImageReference(rock)).toBe(
+      "rocks.pkg.store/ubuntu/test-rock:1.0_stable",
+    );
+  });
+
+  it("skips revisions without a download url", () => {
+    const rock = makeRock({
+      "default-track": "1.0",
+      "channel-map": [
+        channel(),
+        withDownload("rocks.pkg.store/ubuntu/test-rock@sha256:d"),
+      ],
+    });
+
+    expect(getImageReference(rock)).toBe(
+      "rocks.pkg.store/ubuntu/test-rock:1.0_stable",
+    );
+  });
+
+  it("returns null when no revision exposes a download url", () => {
+    expect(getImageReference(makeRock())).toBeNull();
+    expect(
+      getImageReference(makeRock({ "channel-map": [channel()] })),
+    ).toBeNull();
   });
 });
 
 describe("getArchitectures", () => {
-  it("collects from both channel platform and revision platforms, deduped and sorted", () => {
+  it("prefers the channel platform, deduped and sorted", () => {
     const rock = makeRock({
       "channel-map": [
         channel({
@@ -72,7 +213,20 @@ describe("getArchitectures", () => {
       ],
     });
 
-    expect(getArchitectures(rock)).toEqual(["amd64", "arm64", "riscv64"]);
+    expect(getArchitectures(rock)).toEqual(["amd64", "arm64"]);
+  });
+
+  it("falls back to the revision platform when the channel omits one", () => {
+    const rock = makeRock({
+      "channel-map": [
+        channel({
+          channel: { name: "a" },
+          revision: { platforms: [{ architecture: "s390x" }] },
+        }),
+      ],
+    });
+
+    expect(getArchitectures(rock)).toEqual(["s390x"]);
   });
 
   it("returns an empty array when there is no channel map", () => {

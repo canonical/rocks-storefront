@@ -16,11 +16,14 @@ export interface RockFindResponse {
   results: RockFindResultItem[];
 }
 
-export interface RockFindResultItem {
+export interface RockBase {
   name: string;
   "package-id": string;
-  "default-release"?: DefaultRelease;
   metadata?: Metadata;
+}
+
+export interface RockFindResultItem extends RockBase {
+  "default-release"?: DefaultRelease;
 }
 
 export interface DefaultRelease {
@@ -67,15 +70,9 @@ export interface Publisher {
  * Converted from: https://api.snapcraft.io/docs/rocks/#response-json-schema
  * */
 
-export interface RockInfoResponse {
-  /** Root required properties */
-  name: string;
-  "package-id": string;
-
-  /** Optional root properties */
+export interface RockInfoResponse extends RockBase {
   "channel-map"?: ChannelMapItem[];
   "default-track"?: string | null;
-  metadata?: Metadata;
 }
 
 export interface ChannelMapItem {
