@@ -29,26 +29,32 @@
   <title>{getRockTitle(rock)} · Rock Store</title>
 </svelte:head>
 
-<RockHero {rock} />
+<div class="rock-detail">
+  <RockHero {rock} />
 
-<div class="app-container rock-detail__body">
-  <Tabs {tabs} active={activeTab} aria-label="Rock details" />
+  <div class="app-container rock-detail__body">
+    <Tabs {tabs} active={activeTab} aria-label="Rock details" />
 
-  <div class="rock-detail__content">
-    {#if activeTab === "tags"}
-      <RockChannels {rock} />
-    {:else}
-      <SplitLayout>
-        {#snippet aside()}
-          <RockSidebar {rock} />
-        {/snippet}
-        {#snippet main()}
-          <RockDescription {rock} readme={data.readme} upstream={data.upstream} />
-        {/snippet}
-      </SplitLayout>
-    {/if}
+    <div class="rock-detail__content">
+      {#if activeTab === "tags"}
+        <RockChannels {rock} />
+      {:else}
+        <SplitLayout>
+          {#snippet aside()}
+            <RockSidebar {rock} />
+          {/snippet}
+          {#snippet main()}
+            <RockDescription
+              {rock}
+              readme={data.readme}
+              upstream={data.upstream}
+            />
+          {/snippet}
+        </SplitLayout>
+      {/if}
+    </div>
+
+    <RockGetInTouch />
   </div>
-
-  <RockGetInTouch />
 </div>
 
