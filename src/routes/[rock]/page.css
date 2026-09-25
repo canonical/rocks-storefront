@@ -1,3 +1,7 @@
+.rock-detail {
+  background: var(--color-background-layer2);
+}
+
 .rock-detail__body {
   padding-block: var(--space-400);
 }
