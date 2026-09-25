@@ -9,6 +9,7 @@
   import { Tabs } from "$lib/components/ui/Tabs";
   import { getRockTitle } from "$lib/utils/rock";
   import type { PageProps } from "./$types";
+  import "./page.css";
 
   let { data }: PageProps = $props();
 
@@ -51,12 +52,3 @@
   <RockGetInTouch />
 </div>
 
-<style>
-  .rock-detail__body {
-    padding-block: var(--space-400);
-  }
-
-  .rock-detail__content {
-    padding-block-start: var(--space-400);
-  }
-</style>
