@@ -53,10 +53,9 @@ describe("RockHero server rendering", () => {
 });
 
 describe("RockDescription server rendering", () => {
-  it("emits the summary and the rendered markdown", () => {
+  it("emits the rendered markdown", () => {
     const { body } = render(RockDescription, { props: { rock: ROCK } });
 
-    expect(body).toContain("An in-memory data store.");
     expect(body).toContain("<h2>Usage</h2>");
     expect(body).toContain("<strong>docker</strong>");
   });

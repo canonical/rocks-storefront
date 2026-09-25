@@ -43,7 +43,7 @@
           <RockSidebar {rock} />
         {/snippet}
         {#snippet main()}
-          <RockDescription {rock} />
+          <RockDescription {rock} readme={data.readme} upstream={data.upstream} />
         {/snippet}
       </SplitLayout>
     {/if}

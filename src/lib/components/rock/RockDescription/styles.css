@@ -1,9 +1,41 @@
-.ds.rock-description .rock-description__summary {
-  margin-block: 0 var(--space-300);
-  color: var(--color-text);
-}
-
 .ds.rock-description .rock-description__empty {
   margin-block: 0;
   color: var(--color-text-muted);
+}
+
+/* styling of markdown content within the rock description body */
+.ds.rock-description .rock-description__body > :is(ul, ol, pre, blockquote) {
+  margin-block: 0 var(--space-200);
+}
+
+.ds.rock-description .rock-description__body > table {
+  margin-block: 0 var(--space-300);
+}
+
+.ds.rock-description .rock-description__body > hr {
+  margin-block: 0 var(--space-400);
+}
+
+.ds.rock-description .rock-description__body pre {
+  padding: var(--space-150);
+  background: var(--color-background-container);
+  border-radius: var(--dimension-025);
+  overflow-x: auto;
+}
+
+.ds.rock-description .rock-description__body :not(pre) > code {
+  padding: 0 var(--space-050);
+  background: var(--color-background-container);
+  border-radius: var(--dimension-025);
+}
+
+.ds.rock-description .rock-description__body :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--typography-font-family-default);
+  font-size: var(--font-size);
+  font-weight: var(--font-weight);
+  line-height: var(--line-height);
+}
+
+.ds.rock-description .rock-description__body :is(code, pre) {
+  font-family: var(--typography-font-family-monospace);
 }

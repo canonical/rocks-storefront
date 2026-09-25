@@ -1,28 +1,30 @@
 <script lang="ts">
-  import { renderMarkdown } from "$lib/utils/markdown";
+  import { renderMarkdown, renderReadmeMarkdown } from "$lib/utils/markdown";
   import type { RockDescriptionProps } from "./types.js";
   import "./styles.css";
 
   const componentCssClassName = "ds rock-description";
 
-  let { rock }: RockDescriptionProps = $props();
+  let { rock, readme, upstream }: RockDescriptionProps = $props();
 
-  const summary = $derived(rock.metadata?.summary?.trim());
+  const bodyHtml = $derived.by(() => {
+    const readmeSource = readme?.trim();
+    if (readmeSource && upstream) {
+      return renderReadmeMarkdown(readmeSource, upstream);
+    }
 
-  const descriptionHtml = $derived.by(() => {
     const source = rock.metadata?.description?.trim();
     return source ? renderMarkdown(source) : "";
   });
 </script>
 
 <div class={componentCssClassName}>
-  {#if summary}
-    <p class="rock-description__summary">{summary}</p>
-  {/if}
-  {#if descriptionHtml}
+  {#if bodyHtml}
     <!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised by markdown-it -->
-    <div class="rock-description__body">{@html descriptionHtml}</div>
-  {:else if !summary}
+    <div class="rock-description__body editorial content-flow">
+      {@html bodyHtml}
+    </div>
+  {:else}
     <p class="rock-description__empty">No description provided.</p>
   {/if}
 </div>
