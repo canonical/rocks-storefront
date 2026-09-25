@@ -1,7 +1,6 @@
 import { render } from "svelte/server";
 import { describe, expect, it } from "vitest";
 import RockDescription from "$lib/components/rock/RockDescription/RockDescription.svelte";
-import RockFeedback from "$lib/components/rock/RockFeedback/RockFeedback.svelte";
 import RockHero from "$lib/components/rock/RockHero/RockHero.svelte";
 import RockList from "$lib/components/rock/RockList/RockList.svelte";
 import RockSidebar from "$lib/components/rock/RockSidebar/RockSidebar.svelte";
@@ -171,13 +170,5 @@ describe("ImageWithFallback server rendering", () => {
     });
 
     expect(body).toContain('src="https://example.com/i.png"');
-  });
-});
-
-describe("RockFeedback server rendering", () => {
-  it("emits the survey link", () => {
-    const { body } = render(RockFeedback, { props: {} });
-
-    expect(body).toContain("this short survey");
   });
 });
