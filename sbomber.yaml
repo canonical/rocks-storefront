@@ -14,7 +14,7 @@ artifacts:
     name: rocks-storefront
     charm_resource: app-image
     charm: rocks-storefront
-    channel: beta
+    channel: latest/beta
     version: "" # autodetect
     ssdlc_params:
       name: rocks-storefront
@@ -24,7 +24,7 @@ artifacts:
   - type: charm
     name: rocks-storefront
     charm: rocks-storefront
-    channel: beta
+    channel: latest/beta
     version: "" # autodetect
     ssdlc_params:
       name: rocks-storefront
