@@ -2,14 +2,15 @@ name: Terraform Apply
 
 on:
   workflow_dispatch:
-    target:
-      description: "Target environment"
-      type: choice
-      options:
-        - Staging
-        - Production
-        - Auto
-      default: Auto
+    inputs:
+      target:
+        description: "Target environment"
+        type: choice
+        options:
+          - Staging
+          - Production
+          - Auto
+        default: Auto
 
 permissions:
   contents: read
