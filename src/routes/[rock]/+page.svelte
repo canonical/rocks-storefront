@@ -2,7 +2,6 @@
   import { page } from "$app/state";
   import { RockChannels } from "$lib/components/rock/RockChannels";
   import { RockDescription } from "$lib/components/rock/RockDescription";
-  import { RockFeedback } from "$lib/components/rock/RockFeedback";
   import { RockGetInTouch } from "$lib/components/rock/RockGetInTouch";
   import { RockHero } from "$lib/components/rock/RockHero";
   import { RockSidebar } from "$lib/components/rock/RockSidebar";
@@ -49,11 +48,7 @@
     {/if}
   </div>
 
-  {#if activeTab === "tags"}
-    <RockGetInTouch />
-  {:else}
-    <RockFeedback />
-  {/if}
+  <RockGetInTouch />
 </div>
 
 <style>
