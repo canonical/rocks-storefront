@@ -1,7 +1,9 @@
 import { error } from "@sveltejs/kit";
 import { StoreApiResourceNotFound } from "$lib/server/api/errors";
 import { getReadme } from "$lib/server/api/readme";
+import { getRockcraftUrls } from "$lib/server/api/rockcraft";
 import { ApiClient } from "$lib/server/api/rocks";
+import { getTracks } from "$lib/utils/rock";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -18,7 +20,13 @@ export const load: PageServerLoad = async ({ params }) => {
   }
 
   const upstream = rock.metadata?.links?.upstream?.[0];
-  const readme = upstream ? await getReadme(upstream) : null;
+  const noRecipes: Record<string, string> = {};
+  const [readme, rockcraftUrls] = await Promise.all([
+    upstream ? getReadme(upstream) : null,
+    upstream
+      ? getRockcraftUrls(upstream, rock.name, getTracks(rock))
+      : noRecipes,
+  ]);
 
-  return { rock, readme, upstream: upstream ?? null };
+  return { rock, readme, upstream: upstream ?? null, rockcraftUrls };
 };

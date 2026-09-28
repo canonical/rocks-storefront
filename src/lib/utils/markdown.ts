@@ -1,12 +1,8 @@
 import MarkdownIt from "markdown-it";
+import { githubRepoUrl } from "./github";
 
 /**
  * Shared markdown renderer for publisher-authored content (rock descriptions).
- *
- * `html: false` makes markdown-it escape any raw HTML in the source, and its
- * default link validation rejects unsafe protocols (`javascript:`, `vbscript:`,
- * non-image `data:`), so the rendered output is safe to inject with `{@html}`
- * without a separate DOM sanitiser — which also keeps it working under SSR.
  */
 const md = new MarkdownIt({
   html: false,
@@ -19,7 +15,7 @@ export function renderMarkdown(source: string): string {
 
 /**
  * Renderer for READMEs fetched from a rock's upstream repository.
- * Two things are done before it can stand in as a rock description:
+ * Three things are done before it can stand in as a rock description:
  *
  * - Images are dropped. Dropping them avoids widening the policy
  *   for hosts we do not control.
@@ -59,7 +55,7 @@ readmeMd.renderer.rules.link_open = (tokens, idx, options, env, self) => {
 };
 
 export function renderReadmeMarkdown(source: string, repoUrl: string): string {
-  const repo = repoUrl.replace(/\.git$/, "").replace(/\/$/, "");
+  const repo = githubRepoUrl(repoUrl);
 
   return readmeMd.render(source, { readmeBase: `${repo}/blob/HEAD/` });
 }

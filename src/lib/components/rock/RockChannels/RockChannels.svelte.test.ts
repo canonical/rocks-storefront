@@ -191,4 +191,50 @@ describe("RockChannels.svelte", () => {
       .element(page.getByRole("button", { name: "Copied to clipboard" }))
       .toBeVisible();
   });
+
+  it("shows the base read out of the track", async () => {
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("9.1-26.04/edge")]),
+    });
+
+    const cells = container.querySelectorAll("tbody tr td");
+    expect(cells[2].textContent?.trim()).toBe("26.04");
+  });
+
+  it("leaves the base empty for a track that encodes no release", async () => {
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("latest/stable")]),
+    });
+
+    const cells = container.querySelectorAll("tbody tr td");
+    expect(cells[2].textContent?.trim()).toBe("— Not available");
+  });
+
+  it("links to the recipe of a track that has one", async () => {
+    render(RockChannels, {
+      rock: makeRock([entry("9.1-26.04/edge")]),
+      rockcraftUrls: {
+        "9.1-26.04":
+          "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
+      },
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
+      .toHaveAttribute(
+        "href",
+        "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
+      );
+  });
+
+  it("shows no recipe link for a track whose recipe was not found", async () => {
+    render(RockChannels, {
+      rock: makeRock([entry("9.1-26.04/edge")]),
+      rockcraftUrls: {},
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
+      .not.toBeInTheDocument();
+  });
 });

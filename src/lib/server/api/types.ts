@@ -35,7 +35,7 @@ export interface DefaultRelease {
 export interface Channel {
   /** This channel's full name, as track/risk. eg "latest/stable". */
   name: string;
-  /** This channel's supported base. */
+  /** This channel's supported platform. */
   platform: Platform;
   /** The timestamp of the last release to this channel */
   "released-at": string | null;
