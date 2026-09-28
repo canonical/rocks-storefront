@@ -196,6 +196,10 @@ export function getChannelRevisions(
   return rows.sort((a, b) => (b.revision ?? 0) - (a.revision ?? 0));
 }
 
+export function getLatestVersion(rock: RockInfoResponse): string | undefined {
+  return getChannelRows(rock).find((row) => row.version)?.version;
+}
+
 export function getVersions(rock: RockInfoResponse): string[] {
   return collect(rock, (item) => item.revision?.version);
 }

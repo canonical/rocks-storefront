@@ -42,7 +42,7 @@
 
     <div class="rock-detail__content">
       {#if activeTab === "tags"}
-        <RockChannels {rock} rockcraftUrls={data.rockcraftUrls} />
+        <RockChannels {rock} />
       {:else}
         <SplitLayout>
           {#snippet aside()}
