@@ -18,6 +18,7 @@
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import {
     getArchitectures,
+    getBase,
     getGroupedChannelRows,
     getImageReference,
     getVersions,
@@ -34,7 +35,7 @@
 
   const componentCssClassName = "ds rock-channels";
 
-  let { rock }: RockChannelsProps = $props();
+  let { rock, rockcraftUrls = {} }: RockChannelsProps = $props();
 
   const imageReference = $derived(getImageReference(rock));
 
@@ -153,12 +154,16 @@
           <tr>
             <th scope="col"><SmallCaps>Channel tag</SmallCaps></th>
             <th scope="col"><SmallCaps>Version</SmallCaps></th>
+            <th scope="col"><SmallCaps>Base</SmallCaps></th>
             <th scope="col"><SmallCaps>Architecture</SmallCaps></th>
             <th scope="col"><SmallCaps>Updated</SmallCaps></th>
+            <th scope="col"><SmallCaps>Recipe</SmallCaps></th>
           </tr>
         </thead>
         <tbody>
           {#each pagedRows as row (row.channelTag)}
+            {@const base = getBase(row.track)}
+            {@const rockcraftUrl = rockcraftUrls[row.track]}
             <tr>
               <td>
                 <button
@@ -173,6 +178,9 @@
                 {#if row.version}{row.version}{:else}<EmptyCell />{/if}
               </td>
               <td>
+                {#if base}{base}{:else}<EmptyCell />{/if}
+              </td>
+              <td>
                 {#if row.architectures.length}
                   {row.architectures.join(", ")}
                 {:else}
@@ -182,6 +190,19 @@
               <td>
                 {#if row.lastUpdated}
                   <RelativeDateTime date={row.lastUpdated} />
+                {:else}
+                  <EmptyCell />
+                {/if}
+              </td>
+              <td>
+                {#if rockcraftUrl}
+                  <Link
+                    href={rockcraftUrl}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    rockcraft.yaml
+                  </Link>
                 {:else}
                   <EmptyCell />
                 {/if}

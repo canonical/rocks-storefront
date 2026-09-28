@@ -14,6 +14,11 @@
   let { data }: PageProps = $props();
 
   const rock = $derived(data.rock);
+  const rockcraftUrl = $derived(
+    data.rockcraftUrls[rock["default-track"] ?? ""] ??
+      Object.values(data.rockcraftUrls)[0] ??
+      null,
+  );
 
   const tabs = [
     { id: "description", label: "Description", href: "?tab=description" },
@@ -37,11 +42,11 @@
 
     <div class="rock-detail__content">
       {#if activeTab === "tags"}
-        <RockChannels {rock} />
+        <RockChannels {rock} rockcraftUrls={data.rockcraftUrls} />
       {:else}
         <SplitLayout>
           {#snippet aside()}
-            <RockSidebar {rock} />
+            <RockSidebar {rock} {rockcraftUrl} />
           {/snippet}
           {#snippet main()}
             <RockDescription

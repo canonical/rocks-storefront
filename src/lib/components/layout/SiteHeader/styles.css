@@ -8,10 +8,6 @@
   --grid-row-gap: 0;
 }
 
-.ds.site-header .site-header__logo {
-  display: block;
-}
-
 .ds.site-header .site-header__nav {
   display: flex;
   flex-wrap: wrap;
