@@ -8,6 +8,7 @@ import {
   getChannelRows,
   getImageReference,
   getLatestTag,
+  getLatestVersion,
   getRockIconUrl,
   getRockPublisher,
   getRockTitle,
@@ -387,5 +388,28 @@ describe("getBases", () => {
     });
 
     expect(getBases(rock)).toEqual([]);
+  });
+});
+
+describe("getLatestVersion", () => {
+  it("takes the version of the most recently released channel", () => {
+    const rock = makeRock({
+      "channel-map": [
+        channel({
+          channel: { name: "old", "released-at": "2026-01-01T00:00:00Z" },
+          revision: { version: "1.0" },
+        }),
+        channel({
+          channel: { name: "new", "released-at": "2026-06-01T00:00:00Z" },
+          revision: { version: "2.0" },
+        }),
+      ],
+    });
+
+    expect(getLatestVersion(rock)).toBe("2.0");
+  });
+
+  it("is undefined when no channel carries a version", () => {
+    expect(getLatestVersion(makeRock({ "channel-map": [] }))).toBeUndefined();
   });
 });

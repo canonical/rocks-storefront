@@ -9,3 +9,8 @@
   letter-spacing: var(--typography-text-primary-smallcaps-letter-spacing);
   line-height: var(--typography-text-primary-smallcaps-line-height);
 }
+
+th > .ds.small-caps,
+th > * > .ds.small-caps {
+  margin-block-end: 0;
+}

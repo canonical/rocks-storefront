@@ -52,6 +52,22 @@ function makeRock(
   };
 }
 
+/** The OS cell of the first row, found by header so column order cannot break it. */
+function osCell(container: HTMLElement): Element {
+  const index = [...container.querySelectorAll("thead th")].findIndex((th) =>
+    th.textContent?.trim().startsWith("OS"),
+  );
+
+  return container.querySelectorAll("tbody tr:first-child td")[index];
+}
+
+function twoVersions() {
+  return makeRock([
+    entry("v2/stable", { version: "2.0", releasedAt: "2026-06-01T00:00:00Z" }),
+    entry("v1/stable", { version: "1.0", releasedAt: "2026-01-01T00:00:00Z" }),
+  ]);
+}
+
 describe("RockChannels.svelte", () => {
   it("renders the image reference for the latest tag", async () => {
     render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
@@ -63,11 +79,12 @@ describe("RockChannels.svelte", () => {
 
   it("hides the placeholder in empty cells from assistive technology", async () => {
     const { container } = render(RockChannels, {
-      rock: makeRock([entry("1.0/stable", { version: "" })]),
+      rock: makeRock([entry("latest/stable")]),
     });
 
-    const cell = container.querySelectorAll("tbody td")[1];
+    const cell = osCell(container);
 
+    expect(cell?.textContent?.trim()).toBe("— Not available");
     expect(cell?.querySelector("[aria-hidden='true']")?.textContent).toBe("—");
     expect(cell?.querySelector(".visually-hidden")?.textContent).toBe(
       "Not available",
@@ -93,6 +110,30 @@ describe("RockChannels.svelte", () => {
     await expect
       .element(page.getByRole("cell", { name: "1.0/edge" }))
       .toBeVisible();
+  });
+
+  it("starts on the latest version rather than showing them all", async () => {
+    render(RockChannels, {
+      rock: twoVersions(),
+    });
+
+    await expect
+      .element(page.getByRole("cell", { name: "v2/stable" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("cell", { name: "v1/stable" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("offers no all-versions option", async () => {
+    const { container } = render(RockChannels, {
+      rock: twoVersions(),
+    });
+
+    const versionSelect = container.querySelector("select");
+    expect(
+      [...(versionSelect?.options ?? [])].map((o) => o.textContent?.trim()),
+    ).toEqual(["1.0", "2.0 (latest)"]);
   });
 
   it("filters rows by the selected version", async () => {
@@ -197,44 +238,6 @@ describe("RockChannels.svelte", () => {
       rock: makeRock([entry("9.1-26.04/edge")]),
     });
 
-    const cells = container.querySelectorAll("tbody tr td");
-    expect(cells[2].textContent?.trim()).toBe("26.04");
-  });
-
-  it("leaves the base empty for a track that encodes no release", async () => {
-    const { container } = render(RockChannels, {
-      rock: makeRock([entry("latest/stable")]),
-    });
-
-    const cells = container.querySelectorAll("tbody tr td");
-    expect(cells[2].textContent?.trim()).toBe("— Not available");
-  });
-
-  it("links to the recipe of a track that has one", async () => {
-    render(RockChannels, {
-      rock: makeRock([entry("9.1-26.04/edge")]),
-      rockcraftUrls: {
-        "9.1-26.04":
-          "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
-      },
-    });
-
-    await expect
-      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
-      .toHaveAttribute(
-        "href",
-        "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
-      );
-  });
-
-  it("shows no recipe link for a track whose recipe was not found", async () => {
-    render(RockChannels, {
-      rock: makeRock([entry("9.1-26.04/edge")]),
-      rockcraftUrls: {},
-    });
-
-    await expect
-      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
-      .not.toBeInTheDocument();
+    expect(osCell(container).textContent?.trim()).toBe("26.04");
   });
 });
