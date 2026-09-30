@@ -1,11 +1,11 @@
 <script lang="ts">
   import { CheckmarkIcon, CopyIcon } from "@canonical/svelte-icons";
   import { onDestroy } from "svelte";
+  import { copier } from "$lib/utils/clipboard.svelte";
   import type { CopyButtonProps } from "./types.js";
   import "./styles.css";
 
   const componentCssClassName = "ds copy-button";
-  const CONFIRMATION_MS = 2000;
 
   let {
     value,
@@ -14,27 +14,16 @@
     ...rest
   }: CopyButtonProps = $props();
 
-  let copied = $state(false);
-  let copyResetTimer: ReturnType<typeof setTimeout>;
+  const clipboard = copier();
+  const copied = $derived(clipboard.copied);
 
-  async function copy() {
-    try {
-      await navigator.clipboard.writeText(value);
-      copied = true;
-      clearTimeout(copyResetTimer);
-      copyResetTimer = setTimeout(() => (copied = false), CONFIRMATION_MS);
-    } catch {
-      // Clipboard API unavailable do nothing
-    }
-  }
-
-  onDestroy(() => clearTimeout(copyResetTimer));
+  onDestroy(() => clipboard.destroy());
 </script>
 
 <button
   type="button"
   class={[componentCssClassName, className]}
-  onclick={copy}
+  onclick={() => clipboard.copy(value)}
   aria-label={copied ? "Copied to clipboard" : label}
   {...rest}
 >

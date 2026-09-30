@@ -116,3 +116,14 @@
   color: var(--color-text-muted);
   cursor: help;
 }
+
+.ds.rock-channels .rock-channels__get {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-200);
+}
+
+.ds.rock-channels .rock-channels__get .ds.copyable-code {
+  flex: 1 1 18rem;
+}

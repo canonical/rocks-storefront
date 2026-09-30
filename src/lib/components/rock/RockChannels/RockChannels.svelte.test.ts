@@ -70,11 +70,13 @@ function twoVersions() {
 
 describe("RockChannels.svelte", () => {
   it("renders the image reference for the latest tag", async () => {
-    render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("1.0/stable")]),
+    });
 
-    await expect
-      .element(page.getByText("rocks.pkg.store/ubuntu/test-rock:1.0_stable"))
-      .toBeVisible();
+    expect(
+      container.querySelector(".rock-channels__get .ds.code")?.textContent,
+    ).toBe("rocks.pkg.store/ubuntu/test-rock:1.0_stable");
   });
 
   it("hides the placeholder in empty cells from assistive technology", async () => {
@@ -130,7 +132,9 @@ describe("RockChannels.svelte", () => {
       rock: twoVersions(),
     });
 
-    const versionSelect = container.querySelector("select");
+    const versionSelect = container.querySelector<HTMLSelectElement>(
+      ".rock-channels__filters select",
+    );
     expect(
       [...(versionSelect?.options ?? [])].map((o) => o.textContent?.trim()),
     ).toEqual(["1.0", "2.0 (latest)"]);
@@ -239,5 +243,61 @@ describe("RockChannels.svelte", () => {
     });
 
     expect(osCell(container).textContent?.trim()).toBe("26.04");
+  });
+
+  it("opens the command builder from the get-a-rock card", async () => {
+    render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+
+    await expect
+      .element(page.getByRole("heading", { name: "Command builder" }))
+      .toBeVisible();
+  });
+
+  it("closes the command builder again", async () => {
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("1.0/stable")]),
+    });
+    const panel = container.querySelector<HTMLDialogElement>(
+      ".ds.rock-command-panel",
+    );
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+    expect(panel?.open).toBe(true);
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Close the command builder" }),
+    );
+    expect(panel?.open).toBe(false);
+  });
+
+  it("opens the channel details for the command builder's selection", async () => {
+    render(RockChannels, {
+      rock: makeRock([
+        entry("2.0-26.04/edge", {
+          version: "2.0",
+          releasedAt: "2026-06-01T00:00:00Z",
+        }),
+        entry("1.0-24.04/edge", {
+          version: "1.0",
+          releasedAt: "2026-01-01T00:00:00Z",
+        }),
+      ]),
+    });
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+    await userEvent.selectOptions(page.getByRole("combobox").nth(1), "1.0");
+    await userEvent.click(page.getByRole("button", { name: "View details" }));
+
+    await expect
+      .element(page.getByRole("heading", { name: "1.0-24.04/edge" }))
+      .toBeVisible();
   });
 });
