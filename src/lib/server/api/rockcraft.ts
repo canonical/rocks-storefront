@@ -1,4 +1,5 @@
 import { githubRepo } from "$lib/utils/github";
+import { launchpadPath } from "$lib/utils/launchpad";
 import { memoizedAsync } from "../utils/cache.server";
 
 const REQUEST_TIMEOUT_MS = 5_000;
@@ -39,27 +40,6 @@ function githubCandidates(
       blob: `${blob}/HEAD/${path}`,
     })),
   ];
-}
-
-/**
- * Reads the repository path out of a Launchpad URL. `git.launchpad.net` serves
- * that same path, and that is where the raw files are.
- */
-function launchpadPath(url: string): string | null {
-  let parsed: URL;
-  try {
-    parsed = new URL(url);
-  } catch {
-    return null;
-  }
-
-  if (parsed.protocol !== "https:") return null;
-  if (!["launchpad.net", "git.launchpad.net"].includes(parsed.hostname)) {
-    return null;
-  }
-
-  const path = parsed.pathname.replace(/\/$/, "");
-  return path.includes("/+git/") ? path : null;
 }
 
 function launchpadCandidates(
