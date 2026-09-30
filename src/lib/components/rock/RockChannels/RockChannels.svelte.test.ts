@@ -190,7 +190,7 @@ describe("RockChannels.svelte", () => {
     await expect.element(panel.getByText("1.0/edge")).toBeVisible();
     await expect.element(panel.getByText("3")).toBeVisible();
     await expect
-      .element(panel.getByText(/revisions are maintained by Canonical/))
+      .element(panel.getByText(/Edge channels include experimental updates/))
       .toBeVisible();
   });
 

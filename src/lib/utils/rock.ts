@@ -26,6 +26,22 @@ export function getRockIconUrl(rock: RockBase): string {
 
 const RISK_ORDER = ["stable", "candidate", "beta", "edge"];
 
+const RISK_DESCRIPTIONS: Record<string, string> = {
+  stable:
+    "Stable channels receive regular updates following strict QA and review processes. No breaking changes are expected. Recommended for production environments.",
+  candidate:
+    "Candidate channels include near-stable updates, but haven\u2019t passed all QA and review processes yet. Few breaking changes are expected.",
+  beta: "Beta channels provide an early-stage preview of new upstream features ready for testing. Some breaking changes are to be expected.",
+  edge: "Edge channels include experimental updates including latest upstream features. Breaking changes are to be expected.",
+};
+
+export function getRiskDescription(risk: string): string {
+  return (
+    RISK_DESCRIPTIONS[risk] ??
+    "This channel\u2019s revisions are maintained by Canonical."
+  );
+}
+
 function riskRank(risk: string): number {
   const index = RISK_ORDER.indexOf(risk);
   return index === -1 ? RISK_ORDER.length : index;
