@@ -17,6 +17,7 @@
   import {
     getArchitectures,
     getBase,
+    getBases,
     getGroupedChannelRows,
     getImageReference,
     getLatestVersion,
@@ -42,6 +43,7 @@
   const versions = $derived(getVersions(rock));
   const latestVersion = $derived(getLatestVersion(rock));
   const architectures = $derived(getArchitectures(rock));
+  const bases = $derived(getBases(rock));
 
   let panel = $state<ReturnType<typeof RockChannelPanel> | undefined>();
   let commandPanel = $state<ReturnType<typeof RockCommandPanel> | undefined>();
@@ -54,13 +56,15 @@
 
   let versionFilter = $derived(latestVersion ?? "");
   let architectureFilter = $state("");
+  let osFilter = $state("");
   let currentPage = $state(1);
 
   const filteredRows = $derived(
     rows.filter(
       (r) =>
         r.version === versionFilter &&
-        (!architectureFilter || r.architectures.includes(architectureFilter)),
+        (!architectureFilter || r.architectures.includes(architectureFilter)) &&
+        (!osFilter || getBase(r.track) === osFilter),
     ),
   );
 
@@ -144,6 +148,15 @@
           <option value="">All</option>
           {#each architectures as architecture (architecture)}
             <option value={architecture}>{architecture}</option>
+          {/each}
+        </Select>
+      </label>
+      <label class="rock-channels__filter">
+        <span>OS</span>
+        <Select bind:value={osFilter} onchange={resetPage}>
+          <option value="">All</option>
+          {#each bases as base (base)}
+            <option value={base}>{base}</option>
           {/each}
         </Select>
       </label>
