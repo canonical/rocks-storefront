@@ -300,4 +300,32 @@ describe("RockChannels.svelte", () => {
       .element(page.getByRole("heading", { name: "1.0-24.04/edge" }))
       .toBeVisible();
   });
+
+  it("links each channel to the recipe that built it", async () => {
+    render(RockChannels, {
+      rock: makeRock([entry("9.1-26.04/edge")]),
+      rockcraftUrls: {
+        "9.1-26.04":
+          "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
+      },
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
+      .toHaveAttribute(
+        "href",
+        "https://github.com/canonical/x/blob/9.1-26.04/rockcraft.yaml",
+      );
+  });
+
+  it("shows nothing for a channel whose recipe was not found", async () => {
+    render(RockChannels, {
+      rock: makeRock([entry("9.1-26.04/edge")]),
+      rockcraftUrls: {},
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "rockcraft.yaml" }))
+      .not.toBeInTheDocument();
+  });
 });
