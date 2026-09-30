@@ -3,6 +3,7 @@ import { fetchRockcraftUrl, getRockcraftUrl } from "./rockcraft";
 
 const VALKEY = "https://github.com/canonical/valkey-rock.git";
 const DOTNET = "https://github.com/canonical/dotnet-runtime-rock";
+const LAUNCHPAD = "https://launchpad.net/~sd-packages/+git/rock_valkey";
 
 /** Resolves 200 for the listed raw paths and 404 for everything else. */
 function mockFetch(found: string[]) {
@@ -63,11 +64,20 @@ describe("fetchRockcraftUrl", () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it("does not fetch for a non-github upstream", async () => {
+  it("does not fetch for a host it cannot read", async () => {
     const fetchMock = mockFetch([]);
 
     await expect(
-      fetchRockcraftUrl("https://launchpad.net/~x/+git/y", "ubuntu", "26.04"),
+      fetchRockcraftUrl("https://example.com/x/y", "ubuntu", "26.04"),
+    ).resolves.toBeNull();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("does not fetch for a launchpad url that names no repository", async () => {
+    const fetchMock = mockFetch([]);
+
+    await expect(
+      fetchRockcraftUrl("https://launchpad.net/ubuntu", "ubuntu", "26.04"),
     ).resolves.toBeNull();
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -111,5 +121,74 @@ describe("getRockcraftUrl", () => {
     await getRockcraftUrl(...args);
 
     expect(fetchMock).toHaveBeenCalledTimes(callsAfterFirst);
+  });
+});
+
+describe("fetchRockcraftUrl on launchpad", () => {
+  it("reads a branch named after the track from git.launchpad.net", async () => {
+    mockFetch(["/plain/rockcraft.yaml?h=9.1-26.04"]);
+
+    await expect(
+      fetchRockcraftUrl(LAUNCHPAD, "valkey", "9.1-26.04"),
+    ).resolves.toBe(
+      "https://git.launchpad.net/~sd-packages/+git/rock_valkey/tree/rockcraft.yaml?h=9.1-26.04",
+    );
+  });
+
+  it("falls back to a directory named after the rock", async () => {
+    mockFetch(["/plain/valkey/9.1-26.04/rockcraft.yaml"]);
+
+    await expect(
+      fetchRockcraftUrl(LAUNCHPAD, "valkey", "9.1-26.04"),
+    ).resolves.toBe(
+      "https://git.launchpad.net/~sd-packages/+git/rock_valkey/tree/valkey/9.1-26.04/rockcraft.yaml",
+    );
+  });
+
+  it("falls back to a directory named after the repository", async () => {
+    mockFetch(["/plain/rock_valkey/9.1-26.04/rockcraft.yaml"]);
+
+    await expect(
+      fetchRockcraftUrl(LAUNCHPAD, "valkey", "9.1-26.04"),
+    ).resolves.toBe(
+      "https://git.launchpad.net/~sd-packages/+git/rock_valkey/tree/rock_valkey/9.1-26.04/rockcraft.yaml",
+    );
+  });
+
+  it("accepts a git.launchpad.net url as well as a launchpad.net one", async () => {
+    mockFetch(["/plain/rockcraft.yaml?h=1.0-26.04"]);
+
+    await expect(
+      fetchRockcraftUrl(
+        "https://git.launchpad.net/~team/project/+oci/thing/+git/thing",
+        "thing",
+        "1.0-26.04",
+      ),
+    ).resolves.toBe(
+      "https://git.launchpad.net/~team/project/+oci/thing/+git/thing/tree/rockcraft.yaml?h=1.0-26.04",
+    );
+  });
+
+  it("returns null when the repository has no recipe", async () => {
+    mockFetch([]);
+
+    await expect(
+      fetchRockcraftUrl(LAUNCHPAD, "valkey", "9.1-26.04"),
+    ).resolves.toBeNull();
+  });
+
+  it("treats a private repository's login redirect as a miss", async () => {
+    const fetchMock = vi.fn(
+      (_input: string | URL | Request, _init?: RequestInit) =>
+        Promise.resolve(
+          new Response("", { status: 302, headers: { location: "/login" } }),
+        ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      fetchRockcraftUrl(LAUNCHPAD, "valkey", "9.1-26.04"),
+    ).resolves.toBeNull();
+    expect(fetchMock.mock.calls[0][1]).toMatchObject({ redirect: "manual" });
   });
 });

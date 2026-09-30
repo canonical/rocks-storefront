@@ -53,7 +53,7 @@ export function getLatestTag(rock: RockInfoResponse): string | null {
   return best ? `${best.track}_${best.risk}` : null;
 }
 
-function getRepository(rock: RockInfoResponse): string | null {
+export function getRepository(rock: RockInfoResponse): string | null {
   for (const item of rock["channel-map"] ?? []) {
     const url = item.revision?.download?.url;
     if (url) return url.split("@")[0];
@@ -198,6 +198,44 @@ export function getChannelRevisions(
 
 export function getLatestVersion(rock: RockInfoResponse): string | undefined {
   return getChannelRows(rock).find((row) => row.version)?.version;
+}
+
+export interface ChannelCombination {
+  version: string;
+  architecture: string;
+  risk: string;
+}
+
+export function getChannelCombinations(
+  rock: RockInfoResponse,
+): ChannelCombination[] {
+  return (rock["channel-map"] ?? []).map((item) => ({
+    version: item.revision?.version ?? "",
+    architecture: resolveArchitecture(item),
+    risk: item.channel?.risk ?? "",
+  }));
+}
+
+export function getRisks(rock: RockInfoResponse): string[] {
+  return collect(rock, (item) => item.channel?.risk).sort(
+    (a, b) => riskRank(a) - riskRank(b),
+  );
+}
+
+export function findChannel(
+  rock: RockInfoResponse,
+  version: string,
+  risk: string,
+): { track: string; name: string } | undefined {
+  const channel = (rock["channel-map"] ?? []).find(
+    (item) =>
+      item.revision?.version === version &&
+      (!risk || item.channel?.risk === risk),
+  )?.channel;
+
+  return channel?.track && channel?.name
+    ? { track: channel.track, name: channel.name }
+    : undefined;
 }
 
 export function getVersions(rock: RockInfoResponse): string[] {

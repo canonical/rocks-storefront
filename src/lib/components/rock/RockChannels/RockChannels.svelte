@@ -9,6 +9,7 @@
   } from "@canonical/svelte-ds-app-launchpad";
   import { ChevronRightIcon, InformationIcon } from "@canonical/svelte-icons";
   import { RockChannelPanel } from "$lib/components/rock/RockChannelPanel";
+  import { RockCommandPanel } from "$lib/components/rock/RockCommandPanel";
   import { CopyableCode } from "$lib/components/ui/CopyableCode";
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
@@ -43,6 +44,7 @@
   const architectures = $derived(getArchitectures(rock));
 
   let panel = $state<ReturnType<typeof RockChannelPanel> | undefined>();
+  let commandPanel = $state<ReturnType<typeof RockCommandPanel> | undefined>();
   let selectedChannelTag = $state<string | null>(null);
 
   function openChannel(channelTag: string) {
@@ -86,9 +88,14 @@
           choose a channel tag, add it to the registry address, and use the
           tool of your choice to access the image.
         </p>
-        {#if imageReference}
-          <CopyableCode value={imageReference} />
-        {/if}
+        <div class="rock-channels__get">
+          {#if imageReference}
+            <CopyableCode value={imageReference} />
+          {/if}
+          <Button type="button" onclick={() => commandPanel?.showModal()}>
+            Build your command
+          </Button>
+        </div>
       </article>
       <article class="rock-channels__card">
         <Heading level={3}>Learn more about rocks</Heading>
@@ -111,6 +118,11 @@
   </section>
 
   <RockChannelPanel bind:this={panel} {rock} channelTag={selectedChannelTag} />
+  <RockCommandPanel
+    bind:this={commandPanel}
+    {rock}
+    onViewDetails={openChannel}
+  />
 
   <section class="rock-channels__section">
     <Heading level={2}>Tags and channels</Heading>
