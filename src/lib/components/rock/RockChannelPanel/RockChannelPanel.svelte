@@ -10,11 +10,13 @@
   import {
     DateTime,
     Select,
-    SidePanel,
-    type SidePanelMethods,
   } from "@canonical/svelte-ds-app-launchpad";
   import { CloseIcon } from "@canonical/svelte-icons";
   import { Table } from "@canonical/svelte-ds-app-launchpad";
+  import {
+    SidePanel,
+    type SidePanelMethods,
+  } from "$lib/components/ui/SidePanel";
   import { CopyButton } from "$lib/components/ui/CopyButton";
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
@@ -55,7 +57,7 @@
   {#snippet children(_commandfor, close)}
     <div class="rock-channel-panel__content">
       <div class="rock-channel-panel__header">
-        <Heading level={4}>{channelTag}</Heading>
+        <Heading level={3}>{channelTag}</Heading>
         <button
           type="button"
           class="rock-channel-panel__close"
@@ -67,7 +69,7 @@
       </div>
 
       <div class="rock-channel-panel__intro-group">
-        <Heading level={5}>Channel information</Heading>
+        <Heading level={4}>Channel information</Heading>
         <p class="rock-channel-panel__intro">{description}</p>
       </div>
 
