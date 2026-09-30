@@ -34,7 +34,7 @@
 
   const componentCssClassName = "ds rock-channels";
 
-  let { rock }: RockChannelsProps = $props();
+  let { rock, rockcraftUrls = {} }: RockChannelsProps = $props();
 
   const imageReference = $derived(getImageReference(rock));
 
@@ -178,11 +178,13 @@
                 </Tooltip>
               </span>
             </th>
+            <th scope="col"><SmallCaps>Recipe</SmallCaps></th>
           </tr>
         </thead>
         <tbody>
           {#each pagedRows as row (row.channelTag)}
             {@const base = getBase(row.track)}
+            {@const rockcraftUrl = rockcraftUrls[row.track]}
             <tr>
               <td>
                 <button
@@ -209,6 +211,15 @@
               </td>
               <td>
                 {#if base}{base}{:else}<EmptyCell />{/if}
+              </td>
+              <td>
+                {#if rockcraftUrl}
+                  <Link href={rockcraftUrl} target="_blank" rel="noopener">
+                    rockcraft.yaml
+                  </Link>
+                {:else}
+                  <EmptyCell />
+                {/if}
               </td>
             </tr>
           {/each}
