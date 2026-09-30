@@ -9,6 +9,7 @@ import {
   getImageReference,
   getLatestTag,
   getLatestVersion,
+  getRiskDescription,
   getRockIconUrl,
   getRockPublisher,
   getRockTitle,
@@ -411,5 +412,35 @@ describe("getLatestVersion", () => {
 
   it("is undefined when no channel carries a version", () => {
     expect(getLatestVersion(makeRock({ "channel-map": [] }))).toBeUndefined();
+  });
+});
+
+describe("getRiskDescription", () => {
+  it.each([
+    ["stable", "strict QA and review processes"],
+    ["candidate", "near-stable updates"],
+    ["beta", "early-stage preview"],
+    ["edge", "experimental updates"],
+  ])("describes the %s channel", (risk, phrase) => {
+    expect(getRiskDescription(risk)).toContain(phrase);
+  });
+
+  it.each([
+    ["stable", "No breaking changes"],
+    ["candidate", "Few breaking changes"],
+    ["beta", "Some breaking changes"],
+    ["edge", "Breaking changes are to be expected"],
+  ])("says what %s means for breaking changes", (risk, phrase) => {
+    expect(getRiskDescription(risk)).toContain(phrase);
+  });
+
+  it("recommends stable for production", () => {
+    expect(getRiskDescription("stable")).toContain("production environments");
+  });
+
+  it("falls back for a risk it does not know", () => {
+    expect(getRiskDescription("experimental")).toContain(
+      "maintained by Canonical",
+    );
   });
 });
