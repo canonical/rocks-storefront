@@ -21,25 +21,26 @@ test.describe("home page", () => {
     await page.goto("/");
 
     const card = page.locator("a.name").first();
-    const name = (await card.innerText()).trim();
+    // Follow the href, not the visible text: a rock's title can differ from
+    // the name its page lives under.
+    const href = await card.getAttribute("href");
     await card.click();
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page).toHaveURL(new RegExp(encodeURIComponent(name)));
+    await expect(page).toHaveURL(new RegExp(`${href}$`));
   });
 
   // The search box drives a debounced remote query, so a result here means the
   // page hydrated and the client-side round trip works.
   test("filters results from the search box", async ({ page, request }) => {
-    const name = decodeURIComponent((await firstRockPath(request)).slice(1));
+    const path = await firstRockPath(request);
+    const name = decodeURIComponent(path.slice(1));
 
     await page.goto("/");
     await page.getByRole("searchbox", { name: "Search rocks" }).fill(name);
 
     await expect(page).toHaveURL(/[?&]q=/);
-    await expect(
-      page.getByRole("heading", { name, level: 5, exact: true }),
-    ).toBeVisible();
+    await expect(page.locator(`a.name[href="${path}"]`)).toBeVisible();
   });
 });
 
