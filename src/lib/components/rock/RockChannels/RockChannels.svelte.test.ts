@@ -161,6 +161,51 @@ describe("RockChannels.svelte", () => {
       .not.toBeInTheDocument();
   });
 
+  function twoOperatingSystems() {
+    return makeRock([
+      entry("1.0-26.04/stable", { version: "1.0" }),
+      entry("1.0-24.04/stable", { version: "1.0" }),
+    ]);
+  }
+
+  it("shows every os until one is picked", async () => {
+    render(RockChannels, { rock: twoOperatingSystems() });
+
+    await expect
+      .element(page.getByRole("cell", { name: "1.0-26.04/stable" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("cell", { name: "1.0-24.04/stable" }))
+      .toBeVisible();
+  });
+
+  it("filters rows by the selected os", async () => {
+    render(RockChannels, { rock: twoOperatingSystems() });
+
+    await userEvent.selectOptions(
+      page.getByRole("combobox", { name: "OS" }),
+      "26.04",
+    );
+
+    await expect
+      .element(page.getByRole("cell", { name: "1.0-26.04/stable" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("cell", { name: "1.0-24.04/stable" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("offers only the operating systems the rock ships", async () => {
+    render(RockChannels, { rock: twoOperatingSystems() });
+
+    const select = page.getByRole("combobox", { name: "OS" });
+    const options = [...(select.element() as HTMLSelectElement).options].map(
+      (o) => o.textContent?.trim(),
+    );
+
+    expect(options).toEqual(["All", "24.04", "26.04"]);
+  });
+
   it("opens the channel panel for the tag that was clicked", async () => {
     render(RockChannels, {
       rock: makeRock([

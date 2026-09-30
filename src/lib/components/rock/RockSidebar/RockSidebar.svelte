@@ -11,6 +11,7 @@
   import type { Component } from "svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import { githubRepo } from "$lib/utils/github";
+  import { launchpadBugUrl } from "$lib/utils/launchpad";
   import { getArchitectures, getBases } from "$lib/utils/rock";
   import type { RockSidebarProps } from "./types.js";
   import "./styles.css";
@@ -33,7 +34,7 @@
     key: string;
     icon: Component;
     label: string;
-    href: string;
+    href: string | null;
   };
 
   let { rock, rockcraftUrl }: RockSidebarProps = $props();
@@ -49,22 +50,26 @@
   }
   function displayUrl(value: string): string {
     return value
-      .replace(/^mailto:/, "")
+      .replace(/^(mailto|tel):/, "")
       .replace(/^https?:\/\//, "")
       .replace(/\/$/, "");
   }
+  // A chat handle such as `@team:matrix.example.com` also contains an `@`, so
+  // require something before it and no scheme separator anywhere.
   function isEmail(value: string): boolean {
-    return value.includes("@") && !value.includes("//");
+    return /^[^\s:@]+@[^\s:@]+\.[^\s:@]+$/.test(value);
   }
-  function hrefFor(value: string): string {
+  // Returns null for a value there is nowhere to send: a contact may be a
+  // handle or a username, which reads fine but is not a destination.
+  function hrefFor(value: string): string | null {
     const trimmed = value.trim();
     if (/^(https?:|mailto:|tel:)/i.test(trimmed)) return trimmed;
     // Block dangerous/unknown schemes (javascript:, data:, …) before falling
-    // through to bare-email or relative handling, since metadata is untrusted.
+    // through to bare-email handling, since metadata is untrusted.
     if (/^[a-z][a-z0-9+.-]*:/i.test(trimmed) || trimmed.startsWith("//"))
       return "#";
     if (isEmail(trimmed)) return `mailto:${trimmed}`;
-    return trimmed;
+    return null;
   }
 
   function pickLinks(keys: string[]): { key: string; url: string }[] {
@@ -112,14 +117,8 @@
     return out;
   });
 
-  function contactIcon(value: string, email: boolean): Component {
-    if (email) return UserProfileIcon;
-    return isGithub(value) ? GithubIcon : LinkIcon;
-  }
-  function contactLabel(value: string, email: boolean): string {
-    if (email) return displayUrl(value);
-    const segments = displayUrl(value).split("/").filter(Boolean);
-    return segments.at(-1) ?? displayUrl(value);
+  function contactLabel(value: string): string {
+    return displayUrl(value).split("/").filter(Boolean).at(-1) ?? "";
   }
 
   const contacts = $derived.by<LinkRow[]>(() => {
@@ -132,24 +131,32 @@
     for (const value of values) {
       if (seen.has(value)) continue;
       seen.add(value);
-      const email = isEmail(value);
       out.push({
         key: value,
-        icon: contactIcon(value, email),
-        label: contactLabel(value, email),
+        icon: UserProfileIcon,
+        label: contactLabel(value),
         href: hrefFor(value),
       });
     }
 
-    const repo = pickLinks(["upstream", "upstream-source"])
-      .map((row) => githubRepo(row.url))
-      .find(Boolean);
-    if (repo) {
+    const published = hrefFor(
+      pickLinks(["issues", "issue", "bug-tracker", "bugs"])[0]?.url ?? "",
+    );
+    const upstreams = pickLinks(["upstream", "upstream-source"]).map(
+      (row) => row.url,
+    );
+    const repo = upstreams.map(githubRepo).find(Boolean);
+    const inferred = repo
+      ? `https://github.com/${repo}/issues/new`
+      : upstreams.map(launchpadBugUrl).find(Boolean);
+    const bugHref = published ?? inferred;
+
+    if (bugHref && !out.some((row) => row.href === bugHref)) {
       out.push({
         key: "submit-a-bug",
         icon: BugIcon,
         label: "Submit a bug",
-        href: `https://github.com/${repo}/issues/new`,
+        href: bugHref,
       });
     }
 
@@ -161,7 +168,11 @@
   {@const Icon = item.icon}
   <li class="rock-sidebar__row">
     <Icon />
-    <Link href={item.href} target="_blank" rel="noopener">{item.label}</Link>
+    {#if item.href}
+      <Link href={item.href} target="_blank" rel="noopener">{item.label}</Link>
+    {:else}
+      <span>{item.label}</span>
+    {/if}
   </li>
 {/snippet}
 

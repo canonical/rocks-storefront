@@ -109,6 +109,50 @@ test.describe("rock description", () => {
   }
 });
 
+test.describe("side panel width", () => {
+  // The panel slides in, so wait for it to come to rest before measuring.
+  async function openPanelWidth(page, path: string) {
+    await page.goto(`${path}?tab=tags`);
+    await page.getByRole("button", { name: "Build your command" }).click();
+
+    const panel = page.locator("dialog.side-panel[open]");
+    await expect(panel).toBeVisible();
+    await expect
+      .poll(() => panel.evaluate((el) => getComputedStyle(el).transform))
+      .toBe("matrix(1, 0, 0, 1, 0, 0)");
+
+    const box = await panel.boundingBox();
+    if (!box) throw new Error("expected the side panel to be visible");
+
+    return box;
+  }
+
+  test.describe("on a narrow screen", () => {
+    test.use({ viewport: { width: 600, height: 800 } });
+
+    test("fills the screen", async ({ page, request }) => {
+      const path = await firstRockPath(request);
+      const box = await openPanelWidth(page, path);
+      const viewport = page.viewportSize();
+
+      expect(box.x).toBe(0);
+      expect(box.width).toBeGreaterThan((viewport?.width ?? 0) * 0.95);
+    });
+  });
+
+  test.describe("on a wide screen", () => {
+    test.use({ viewport: { width: 1440, height: 800 } });
+
+    test("stays docked to one side", async ({ page, request }) => {
+      const path = await firstRockPath(request);
+      const box = await openPanelWidth(page, path);
+
+      expect(box.x).toBeGreaterThan(0);
+      expect(box.width).toBeLessThan(700);
+    });
+  });
+});
+
 test.describe("site header", () => {
   test("starts the nav on the app's main column", async ({ page, request }) => {
     const path = await firstRockPath(request);

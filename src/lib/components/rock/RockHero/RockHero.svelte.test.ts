@@ -64,8 +64,8 @@ describe("RockHero.svelte", () => {
 
     const meta = container.querySelector(".rock-hero__meta");
 
-    expect(meta?.textContent).toContain("databases");
-    expect(meta?.textContent).toContain("caching");
+    expect(meta?.textContent).toContain("Databases");
+    expect(meta?.textContent).toContain("Caching");
   });
 
   it("separates publisher and categories with a decorative divider", async () => {

@@ -16,6 +16,12 @@ import { env } from "$env/dynamic/private";
 import { memoizedAsync } from "../utils/cache.server";
 import { expoBackoff, retry } from "../utils/retry.server";
 import {
+  DEMO_ROCK_NAME,
+  demoRockDetails,
+  demoRockFindItem,
+  demoRockMatches,
+} from "./demo-rock";
+import {
   StoreApiBadGatewayError,
   StoreApiConnectionError,
   type StoreApiErrorEntry,
@@ -142,6 +148,7 @@ type ApiClientOptions = {
 };
 
 const API_BASE_URL = env.API_BASE_URL ?? "https://api.snapcraft.io/";
+
 const NAMESPACE = "v2/rocks";
 
 export class ApiClient {
@@ -316,6 +323,10 @@ export class ApiClient {
 
     const result = await this.request<RockFindResponse>(url);
 
+    if (demoRockMatches(query)) {
+      return { results: [demoRockFindItem, ...result.results] };
+    }
+
     return result;
   }
 
@@ -323,6 +334,9 @@ export class ApiClient {
   async getRockDetails(input: GetRockDetailsInput): Promise<RockInfoResponse> {
     // parse manually because ValidateArgs is broken :(
     const { name, fields } = parse(getRockDetailsSchema, input);
+
+    if (name === DEMO_ROCK_NAME) return demoRockDetails;
+
     const url = this.buildUrl(`info/${encodeURIComponent(name)}`, {
       fields: fields.join(","),
     });

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Link } from "@canonical/svelte-ds-app-launchpad";
-  import { SmallCaps } from "$lib/components/ui/SmallCaps";
+  import { Heading } from "$lib/components/ui/Heading";
   import { SplitLayout } from "$lib/components/ui/SplitLayout";
   import "./styles.css";
 
@@ -11,7 +11,7 @@
 
 <SplitLayout class="rock-get-in-touch">
   {#snippet aside()}
-    <SmallCaps>Get in touch</SmallCaps>
+    <Heading level={2}>Get in touch</Heading>
   {/snippet}
   {#snippet main()}
     <p class="rock-get-in-touch__text">

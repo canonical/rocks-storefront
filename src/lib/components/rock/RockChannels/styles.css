@@ -68,6 +68,7 @@
   color: var(--color-text);
   cursor: pointer;
   font: inherit;
+  text-align: start;
   text-decoration: underline;
 }
 
