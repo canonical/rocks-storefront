@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { DEMO_ROCK_NAME } from "./demo-rock";
 import {
   StoreApiBadGatewayError,
   StoreApiConnectionError,
@@ -93,7 +94,13 @@ describe("ApiClient.getRocks", () => {
   it("returns the decoded response body", async () => {
     const result = await getApiClient().getRocks({});
 
-    expect(result).toEqual({ results: [{ name: "redis" }] });
+    expect(result.results).toContainEqual({ name: "redis" });
+  });
+
+  it("includes the demo rock alongside the store's results", async () => {
+    const result = await getApiClient().getRocks({});
+
+    expect(result.results.map((item) => item.name)).toContain(DEMO_ROCK_NAME);
   });
 
   it("rejects input that violates the schema", async () => {
@@ -373,5 +380,29 @@ describe("ApiClient abort signal", () => {
     expect(fetchMock.mock.calls[0][1]).toMatchObject({
       signal: controller.signal,
     });
+  });
+});
+
+describe("ApiClient demo rock", () => {
+  it("serves the demo rock without calling the store", async () => {
+    const fetchMock = mockFetch(jsonResponse({}));
+
+    const result = await getApiClient().getRockDetails({
+      name: DEMO_ROCK_NAME,
+    });
+
+    expect(result.name).toBe(DEMO_ROCK_NAME);
+    expect(result.metadata?.title).toBe("Demo Rock");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("leaves it out of a search that cannot match it", async () => {
+    mockFetch(jsonResponse({ results: [{ name: "redis" }] }));
+
+    const result = await getApiClient().getRocks({ query: "redis" });
+
+    expect(result.results.map((item) => item.name)).not.toContain(
+      DEMO_ROCK_NAME,
+    );
   });
 });
