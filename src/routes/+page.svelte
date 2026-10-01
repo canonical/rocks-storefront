@@ -8,6 +8,7 @@
   import { getRocks } from "$lib/remote/api.remote";
   import debounced from "$lib/utils/debounced.svelte";
   import searchParams from "$lib/utils/searchParams.svelte";
+  import "./page.css";
 
   const CATEGORIES = [
     "Featured",
@@ -54,7 +55,7 @@
     {/if}
 </svelte:head>
 
-<div class="app-container">
+<div class="app-container home-page">
     <Heading class="visually-hidden" level={1}>Rocks store</Heading>
 
     <div class="grid responsive">
@@ -86,27 +87,3 @@
     </div>
 </div>
 
-<style>
-    .app-container {
-        margin-block: var(--dimension-500);
-    }
-
-    .ds.checkbox-group {
-      --x-gap: var(--space-200);
-      --y-gap: var(--space-100);
-
-      padding: 0;
-      border: none;
-      display: grid;
-      row-gap: var(--y-gap);
-      margin-block-end: var(--space-400);
-
-      label {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        column-gap: var(--x-gap);
-        align-items: center;
-        cursor: pointer;
-      }
-    }
-</style>

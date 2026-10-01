@@ -31,6 +31,31 @@
   padding-inline: var(--space-300);
 }
 
+.app-columns {
+  --grid-column-gap: var(--space-600);
+}
+
+.app-columns__aside,
+.app-columns__main {
+  grid-column: span 4;
+}
+
+@media (min-width: 768px) {
+  .app-columns__aside {
+    grid-column: span 3;
+  }
+
+  .app-columns__main {
+    grid-column: span 5;
+  }
+}
+
+@media (min-width: 1280px) {
+  .app-columns__main {
+    grid-column: span 9;
+  }
+}
+
 /* Reserve the scrollbar gutter so pages with and without a scrollbar keep the
    same content width — otherwise the centered column recenters and short pages
    (no scrollbar) look like they have more side padding than long ones. */

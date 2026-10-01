@@ -3,6 +3,8 @@ import type { ChannelMapItem, RockInfoResponse } from "$lib/server/api/types";
 import {
   FALLBACK_ICON,
   getArchitectures,
+  getBase,
+  getBases,
   getChannelRows,
   getImageReference,
   getLatestTag,
@@ -279,6 +281,7 @@ describe("getChannelRows", () => {
     expect(getChannelRows(rock)).toEqual([
       {
         channelTag: "1.0/edge",
+        track: "1.0",
         version: "1.0.1",
         architecture: "arm64",
         lastUpdated: "2026-05-01T00:00:00Z",
@@ -308,6 +311,7 @@ describe("getChannelRows", () => {
 
     expect(getChannelRows(rock)[0]).toEqual({
       channelTag: "bare",
+      track: "",
       version: "",
       architecture: "",
       lastUpdated: null,
@@ -338,5 +342,50 @@ describe("getChannelRows", () => {
 
   it("returns an empty array when there is no channel map", () => {
     expect(getChannelRows(makeRock())).toEqual([]);
+  });
+});
+
+describe("getBase", () => {
+  it.each([
+    ["9.1-26.04", "26.04"],
+    ["9.0-22.04", "22.04"],
+  ])("reads the ubuntu release out of %s", (track, base) => {
+    expect(getBase(track)).toBe(base);
+  });
+
+  it("treats a bare release track as its own base", () => {
+    expect(getBase("26.04")).toBe("26.04");
+  });
+
+  it.each([
+    "latest",
+    "stable",
+    "9.1",
+    "",
+    "9.1-next",
+  ])("returns null for %s, which encodes no release", (track) => {
+    expect(getBase(track)).toBeNull();
+  });
+});
+
+describe("getBases", () => {
+  it("lists each ubuntu release the rock is built on, without repeats", () => {
+    const rock = makeRock({
+      "channel-map": [
+        channel({ channel: { name: "a", track: "9.1-26.04" } }),
+        channel({ channel: { name: "b", track: "9.0-26.04" } }),
+        channel({ channel: { name: "c", track: "8.0-24.04" } }),
+      ],
+    });
+
+    expect(getBases(rock)).toEqual(["24.04", "26.04"]);
+  });
+
+  it("skips tracks that encode no release", () => {
+    const rock = makeRock({
+      "channel-map": [channel({ channel: { name: "a", track: "latest" } })],
+    });
+
+    expect(getBases(rock)).toEqual([]);
   });
 });

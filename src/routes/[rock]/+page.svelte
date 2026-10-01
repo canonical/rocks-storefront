@@ -2,7 +2,6 @@
   import { page } from "$app/state";
   import { RockChannels } from "$lib/components/rock/RockChannels";
   import { RockDescription } from "$lib/components/rock/RockDescription";
-  import { RockFeedback } from "$lib/components/rock/RockFeedback";
   import { RockGetInTouch } from "$lib/components/rock/RockGetInTouch";
   import { RockHero } from "$lib/components/rock/RockHero";
   import { RockSidebar } from "$lib/components/rock/RockSidebar";
@@ -10,10 +9,16 @@
   import { Tabs } from "$lib/components/ui/Tabs";
   import { getRockTitle } from "$lib/utils/rock";
   import type { PageProps } from "./$types";
+  import "./page.css";
 
   let { data }: PageProps = $props();
 
   const rock = $derived(data.rock);
+  const rockcraftUrl = $derived(
+    data.rockcraftUrls[rock["default-track"] ?? ""] ??
+      Object.values(data.rockcraftUrls)[0] ??
+      null,
+  );
 
   const tabs = [
     { id: "description", label: "Description", href: "?tab=description" },
@@ -29,39 +34,32 @@
   <title>{getRockTitle(rock)} · Rock Store</title>
 </svelte:head>
 
-<RockHero {rock} />
+<div class="rock-detail">
+  <RockHero {rock} />
 
-<div class="app-container rock-detail__body">
-  <Tabs {tabs} active={activeTab} aria-label="Rock details" />
+  <div class="app-container rock-detail__body">
+    <Tabs {tabs} active={activeTab} aria-label="Rock details" />
 
-  <div class="rock-detail__content">
-    {#if activeTab === "tags"}
-      <RockChannels {rock} />
-    {:else}
-      <SplitLayout>
-        {#snippet aside()}
-          <RockSidebar {rock} />
-        {/snippet}
-        {#snippet main()}
-          <RockDescription {rock} />
-        {/snippet}
-      </SplitLayout>
-    {/if}
-  </div>
+    <div class="rock-detail__content">
+      {#if activeTab === "tags"}
+        <RockChannels {rock} rockcraftUrls={data.rockcraftUrls} />
+      {:else}
+        <SplitLayout>
+          {#snippet aside()}
+            <RockSidebar {rock} {rockcraftUrl} />
+          {/snippet}
+          {#snippet main()}
+            <RockDescription
+              {rock}
+              readme={data.readme}
+              upstream={data.upstream}
+            />
+          {/snippet}
+        </SplitLayout>
+      {/if}
+    </div>
 
-  {#if activeTab === "tags"}
     <RockGetInTouch />
-  {:else}
-    <RockFeedback />
-  {/if}
+  </div>
 </div>
 
-<style>
-  .rock-detail__body {
-    padding-block: var(--space-400);
-  }
-
-  .rock-detail__content {
-    padding-block-start: var(--space-400);
-  }
-</style>

@@ -16,6 +16,10 @@
   flex-shrink: 0;
 }
 
+.ds.rock-hero .rock-hero__body {
+  min-inline-size: 0;
+}
+
 .ds.rock-hero .rock-hero__body .heading {
   margin-block-end: 0;
 }

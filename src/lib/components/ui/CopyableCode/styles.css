@@ -1,14 +1,21 @@
 .ds.copyable-code {
   position: relative;
+  min-inline-size: 0;
 }
 
 .ds.copyable-code .ds.code {
   display: block;
   padding-inline-end: var(--dimension-500);
+  white-space: pre;
+  overflow-x: auto;
 }
 
 .ds.copyable-code .copy {
   position: absolute;
-  inset-block-start: var(--space-100);
-  inset-inline-end: var(--space-100);
+  inset-block: 0;
+  inset-inline-end: 0;
+  padding-inline: var(--space-150);
+  background: var(--color-background-container);
+  border-start-end-radius: var(--dimension-025);
+  border-end-end-radius: var(--dimension-025);
 }
