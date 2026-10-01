@@ -206,3 +206,55 @@ describe("memoizedAsync", () => {
     expect(fn).toHaveBeenCalledTimes(2);
   });
 });
+
+describe("cache key namespacing", () => {
+  async function fetchReadme(_upstream: string) {
+    return "# readme";
+  }
+  async function _request(_input: string | URL) {
+    return { name: "victim", "package-id": "pkg" };
+  }
+
+  const urlFor = (rock: string) =>
+    `https://api.snapcraft.io/v2/rocks/info/${rock}?fields=name`;
+
+  it("keeps two functions taking the same argument apart", async () => {
+    const url = urlFor("apart");
+    const readme = memoizedAsync(fetchReadme);
+    const request = memoizedAsync(_request);
+
+    const response = await request(new URL(url));
+
+    expect(await readme(url)).toBe("# readme");
+    expect(response).toEqual({ name: "victim", "package-id": "pkg" });
+  });
+
+  it("does not let a null result poison another function's entry", async () => {
+    const url = urlFor("poison");
+    const miss = memoizedAsync(async function fetchReadme(_u: string) {
+      return null;
+    });
+    const fn = vi.fn(_request);
+    const request = memoizedAsync(fn);
+
+    await miss(url);
+
+    expect(await request(new URL(url))).toEqual({
+      name: "victim",
+      "package-id": "pkg",
+    });
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+
+  it("shares one cache between wrappers of the same function", async () => {
+    const url = urlFor("shared");
+    const fn = vi.fn(_request);
+    const a = memoizedAsync(fn);
+    const b = memoizedAsync(fn);
+
+    await a(new URL(url));
+    await b(new URL(url));
+
+    expect(fn).toHaveBeenCalledTimes(1);
+  });
+});
