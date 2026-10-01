@@ -35,8 +35,7 @@
   <section class="rock-description__commercial">
     <Heading level={2}>Commercial use</Heading>
     <p>
-      Individual developers and a community members you can access all rocks
-      for free.
+      Individual developers and community members can access all rocks for free.
       If your usage includes commercial redistribution, requires security
       maintenance or support, or needs access to features like FIPS compliance,
       <Link href={GET_IN_TOUCH_HREF} target="_blank" rel="noopener">
