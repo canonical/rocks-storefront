@@ -18,3 +18,8 @@ export function truncateDigest(digest: string): string {
     ? `${digest.slice(0, DIGEST_CHARS)}…`
     : digest;
 }
+
+/** Category names arrive lower-cased, so give each word a capital. */
+export function formatCategory(name: string): string {
+  return name.replace(/(?<=^|[\s\-/])[a-z]/g, (letter) => letter.toUpperCase());
+}
