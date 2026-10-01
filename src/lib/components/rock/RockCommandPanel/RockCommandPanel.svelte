@@ -1,14 +1,13 @@
 <script lang="ts">
-  import {
-    Button,
-    Select,
-    SidePanel,
-    type SidePanelMethods,
-  } from "@canonical/svelte-ds-app-launchpad";
+  import { Button, Select } from "@canonical/svelte-ds-app-launchpad";
   import { CloseIcon } from "@canonical/svelte-icons";
   import { onDestroy } from "svelte";
   import { CopyableCode } from "$lib/components/ui/CopyableCode";
   import { Heading } from "$lib/components/ui/Heading";
+  import {
+    SidePanel,
+    type SidePanelMethods,
+  } from "$lib/components/ui/SidePanel";
   import { copier } from "$lib/utils/clipboard.svelte";
   import {
     ANY,

@@ -1,0 +1,7 @@
+@media (max-width: 767px) {
+  .ds.side-panel.app-side-panel {
+    --dimension-width-modal: 100%;
+
+    max-width: 100%;
+  }
+}
