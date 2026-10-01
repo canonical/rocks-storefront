@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { ChannelMapItem, RockInfoResponse } from "$lib/server/api/types";
+import type { ChannelMapItem } from "$lib/server/api/types";
+import { makeInfoRock } from "$lib/test-support/rock-fixtures";
 import {
+  CANONICAL_ICON,
   FALLBACK_ICON,
   getArchitectures,
   getBase,
@@ -10,19 +12,13 @@ import {
   getLatestTag,
   getLatestVersion,
   getRiskDescription,
+  getRockFallbackIcon,
   getRockIconUrl,
   getRockPublisher,
   getRockTitle,
   getVersions,
+  isCanonicalRock,
 } from "./rock";
-
-function makeRock(overrides: Partial<RockInfoResponse> = {}): RockInfoResponse {
-  return {
-    name: "test-rock",
-    "package-id": "pkg-1",
-    ...overrides,
-  };
-}
 
 function channel(overrides: Partial<ChannelMapItem> = {}): ChannelMapItem {
   return {
@@ -42,7 +38,7 @@ describe("getRockPublisher", () => {
   it("prefers the display name over the username", () => {
     expect(
       getRockPublisher(
-        makeRock({
+        makeInfoRock({
           metadata: {
             publisher: { "display-name": "Canonical", username: "canonical" },
           },
@@ -54,13 +50,13 @@ describe("getRockPublisher", () => {
   it("falls back to the username", () => {
     expect(
       getRockPublisher(
-        makeRock({ metadata: { publisher: { username: "jdoe" } } }),
+        makeInfoRock({ metadata: { publisher: { username: "jdoe" } } }),
       ),
     ).toBe("jdoe");
   });
 
   it("is undefined when there is no publisher", () => {
-    expect(getRockPublisher(makeRock())).toBeUndefined();
+    expect(getRockPublisher(makeInfoRock())).toBeUndefined();
   });
 });
 
@@ -68,7 +64,7 @@ describe("getRockIconUrl", () => {
   it("uses the icon from metadata media", () => {
     expect(
       getRockIconUrl(
-        makeRock({
+        makeInfoRock({
           metadata: {
             media: [
               {
@@ -91,19 +87,19 @@ describe("getRockIconUrl", () => {
   });
 
   it("falls back to the placeholder icon", () => {
-    expect(getRockIconUrl(makeRock())).toBe(FALLBACK_ICON);
+    expect(getRockIconUrl(makeInfoRock())).toBe(FALLBACK_ICON);
   });
 });
 
 describe("getRockTitle", () => {
   it("prefers the metadata title", () => {
-    expect(getRockTitle(makeRock({ metadata: { title: "Pretty" } }))).toBe(
+    expect(getRockTitle(makeInfoRock({ metadata: { title: "Pretty" } }))).toBe(
       "Pretty",
     );
   });
 
   it("falls back to the rock name when no title", () => {
-    expect(getRockTitle(makeRock({ name: "raw-name" }))).toBe("raw-name");
+    expect(getRockTitle(makeInfoRock({ name: "raw-name" }))).toBe("raw-name");
   });
 });
 
@@ -120,7 +116,7 @@ describe("getLatestTag", () => {
     });
 
   it("renders the registry tag as track_risk", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "default-track": "24.04",
       "channel-map": [on("24.04", "edge")],
     });
@@ -129,7 +125,7 @@ describe("getLatestTag", () => {
   });
 
   it("prefers the most stable risk on the default track", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "default-track": "24.04",
       "channel-map": [
         on("24.04", "edge"),
@@ -142,7 +138,7 @@ describe("getLatestTag", () => {
   });
 
   it("ignores channels on other tracks", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "default-track": "24.04",
       "channel-map": [on("22.04", "stable"), on("24.04", "edge")],
     });
@@ -151,13 +147,13 @@ describe("getLatestTag", () => {
   });
 
   it("falls back to any channel when no default track is set", () => {
-    const rock = makeRock({ "channel-map": [on("24.04", "edge")] });
+    const rock = makeInfoRock({ "channel-map": [on("24.04", "edge")] });
 
     expect(getLatestTag(rock)).toBe("24.04_edge");
   });
 
   it("returns null when there are no channels", () => {
-    expect(getLatestTag(makeRock())).toBeNull();
+    expect(getLatestTag(makeInfoRock())).toBeNull();
   });
 });
 
@@ -168,7 +164,7 @@ describe("getImageReference", () => {
     });
 
   it("derives the repository from the revision download url", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "default-track": "1.0",
       "channel-map": [
         withDownload("rocks.pkg.store/ubuntu/test-rock@sha256:d"),
@@ -181,7 +177,7 @@ describe("getImageReference", () => {
   });
 
   it("skips revisions without a download url", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "default-track": "1.0",
       "channel-map": [
         channel(),
@@ -195,16 +191,16 @@ describe("getImageReference", () => {
   });
 
   it("returns null when no revision exposes a download url", () => {
-    expect(getImageReference(makeRock())).toBeNull();
+    expect(getImageReference(makeInfoRock())).toBeNull();
     expect(
-      getImageReference(makeRock({ "channel-map": [channel()] })),
+      getImageReference(makeInfoRock({ "channel-map": [channel()] })),
     ).toBeNull();
   });
 });
 
 describe("getArchitectures", () => {
   it("prefers the channel platform, deduped and sorted", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({
           channel: { name: "a", platform: { architecture: "arm64" } },
@@ -221,7 +217,7 @@ describe("getArchitectures", () => {
   });
 
   it("falls back to the revision platform when the channel omits one", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({
           channel: { name: "a" },
@@ -234,13 +230,13 @@ describe("getArchitectures", () => {
   });
 
   it("returns an empty array when there is no channel map", () => {
-    expect(getArchitectures(makeRock())).toEqual([]);
+    expect(getArchitectures(makeInfoRock())).toEqual([]);
   });
 });
 
 describe("getVersions", () => {
   it("dedupes and sorts revision versions", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({ revision: { version: "2.0" } }),
         channel({ revision: { version: "1.0" } }),
@@ -252,7 +248,7 @@ describe("getVersions", () => {
   });
 
   it("ignores entries with no version", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({ revision: {} }),
         channel({ revision: { version: "1.0" } }),
@@ -265,7 +261,7 @@ describe("getVersions", () => {
 
 describe("getChannelRows", () => {
   it("maps each channel-map entry to a row", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({
           channel: {
@@ -292,7 +288,7 @@ describe("getChannelRows", () => {
   });
 
   it("skips entries without a channel name", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         { channel: { risk: "stable" }, revision: { version: "1.0" } },
         channel({
@@ -307,7 +303,7 @@ describe("getChannelRows", () => {
   });
 
   it("applies fallbacks for missing version, architecture, and release date", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [{ channel: { name: "bare" }, revision: {} }],
     });
 
@@ -321,7 +317,7 @@ describe("getChannelRows", () => {
   });
 
   it("sorts rows by last updated, newest first", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({
           channel: { name: "old", "released-at": "2026-01-01T00:00:00Z" },
@@ -343,7 +339,7 @@ describe("getChannelRows", () => {
   });
 
   it("returns an empty array when there is no channel map", () => {
-    expect(getChannelRows(makeRock())).toEqual([]);
+    expect(getChannelRows(makeInfoRock())).toEqual([]);
   });
 });
 
@@ -372,7 +368,7 @@ describe("getBase", () => {
 
 describe("getBases", () => {
   it("lists each ubuntu release the rock is built on, without repeats", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({ channel: { name: "a", track: "9.1-26.04" } }),
         channel({ channel: { name: "b", track: "9.0-26.04" } }),
@@ -384,7 +380,7 @@ describe("getBases", () => {
   });
 
   it("skips tracks that encode no release", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [channel({ channel: { name: "a", track: "latest" } })],
     });
 
@@ -394,7 +390,7 @@ describe("getBases", () => {
 
 describe("getLatestVersion", () => {
   it("takes the version of the most recently released channel", () => {
-    const rock = makeRock({
+    const rock = makeInfoRock({
       "channel-map": [
         channel({
           channel: { name: "old", "released-at": "2026-01-01T00:00:00Z" },
@@ -411,7 +407,9 @@ describe("getLatestVersion", () => {
   });
 
   it("is undefined when no channel carries a version", () => {
-    expect(getLatestVersion(makeRock({ "channel-map": [] }))).toBeUndefined();
+    expect(
+      getLatestVersion(makeInfoRock({ "channel-map": [] })),
+    ).toBeUndefined();
   });
 });
 
@@ -442,5 +440,83 @@ describe("getRiskDescription", () => {
     expect(getRiskDescription("experimental")).toContain(
       "maintained by Canonical",
     );
+  });
+});
+
+describe("isCanonicalRock", () => {
+  it("recognises the ROCKs team account", () => {
+    expect(
+      isCanonicalRock(
+        makeInfoRock({ metadata: { publisher: { username: "rocks-dev" } } }),
+      ),
+    ).toBe(true);
+  });
+
+  it.each([
+    "someone-else",
+    "",
+  ])("does not claim a rock published by %s", (username) => {
+    expect(
+      isCanonicalRock(makeInfoRock({ metadata: { publisher: { username } } })),
+    ).toBe(false);
+  });
+
+  it("does not claim a rock with no publisher", () => {
+    expect(isCanonicalRock(makeInfoRock({ metadata: {} }))).toBe(false);
+  });
+});
+
+describe("getRockIconUrl fallbacks", () => {
+  it("prefers the icon a rock publishes", () => {
+    const rock = makeInfoRock({
+      metadata: {
+        media: [
+          {
+            type: "icon",
+            url: "https://example.com/icon.png",
+            width: 64,
+            height: 64,
+          },
+        ],
+        publisher: { username: "rocks-dev" },
+      },
+    });
+
+    expect(getRockIconUrl(rock)).toBe("https://example.com/icon.png");
+  });
+
+  it("uses canonical's mark for a canonical rock with no icon", () => {
+    const rock = makeInfoRock({
+      metadata: { publisher: { username: "rocks-dev" } },
+    });
+
+    expect(getRockIconUrl(rock)).toBe(CANONICAL_ICON);
+  });
+
+  it("keeps the generic placeholder for anyone else", () => {
+    const rock = makeInfoRock({
+      metadata: { publisher: { username: "someone-else" } },
+    });
+
+    expect(getRockIconUrl(rock)).toBe(FALLBACK_ICON);
+  });
+
+  it("uses canonical's mark when a canonical rock's own icon fails", () => {
+    const rock = makeInfoRock({
+      metadata: {
+        media: [
+          {
+            type: "icon",
+            url: "https://example.com/gone.png",
+            width: 64,
+            height: 64,
+          },
+        ],
+        publisher: { username: "rocks-dev" },
+      },
+    });
+
+    expect(getRockIconUrl(rock)).toBe("https://example.com/gone.png");
+    expect(getRockFallbackIcon(rock)).toBe(CANONICAL_ICON);
   });
 });

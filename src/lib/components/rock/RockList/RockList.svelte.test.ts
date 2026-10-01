@@ -120,7 +120,7 @@ describe("RockList.svelte rock card", () => {
     const chips = container.querySelectorAll(".categories .chip");
 
     expect(chips).toHaveLength(1);
-    expect(chips[0].textContent?.trim()).toBe("databases");
+    expect(chips[0].textContent?.trim()).toBe("Databases");
   });
 
   it("collapses extra categories into a +N chip listing them", async () => {

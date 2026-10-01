@@ -4,11 +4,25 @@ import type {
   RockInfoResponse,
 } from "$lib/server/api/types";
 
+/**
+ * Canonical's mark, shown when a rock of theirs publishes no icon. Served from
+ * `static/` rather than imported, so it stays a same-origin URL: Vite inlines
+ * a small asset as a `data:` URI, which our CSP does not allow for images.
+ */
+export const CANONICAL_ICON = "/canonical.svg";
+
 export const FALLBACK_ICON =
   "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
 
 export function getRockTitle(rock: RockBase): string {
   return rock.metadata?.title ?? rock.name;
+}
+
+/** The account Canonical's own rocks are published under. */
+const CANONICAL_PUBLISHER = "rocks-dev";
+
+export function isCanonicalRock(rock: RockBase): boolean {
+  return rock.metadata?.publisher?.username === CANONICAL_PUBLISHER;
 }
 
 export function getRockPublisher(rock: RockBase): string | undefined {
@@ -18,10 +32,15 @@ export function getRockPublisher(rock: RockBase): string | undefined {
   );
 }
 
+/** The icon to show when a rock publishes none, or its own fails to load. */
+export function getRockFallbackIcon(rock: RockBase): string {
+  return isCanonicalRock(rock) ? CANONICAL_ICON : FALLBACK_ICON;
+}
+
 export function getRockIconUrl(rock: RockBase): string {
-  return (
-    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON
-  );
+  const published = rock.metadata?.media?.find((m) => m.type === "icon")?.url;
+
+  return published || getRockFallbackIcon(rock);
 }
 
 const RISK_ORDER = ["stable", "candidate", "beta", "edge"];

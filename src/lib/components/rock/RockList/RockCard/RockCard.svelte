@@ -8,8 +8,9 @@
   import { Heading } from "$lib/components/ui/Heading";
   import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
   import type { RockFindResultItem } from "$lib/server/api/types";
+  import { formatCategory } from "$lib/utils/format";
   import {
-    FALLBACK_ICON,
+    getRockFallbackIcon,
     getRockIconUrl,
     getRockPublisher,
     getRockTitle,
@@ -39,7 +40,7 @@
 
 <article class="ds rocks-list-card">
     <div class="body">
-        <ImageWithFallback class="logo" src={getRockIconUrl(rock)} alt="" fallback={FALLBACK_ICON} />
+        <ImageWithFallback class="logo" src={getRockIconUrl(rock)} alt="" fallback={getRockFallbackIcon(rock)} />
 
         <div class="identity">
             <Link class="name" soft href={`/${encodeURIComponent(rock.name)}`}>
@@ -71,7 +72,7 @@
     <footer class="footer">
         <div class="categories">
             {#if primaryCategory}
-                <Chip readonly density="dense" value={primaryCategory.name} />
+                <Chip readonly density="dense" value={formatCategory(primaryCategory.name)} />
             {/if}
             {#if otherCategories.length > 0}
                 <Chip
