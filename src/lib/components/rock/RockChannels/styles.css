@@ -16,7 +16,10 @@
 
 .ds.rock-channels .rock-channels__cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(var(--app-card-min-width), 1fr)
+    );
   gap: var(--space-300);
 }
 
@@ -125,5 +128,5 @@
 }
 
 .ds.rock-channels .rock-channels__get .ds.copyable-code {
-  flex: 1 1 18rem;
+  flex: 1 1 var(--app-code-min-width);
 }
