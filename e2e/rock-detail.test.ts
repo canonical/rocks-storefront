@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 import { firstRockPath, setUpCspWatcher } from "./helpers";
 
@@ -111,7 +112,7 @@ test.describe("rock description", () => {
 
 test.describe("side panel width", () => {
   // The panel slides in, so wait for it to come to rest before measuring.
-  async function openPanelWidth(page, path: string) {
+  async function openPanelWidth(page: Page, path: string) {
     await page.goto(`${path}?tab=tags`);
     await page.getByRole("button", { name: "Build your command" }).click();
 
