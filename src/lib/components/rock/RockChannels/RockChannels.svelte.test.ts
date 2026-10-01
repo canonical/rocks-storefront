@@ -52,22 +52,41 @@ function makeRock(
   };
 }
 
+/** The OS cell of the first row, found by header so column order cannot break it. */
+function osCell(container: HTMLElement): Element {
+  const index = [...container.querySelectorAll("thead th")].findIndex((th) =>
+    th.textContent?.trim().startsWith("OS"),
+  );
+
+  return container.querySelectorAll("tbody tr:first-child td")[index];
+}
+
+function twoVersions() {
+  return makeRock([
+    entry("v2/stable", { version: "2.0", releasedAt: "2026-06-01T00:00:00Z" }),
+    entry("v1/stable", { version: "1.0", releasedAt: "2026-01-01T00:00:00Z" }),
+  ]);
+}
+
 describe("RockChannels.svelte", () => {
   it("renders the image reference for the latest tag", async () => {
-    render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
+    const { container } = render(RockChannels, {
+      rock: makeRock([entry("1.0/stable")]),
+    });
 
-    await expect
-      .element(page.getByText("rocks.pkg.store/ubuntu/test-rock:1.0_stable"))
-      .toBeVisible();
+    expect(
+      container.querySelector(".rock-channels__get .ds.code")?.textContent,
+    ).toBe("rocks.pkg.store/ubuntu/test-rock:1.0_stable");
   });
 
   it("hides the placeholder in empty cells from assistive technology", async () => {
     const { container } = render(RockChannels, {
-      rock: makeRock([entry("1.0/stable", { version: "" })]),
+      rock: makeRock([entry("latest/stable")]),
     });
 
-    const cell = container.querySelectorAll("tbody td")[1];
+    const cell = osCell(container);
 
+    expect(cell?.textContent?.trim()).toBe("— Not available");
     expect(cell?.querySelector("[aria-hidden='true']")?.textContent).toBe("—");
     expect(cell?.querySelector(".visually-hidden")?.textContent).toBe(
       "Not available",
@@ -93,6 +112,32 @@ describe("RockChannels.svelte", () => {
     await expect
       .element(page.getByRole("cell", { name: "1.0/edge" }))
       .toBeVisible();
+  });
+
+  it("starts on the latest version rather than showing them all", async () => {
+    render(RockChannels, {
+      rock: twoVersions(),
+    });
+
+    await expect
+      .element(page.getByRole("cell", { name: "v2/stable" }))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("cell", { name: "v1/stable" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("offers no all-versions option", async () => {
+    const { container } = render(RockChannels, {
+      rock: twoVersions(),
+    });
+
+    const versionSelect = container.querySelector<HTMLSelectElement>(
+      ".rock-channels__filters select",
+    );
+    expect(
+      [...(versionSelect?.options ?? [])].map((o) => o.textContent?.trim()),
+    ).toEqual(["1.0", "2.0 (latest)"]);
   });
 
   it("filters rows by the selected version", async () => {
@@ -145,7 +190,7 @@ describe("RockChannels.svelte", () => {
     await expect.element(panel.getByText("1.0/edge")).toBeVisible();
     await expect.element(panel.getByText("3")).toBeVisible();
     await expect
-      .element(panel.getByText(/revisions are maintained by Canonical/))
+      .element(panel.getByText(/Edge channels include experimental updates/))
       .toBeVisible();
   });
 
@@ -197,20 +242,66 @@ describe("RockChannels.svelte", () => {
       rock: makeRock([entry("9.1-26.04/edge")]),
     });
 
-    const cells = container.querySelectorAll("tbody tr td");
-    expect(cells[2].textContent?.trim()).toBe("26.04");
+    expect(osCell(container).textContent?.trim()).toBe("26.04");
   });
 
-  it("leaves the base empty for a track that encodes no release", async () => {
+  it("opens the command builder from the get-a-rock card", async () => {
+    render(RockChannels, { rock: makeRock([entry("1.0/stable")]) });
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+
+    await expect
+      .element(page.getByRole("heading", { name: "Command builder" }))
+      .toBeVisible();
+  });
+
+  it("closes the command builder again", async () => {
     const { container } = render(RockChannels, {
-      rock: makeRock([entry("latest/stable")]),
+      rock: makeRock([entry("1.0/stable")]),
+    });
+    const panel = container.querySelector<HTMLDialogElement>(
+      ".ds.rock-command-panel",
+    );
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+    expect(panel?.open).toBe(true);
+
+    await userEvent.click(
+      page.getByRole("button", { name: "Close the command builder" }),
+    );
+    expect(panel?.open).toBe(false);
+  });
+
+  it("opens the channel details for the command builder's selection", async () => {
+    render(RockChannels, {
+      rock: makeRock([
+        entry("2.0-26.04/edge", {
+          version: "2.0",
+          releasedAt: "2026-06-01T00:00:00Z",
+        }),
+        entry("1.0-24.04/edge", {
+          version: "1.0",
+          releasedAt: "2026-01-01T00:00:00Z",
+        }),
+      ]),
     });
 
-    const cells = container.querySelectorAll("tbody tr td");
-    expect(cells[2].textContent?.trim()).toBe("— Not available");
+    await userEvent.click(
+      page.getByRole("button", { name: "Build your command" }),
+    );
+    await userEvent.selectOptions(page.getByRole("combobox").nth(1), "1.0");
+    await userEvent.click(page.getByRole("button", { name: "View details" }));
+
+    await expect
+      .element(page.getByRole("heading", { name: "1.0-24.04/edge" }))
+      .toBeVisible();
   });
 
-  it("links to the recipe of a track that has one", async () => {
+  it("links each channel to the recipe that built it", async () => {
     render(RockChannels, {
       rock: makeRock([entry("9.1-26.04/edge")]),
       rockcraftUrls: {
@@ -227,7 +318,7 @@ describe("RockChannels.svelte", () => {
       );
   });
 
-  it("shows no recipe link for a track whose recipe was not found", async () => {
+  it("shows nothing for a channel whose recipe was not found", async () => {
     render(RockChannels, {
       rock: makeRock([entry("9.1-26.04/edge")]),
       rockcraftUrls: {},

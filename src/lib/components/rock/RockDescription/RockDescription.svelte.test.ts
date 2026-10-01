@@ -150,4 +150,34 @@ describe("RockDescription.svelte", () => {
       .element(page.getByRole("heading", { name: "Valkey rock", level: 2 }))
       .toBeVisible();
   });
+
+  it("closes with the commercial use section", async () => {
+    render(RockDescription, {
+      rock: makeInfoRock({ metadata: { description: "# Details" } }),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Commercial use", level: 2 }))
+      .toBeVisible();
+    await expect.element(page.getByText(/access all rocks/)).toBeVisible();
+  });
+
+  it("links get in touch to the containers page", async () => {
+    render(RockDescription, { rock: makeInfoRock() });
+
+    await expect
+      .element(page.getByRole("link", { name: "get in touch" }))
+      .toHaveAttribute("href", "https://ubuntu.com/containers#get-in-touch");
+  });
+
+  it("shows commercial use even with no description", async () => {
+    render(RockDescription, { rock: makeInfoRock() });
+
+    await expect
+      .element(page.getByText("No description provided."))
+      .toBeVisible();
+    await expect
+      .element(page.getByRole("heading", { name: "Commercial use" }))
+      .toBeVisible();
+  });
 });

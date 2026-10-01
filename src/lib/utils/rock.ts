@@ -26,6 +26,22 @@ export function getRockIconUrl(rock: RockBase): string {
 
 const RISK_ORDER = ["stable", "candidate", "beta", "edge"];
 
+const RISK_DESCRIPTIONS: Record<string, string> = {
+  stable:
+    "Stable channels receive regular updates following strict QA and review processes. No breaking changes are expected. Recommended for production environments.",
+  candidate:
+    "Candidate channels include near-stable updates, but haven\u2019t passed all QA and review processes yet. Few breaking changes are expected.",
+  beta: "Beta channels provide an early-stage preview of new upstream features ready for testing. Some breaking changes are to be expected.",
+  edge: "Edge channels include experimental updates including latest upstream features. Breaking changes are to be expected.",
+};
+
+export function getRiskDescription(risk: string): string {
+  return (
+    RISK_DESCRIPTIONS[risk] ??
+    "This channel\u2019s revisions are maintained by Canonical."
+  );
+}
+
 function riskRank(risk: string): number {
   const index = RISK_ORDER.indexOf(risk);
   return index === -1 ? RISK_ORDER.length : index;
@@ -53,7 +69,7 @@ export function getLatestTag(rock: RockInfoResponse): string | null {
   return best ? `${best.track}_${best.risk}` : null;
 }
 
-function getRepository(rock: RockInfoResponse): string | null {
+export function getRepository(rock: RockInfoResponse): string | null {
   for (const item of rock["channel-map"] ?? []) {
     const url = item.revision?.download?.url;
     if (url) return url.split("@")[0];
@@ -194,6 +210,48 @@ export function getChannelRevisions(
     });
   }
   return rows.sort((a, b) => (b.revision ?? 0) - (a.revision ?? 0));
+}
+
+export function getLatestVersion(rock: RockInfoResponse): string | undefined {
+  return getChannelRows(rock).find((row) => row.version)?.version;
+}
+
+export interface ChannelCombination {
+  version: string;
+  architecture: string;
+  risk: string;
+}
+
+export function getChannelCombinations(
+  rock: RockInfoResponse,
+): ChannelCombination[] {
+  return (rock["channel-map"] ?? []).map((item) => ({
+    version: item.revision?.version ?? "",
+    architecture: resolveArchitecture(item),
+    risk: item.channel?.risk ?? "",
+  }));
+}
+
+export function getRisks(rock: RockInfoResponse): string[] {
+  return collect(rock, (item) => item.channel?.risk).sort(
+    (a, b) => riskRank(a) - riskRank(b),
+  );
+}
+
+export function findChannel(
+  rock: RockInfoResponse,
+  version: string,
+  risk: string,
+): { track: string; name: string } | undefined {
+  const channel = (rock["channel-map"] ?? []).find(
+    (item) =>
+      item.revision?.version === version &&
+      (!risk || item.channel?.risk === risk),
+  )?.channel;
+
+  return channel?.track && channel?.name
+    ? { track: channel.track, name: channel.name }
+    : undefined;
 }
 
 export function getVersions(rock: RockInfoResponse): string[] {

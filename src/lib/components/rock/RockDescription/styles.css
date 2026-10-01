@@ -39,3 +39,11 @@
 .ds.rock-description .rock-description__body :is(code, pre) {
   font-family: var(--typography-font-family-monospace);
 }
+
+.ds.rock-description .rock-description__commercial {
+  margin-block-start: var(--space-400);
+}
+
+.ds.rock-description .rock-description__commercial p {
+  margin-block: 0;
+}

@@ -20,7 +20,7 @@
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import { formatFileSize, truncateDigest } from "$lib/utils/format";
-  import { getChannelRevisions } from "$lib/utils/rock";
+  import { getChannelRevisions, getRiskDescription } from "$lib/utils/rock";
   import type { RockChannelPanelProps } from "./types.js";
   import "./styles.css";
 
@@ -35,11 +35,7 @@
     channelTag ? getChannelRevisions(rock, channelTag) : [],
   );
 
-  const description = $derived(
-    revisions[0]?.risk === "stable"
-      ? "Stable channels receive regular updates that are maintained by Canonical."
-      : "This channel's revisions are maintained by Canonical.",
-  );
+  const description = $derived(getRiskDescription(revisions[0]?.risk ?? ""));
   const architectures = $derived(
     [...new Set(revisions.map((r) => r.architecture).filter(Boolean))].sort(),
   );

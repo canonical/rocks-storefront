@@ -5,13 +5,11 @@
     RelativeDateTime,
     Select,
     Table,
+    Tooltip,
   } from "@canonical/svelte-ds-app-launchpad";
-  import {
-    BookIcon,
-    ChevronRightIcon,
-    OpenTerminalIcon,
-  } from "@canonical/svelte-icons";
+  import { ChevronRightIcon, InformationIcon } from "@canonical/svelte-icons";
   import { RockChannelPanel } from "$lib/components/rock/RockChannelPanel";
+  import { RockCommandPanel } from "$lib/components/rock/RockCommandPanel";
   import { CopyableCode } from "$lib/components/ui/CopyableCode";
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
@@ -21,15 +19,16 @@
     getBase,
     getGroupedChannelRows,
     getImageReference,
+    getLatestVersion,
     getVersions,
   } from "$lib/utils/rock";
   import "./styles.css";
   import type { RockChannelsProps } from "./types.js";
 
   const LEARN_USE_HREF =
-    "https://documentation.ubuntu.com/rockcraft/en/stable/tutorial/";
+    "https://ubuntu.com/containers/rockcraft/docs/1/tutorial/hello-world/#tutorial-create-a-hello-world-rock";
   const LEARN_CHISEL_HREF =
-    "https://documentation.ubuntu.com/rockcraft/en/stable/explanation/chisel/";
+    "https://ubuntu.com/containers/rockcraft/docs/1/how-to/chiseling/chisel-existing-rock/";
 
   const PAGE_SIZE = 10;
 
@@ -41,10 +40,11 @@
 
   const rows = $derived(getGroupedChannelRows(rock));
   const versions = $derived(getVersions(rock));
-  const latestVersion = $derived(rows.find((r) => r.version)?.version);
+  const latestVersion = $derived(getLatestVersion(rock));
   const architectures = $derived(getArchitectures(rock));
 
   let panel = $state<ReturnType<typeof RockChannelPanel> | undefined>();
+  let commandPanel = $state<ReturnType<typeof RockCommandPanel> | undefined>();
   let selectedChannelTag = $state<string | null>(null);
 
   function openChannel(channelTag: string) {
@@ -52,14 +52,14 @@
     panel?.showModal();
   }
 
-  let versionFilter = $state("");
+  let versionFilter = $derived(latestVersion ?? "");
   let architectureFilter = $state("");
   let currentPage = $state(1);
 
   const filteredRows = $derived(
     rows.filter(
       (r) =>
-        (!versionFilter || r.version === versionFilter) &&
+        r.version === versionFilter &&
         (!architectureFilter || r.architectures.includes(architectureFilter)),
     ),
   );
@@ -79,27 +79,26 @@
 
 <div class={componentCssClassName}>
   <section class="rock-channels__section">
-    <Heading level={3}>Get started</Heading>
+    <Heading level={2}>Get started</Heading>
     <div class="rock-channels__cards">
       <article class="rock-channels__card">
-        <div class="rock-channels__card-header">
-          <OpenTerminalIcon />
-          <Heading level={3}>Get a rock</Heading>
-        </div>
+        <Heading level={3}>Get a rock</Heading>
         <p>
           Rocks are compatible with a wide variety of tools. To get a rock,
           choose a channel tag, add it to the registry address, and use the
           tool of your choice to access the image.
         </p>
-        {#if imageReference}
-          <CopyableCode value={imageReference} />
-        {/if}
+        <div class="rock-channels__get">
+          {#if imageReference}
+            <CopyableCode value={imageReference} />
+          {/if}
+          <Button type="button" onclick={() => commandPanel?.showModal()}>
+            Build your command
+          </Button>
+        </div>
       </article>
       <article class="rock-channels__card">
-        <div class="rock-channels__card-header">
-          <BookIcon />
-          <Heading level={3}>Learn more about rocks</Heading>
-        </div>
+        <Heading level={3}>Learn more about rocks</Heading>
         <p>
           Rocks are part of a rich ecosystem of tools to build and package more
           secure and performant OCI images.
@@ -119,15 +118,19 @@
   </section>
 
   <RockChannelPanel bind:this={panel} {rock} channelTag={selectedChannelTag} />
+  <RockCommandPanel
+    bind:this={commandPanel}
+    {rock}
+    onViewDetails={openChannel}
+  />
 
   <section class="rock-channels__section">
-    <Heading level={3}>Tags and channels</Heading>
+    <Heading level={2}>Tags and channels</Heading>
 
     <div class="rock-channels__filters">
       <label class="rock-channels__filter">
         <span>Version</span>
         <Select bind:value={versionFilter} onchange={resetPage}>
-          <option value="">All</option>
           {#each versions as version (version)}
             <option value={version}>
               {version === latestVersion ? `${version} (latest)` : version}
@@ -153,10 +156,28 @@
         <thead>
           <tr>
             <th scope="col"><SmallCaps>Channel tag</SmallCaps></th>
-            <th scope="col"><SmallCaps>Version</SmallCaps></th>
-            <th scope="col"><SmallCaps>Base</SmallCaps></th>
             <th scope="col"><SmallCaps>Architecture</SmallCaps></th>
             <th scope="col"><SmallCaps>Updated</SmallCaps></th>
+            <th scope="col">
+              <span class="rock-channels__heading-with-hint">
+                <SmallCaps>OS</SmallCaps>
+                <Tooltip>
+                  {#snippet trigger(triggerProps)}
+                    <button
+                      type="button"
+                      class="rock-channels__hint"
+                      aria-label="About the OS column"
+                      onclick={(event) => event.detail > 0 && event.currentTarget.blur()}
+                      {...triggerProps}
+                    >
+                      <InformationIcon />
+                    </button>
+                  {/snippet}
+                  Rocks using the same OS are meant to work together and are
+                  maintained as a unified distribution.
+                </Tooltip>
+              </span>
+            </th>
             <th scope="col"><SmallCaps>Recipe</SmallCaps></th>
           </tr>
         </thead>
@@ -175,12 +196,6 @@
                 </button>
               </td>
               <td>
-                {#if row.version}{row.version}{:else}<EmptyCell />{/if}
-              </td>
-              <td>
-                {#if base}{base}{:else}<EmptyCell />{/if}
-              </td>
-              <td>
                 {#if row.architectures.length}
                   {row.architectures.join(", ")}
                 {:else}
@@ -195,12 +210,11 @@
                 {/if}
               </td>
               <td>
+                {#if base}{base}{:else}<EmptyCell />{/if}
+              </td>
+              <td>
                 {#if rockcraftUrl}
-                  <Link
-                    href={rockcraftUrl}
-                    target="_blank"
-                    rel="noopener"
-                  >
+                  <Link href={rockcraftUrl} target="_blank" rel="noopener">
                     rockcraft.yaml
                   </Link>
                 {:else}
