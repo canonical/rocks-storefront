@@ -111,7 +111,6 @@ test.describe("rock description", () => {
 });
 
 test.describe("side panel width", () => {
-  // The panel slides in, so wait for it to come to rest before measuring.
   async function openPanelWidth(page: Page, path: string) {
     await page.goto(`${path}?tab=tags`);
     await page.getByRole("button", { name: "Build your command" }).click();
@@ -134,10 +133,10 @@ test.describe("side panel width", () => {
     test("fills the screen", async ({ page, request }) => {
       const path = await firstRockPath(request);
       const box = await openPanelWidth(page, path);
-      const viewport = page.viewportSize();
+      const contentWidth = await page.evaluate(() => document.body.clientWidth);
 
       expect(box.x).toBe(0);
-      expect(box.width).toBeGreaterThan((viewport?.width ?? 0) * 0.95);
+      expect(box.width).toBeCloseTo(contentWidth, 0);
     });
   });
 
