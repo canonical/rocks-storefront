@@ -280,6 +280,42 @@ describe("RockSidebar.svelte discourse", () => {
       .toHaveAttribute("href", "mailto:bugs@example.com");
   });
 
+  it("skips a blocked issues link in favour of a later usable one", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            issues: ["javascript:alert(1)", "https://example.com/file-a-bug"],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute("href", "https://example.com/file-a-bug");
+  });
+
+  it("falls back to the repository when every issues link is blocked", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            issues: ["javascript:alert(1)"],
+            upstream: ["https://github.com/canonical/valkey-rock"],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute(
+        "href",
+        "https://github.com/canonical/valkey-rock/issues/new",
+      );
+  });
+
   it("falls back to the upstream repository's issues", async () => {
     render(RockSidebar, {
       rock: makeInfoRock({

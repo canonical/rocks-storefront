@@ -139,9 +139,9 @@
       });
     }
 
-    const published = hrefFor(
-      pickLinks(["issues", "issue", "bug-tracker", "bugs"])[0]?.url ?? "",
-    );
+    const published = pickLinks(["issues", "issue", "bug-tracker", "bugs"])
+      .map((row) => hrefFor(row.url))
+      .find((href) => href && href !== "#");
     const upstreams = pickLinks(["upstream", "upstream-source"]).map(
       (row) => row.url,
     );
