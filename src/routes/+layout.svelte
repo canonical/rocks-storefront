@@ -5,6 +5,7 @@
   import favicon from "$lib/assets/favicon.png";
   import { SiteHeader } from "$lib/components/layout/SiteHeader";
   import "../app.css";
+  import "./layout.css";
 
   let { children } = $props();
 </script>
@@ -33,14 +34,3 @@
   {@render children()}
 </main>
 
-<style lang="css">
-  .ds.navigation-loader {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 100;
-    height: var(--dimension-050);
-    background-color: var(--color-brand-primary);
-  }
-</style>

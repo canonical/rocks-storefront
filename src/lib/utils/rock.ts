@@ -75,17 +75,37 @@ function resolveArchitecture(item: ChannelMapItem): string {
   );
 }
 
-export function getArchitectures(rock: RockInfoResponse): string[] {
+function collect(
+  rock: RockInfoResponse,
+  pick: (item: ChannelMapItem) => string | null | undefined,
+): string[] {
   const set = new Set<string>();
   for (const item of rock["channel-map"] ?? []) {
-    const architecture = resolveArchitecture(item);
-    if (architecture) set.add(architecture);
+    const value = pick(item);
+    if (value) set.add(value);
   }
   return [...set].sort();
 }
 
+export function getArchitectures(rock: RockInfoResponse): string[] {
+  return collect(rock, resolveArchitecture);
+}
+
+export function getTracks(rock: RockInfoResponse): string[] {
+  return collect(rock, (item) => item.channel?.track);
+}
+
+export function getBase(track: string): string | null {
+  return /(?:^|-)(\d{2}\.\d{2})$/.exec(track)?.[1] ?? null;
+}
+
+export function getBases(rock: RockInfoResponse): string[] {
+  return collect(rock, (item) => getBase(item.channel?.track ?? ""));
+}
+
 export interface ChannelRow {
   channelTag: string;
+  track: string;
   version: string;
   architecture: string;
   lastUpdated: string | null;
@@ -98,6 +118,7 @@ export function getChannelRows(rock: RockInfoResponse): ChannelRow[] {
     if (!channel?.name) continue;
     rows.push({
       channelTag: channel.name,
+      track: channel.track ?? "",
       version: item.revision?.version ?? "",
       architecture: resolveArchitecture(item),
       lastUpdated: channel["released-at"] ?? null,
@@ -110,6 +131,7 @@ export function getChannelRows(rock: RockInfoResponse): ChannelRow[] {
 
 export interface GroupedChannelRow {
   channelTag: string;
+  track: string;
   version: string;
   architectures: string[];
   lastUpdated: string | null;
@@ -126,6 +148,7 @@ export function getGroupedChannelRows(
     if (!group) {
       byTag.set(row.channelTag, {
         channelTag: row.channelTag,
+        track: row.track,
         version: row.version,
         architectures: row.architecture ? [row.architecture] : [],
         lastUpdated: row.lastUpdated,
@@ -174,10 +197,5 @@ export function getChannelRevisions(
 }
 
 export function getVersions(rock: RockInfoResponse): string[] {
-  const set = new Set<string>();
-  for (const item of rock["channel-map"] ?? []) {
-    const version = item.revision?.version;
-    if (version) set.add(version);
-  }
-  return [...set].sort();
+  return collect(rock, (item) => item.revision?.version);
 }

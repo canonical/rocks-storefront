@@ -4,8 +4,8 @@
   import { SplitLayout } from "$lib/components/ui/SplitLayout";
   import "./styles.css";
 
-  // TODO: add the correct hrefs
-  const CONTACT_HREF = "https://ubuntu.com/";
+  const CONTACT_HREF = "https://ubuntu.com/containers#get-in-touch";
+  // TODO: add the correct href
   const SURVEY_HREF = "https://ubuntu.com/";
 </script>
 

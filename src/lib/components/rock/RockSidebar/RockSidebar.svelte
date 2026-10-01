@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Button, Link } from "@canonical/svelte-ds-app-launchpad";
   import {
-    FileIcon,
+    BugIcon,
+    CodeIcon,
     GithubIcon,
     LinkIcon,
     OpenTerminalIcon,
@@ -9,13 +10,14 @@
   } from "@canonical/svelte-icons";
   import type { Component } from "svelte";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
-  import { getArchitectures } from "$lib/utils/rock";
+  import { githubRepo } from "$lib/utils/github";
+  import { getArchitectures, getBases } from "$lib/utils/rock";
   import type { RockSidebarProps } from "./types.js";
   import "./styles.css";
 
   const componentCssClassName = "ds rock-sidebar";
 
-  const DISCOURSE_HREF = "https://discourse.ubuntu.com/";
+  const DISCOURSE_HREF = "https://discourse.ubuntu.com/c/project/rocks/117";
 
   const SOURCE_LABELS: Record<string, string> = {
     "upstream-source": "Upstream source",
@@ -34,12 +36,13 @@
     href: string;
   };
 
-  let { rock }: RockSidebarProps = $props();
+  let { rock, rockcraftUrl }: RockSidebarProps = $props();
 
   const meta = $derived(rock.metadata ?? {});
   const license = $derived(meta.license?.trim());
 
   const architectures = $derived(getArchitectures(rock));
+  const bases = $derived(getBases(rock));
 
   function isGithub(url: string): boolean {
     return /(^|\/\/|\.)github\.com\//.test(url);
@@ -78,7 +81,7 @@
   }
 
   function sourceIcon(key: string, url: string): Component {
-    if (key.includes("rockcraft")) return FileIcon;
+    if (key.includes("rockcraft")) return CodeIcon;
     if (key.includes("upstream")) return isGithub(url) ? GithubIcon : LinkIcon;
     return isGithub(url) ? GithubIcon : OpenTerminalIcon;
   }
@@ -96,6 +99,16 @@
         href: hrefFor(url),
       });
     }
+
+    if (rockcraftUrl && !seen.has(rockcraftUrl)) {
+      out.push({
+        key: rockcraftUrl,
+        icon: CodeIcon,
+        label: "rockcraft.yaml",
+        href: rockcraftUrl,
+      });
+    }
+
     return out;
   });
 
@@ -127,6 +140,19 @@
         href: hrefFor(value),
       });
     }
+
+    const repo = pickLinks(["upstream", "upstream-source"])
+      .map((row) => githubRepo(row.url))
+      .find(Boolean);
+    if (repo) {
+      out.push({
+        key: "submit-a-bug",
+        icon: BugIcon,
+        label: "Submit a bug",
+        href: `https://github.com/${repo}/issues/new`,
+      });
+    }
+
     return out;
   });
 </script>
@@ -155,6 +181,13 @@
     <div class="rock-sidebar__item">
       <dt><SmallCaps>Architectures</SmallCaps></dt>
       <dd>{architectures.map((arch) => arch.toUpperCase()).join(", ")}</dd>
+    </div>
+  {/if}
+
+  {#if bases.length}
+    <div class="rock-sidebar__item">
+      <dt><SmallCaps>Base</SmallCaps></dt>
+      <dd>{bases.join(", ")}</dd>
     </div>
   {/if}
 

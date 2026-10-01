@@ -119,6 +119,19 @@ function hashArgs(args: unknown[]): string {
   return createHash("sha256").update(stableStringify(args)).digest("hex");
 }
 
+let anonymousWrappers = 0;
+
+/**
+ * All wrappers share one cache, so keys carry the function's name. Without it,
+ * two functions taking the same argument would read each other's entries.
+ */
+function namespaceFor(fn: { name: string }): string {
+  if (fn.name) return fn.name;
+
+  anonymousWrappers += 1;
+  return `anonymous#${anonymousWrappers}`;
+}
+
 /**
  * Wraps a function so that its results are cached in a {@link TtlCache},
  * keyed by its arguments.
@@ -127,8 +140,8 @@ function hashArgs(args: unknown[]): string {
  * the TTL elapses. Note that `undefined` return values are not cached, and
  * thrown errors propagate to the caller without being cached.
  *
- * Running `memoized` twice on the same function will produce **two
- * different** cache instances!
+ * Keys are namespaced by `fn.name`, so wrapping two different functions keeps
+ * their entries apart, while wrapping the same function twice shares them.
  *
  * @param fn - The function to memoize.
  * @param ttl_ms - How long each cached result stays valid, in milliseconds.
@@ -146,9 +159,10 @@ export function memoized<Args extends unknown[], Ret>(
   argsSerializer: (args: Args) => string = hashArgs,
 ): (...args: Args) => Ret {
   const cache = TtlCache.instance();
+  const namespace = namespaceFor(fn);
 
   return (...args: Args) => {
-    const cacheKey = argsSerializer(args);
+    const cacheKey = `${namespace}:${argsSerializer(args)}`;
     const hit = cache.get<Ret>(cacheKey);
 
     if (typeof hit !== "undefined") return hit;
@@ -168,8 +182,8 @@ export function memoized<Args extends unknown[], Ret>(
  * the TTL elapses. Note that `undefined` return values are not cached, and
  * thrown errors propagate to the caller without being cached.
  *
- * Running `memoizedAsync` twice on the same function will produce **two
- * different** cache instances!
+ * Keys are namespaced by `fn.name`, so wrapping two different functions keeps
+ * their entries apart, while wrapping the same function twice shares them.
  *
  * @param fn - The **async** function to memoize.
  * @param ttl_ms - How long each cached result stays valid, in milliseconds.
@@ -187,9 +201,10 @@ export function memoizedAsync<Args extends unknown[], Ret>(
   argsSerializer: (args: Args) => string = hashArgs,
 ): (...args: Args) => Promise<Ret> {
   const cache = TtlCache.instance();
+  const namespace = namespaceFor(fn);
 
   return async (...args: Args) => {
-    const cacheKey = argsSerializer(args);
+    const cacheKey = `${namespace}:${argsSerializer(args)}`;
 
     const hit = cache.get<Ret>(cacheKey);
     if (typeof hit !== "undefined") return hit;

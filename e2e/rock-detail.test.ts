@@ -87,6 +87,49 @@ test.describe("rock detail page", () => {
   });
 });
 
+test.describe("rock description", () => {
+  test("shows the upstream readme when one is reachable", async ({ page }) => {
+    await page.goto("/valkey");
+
+    const body = page.locator(".rock-description__body");
+
+    await expect(body).toContainText("packaging metadata");
+    await expect(body.locator("img")).toHaveCount(0);
+  });
+
+  for (const name of ["go", "ubuntu"]) {
+    test(`falls back to the api description for ${name}`, async ({ page }) => {
+      await page.goto(`/${name}`);
+
+      await expect(page.locator(".rock-description__body")).not.toBeEmpty();
+      await expect(
+        page.getByText("No description provided."),
+      ).not.toBeVisible();
+    });
+  }
+});
+
+test.describe("site header", () => {
+  test("starts the nav on the app's main column", async ({ page, request }) => {
+    const path = await firstRockPath(request);
+
+    await page.goto(path);
+
+    const [nav, main] = await Promise.all([
+      page.getByRole("navigation", { name: "Main" }).boundingBox(),
+      page.locator("main .app-columns__main").first().boundingBox(),
+    ]);
+
+    if (!nav || !main) {
+      throw new Error(
+        "expected the header nav and the main column to be visible",
+      );
+    }
+
+    expect(nav.x).toBeCloseTo(main.x, 0);
+  });
+});
+
 test.describe("rock detail page without javascript", () => {
   test.use({ javaScriptEnabled: false });
 

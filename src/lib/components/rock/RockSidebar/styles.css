@@ -48,5 +48,5 @@
 
 .ds.rock-sidebar .rock-sidebar__discourse-text {
   margin-block: 0 var(--space-200);
-  color: var(--color-text-muted);
+  color: var(--color-text);
 }

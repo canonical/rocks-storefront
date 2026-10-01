@@ -1,0 +1,11 @@
+.rock-detail {
+  background: var(--color-background-layer2);
+}
+
+.rock-detail__body {
+  padding-block: var(--space-400);
+}
+
+.rock-detail__content {
+  padding-block-start: var(--space-400);
+}
