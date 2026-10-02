@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import { expect, test } from "@playwright/test";
 import { firstRockPath, setUpCspWatcher } from "./helpers";
 
@@ -107,6 +108,49 @@ test.describe("rock description", () => {
       ).not.toBeVisible();
     });
   }
+});
+
+test.describe("side panel width", () => {
+  async function openPanelWidth(page: Page, path: string) {
+    await page.goto(`${path}?tab=tags`);
+    await page.getByRole("button", { name: "Build your command" }).click();
+
+    const panel = page.locator("dialog.side-panel[open]");
+    await expect(panel).toBeVisible();
+    await expect
+      .poll(() => panel.evaluate((el) => getComputedStyle(el).transform))
+      .toBe("matrix(1, 0, 0, 1, 0, 0)");
+
+    const box = await panel.boundingBox();
+    if (!box) throw new Error("expected the side panel to be visible");
+
+    return box;
+  }
+
+  test.describe("on a narrow screen", () => {
+    test.use({ viewport: { width: 600, height: 800 } });
+
+    test("fills the screen", async ({ page, request }) => {
+      const path = await firstRockPath(request);
+      const box = await openPanelWidth(page, path);
+      const contentWidth = await page.evaluate(() => document.body.clientWidth);
+
+      expect(box.x).toBe(0);
+      expect(box.width).toBeCloseTo(contentWidth, 0);
+    });
+  });
+
+  test.describe("on a wide screen", () => {
+    test.use({ viewport: { width: 1440, height: 800 } });
+
+    test("stays docked to one side", async ({ page, request }) => {
+      const path = await firstRockPath(request);
+      const box = await openPanelWidth(page, path);
+
+      expect(box.x).toBeGreaterThan(0);
+      expect(box.width).toBeLessThan(700);
+    });
+  });
 });
 
 test.describe("site header", () => {

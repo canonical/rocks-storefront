@@ -4,11 +4,25 @@ import type {
   RockInfoResponse,
 } from "$lib/server/api/types";
 
+/**
+ * Canonical's mark, shown when a rock of theirs publishes no icon. Served from
+ * `static/` rather than imported, so it stays a same-origin URL: Vite inlines
+ * a small asset as a `data:` URI, which our CSP does not allow for images.
+ */
+export const CANONICAL_ICON = "/canonical.svg";
+
 export const FALLBACK_ICON =
   "https://assets.ubuntu.com/v1/be6eb412-snapcraft-missing-icon.svg";
 
 export function getRockTitle(rock: RockBase): string {
   return rock.metadata?.title ?? rock.name;
+}
+
+/** The account Canonical's own rocks are published under. */
+const CANONICAL_PUBLISHER = "rocks-dev";
+
+export function isCanonicalRock(rock: RockBase): boolean {
+  return rock.metadata?.publisher?.username === CANONICAL_PUBLISHER;
 }
 
 export function getRockPublisher(rock: RockBase): string | undefined {
@@ -18,13 +32,34 @@ export function getRockPublisher(rock: RockBase): string | undefined {
   );
 }
 
+/** The icon to show when a rock publishes none, or its own fails to load. */
+export function getRockFallbackIcon(rock: RockBase): string {
+  return isCanonicalRock(rock) ? CANONICAL_ICON : FALLBACK_ICON;
+}
+
 export function getRockIconUrl(rock: RockBase): string {
-  return (
-    rock.metadata?.media?.find((m) => m.type === "icon")?.url ?? FALLBACK_ICON
-  );
+  const published = rock.metadata?.media?.find((m) => m.type === "icon")?.url;
+
+  return published || getRockFallbackIcon(rock);
 }
 
 const RISK_ORDER = ["stable", "candidate", "beta", "edge"];
+
+const RISK_DESCRIPTIONS: Record<string, string> = {
+  stable:
+    "Stable channels receive regular updates following strict QA and review processes. No breaking changes are expected. Recommended for production environments.",
+  candidate:
+    "Candidate channels include near-stable updates, but haven\u2019t passed all QA and review processes yet. Few breaking changes are expected.",
+  beta: "Beta channels provide an early-stage preview of new upstream features ready for testing. Some breaking changes are to be expected.",
+  edge: "Edge channels include experimental updates including latest upstream features. Breaking changes are to be expected.",
+};
+
+export function getRiskDescription(risk: string): string {
+  return (
+    RISK_DESCRIPTIONS[risk] ??
+    "This channel\u2019s revisions are maintained by Canonical."
+  );
+}
 
 function riskRank(risk: string): number {
   const index = RISK_ORDER.indexOf(risk);
@@ -53,7 +88,7 @@ export function getLatestTag(rock: RockInfoResponse): string | null {
   return best ? `${best.track}_${best.risk}` : null;
 }
 
-function getRepository(rock: RockInfoResponse): string | null {
+export function getRepository(rock: RockInfoResponse): string | null {
   for (const item of rock["channel-map"] ?? []) {
     const url = item.revision?.download?.url;
     if (url) return url.split("@")[0];
@@ -194,6 +229,48 @@ export function getChannelRevisions(
     });
   }
   return rows.sort((a, b) => (b.revision ?? 0) - (a.revision ?? 0));
+}
+
+export function getLatestVersion(rock: RockInfoResponse): string | undefined {
+  return getChannelRows(rock).find((row) => row.version)?.version;
+}
+
+export interface ChannelCombination {
+  version: string;
+  architecture: string;
+  risk: string;
+}
+
+export function getChannelCombinations(
+  rock: RockInfoResponse,
+): ChannelCombination[] {
+  return (rock["channel-map"] ?? []).map((item) => ({
+    version: item.revision?.version ?? "",
+    architecture: resolveArchitecture(item),
+    risk: item.channel?.risk ?? "",
+  }));
+}
+
+export function getRisks(rock: RockInfoResponse): string[] {
+  return collect(rock, (item) => item.channel?.risk).sort(
+    (a, b) => riskRank(a) - riskRank(b),
+  );
+}
+
+export function findChannel(
+  rock: RockInfoResponse,
+  version: string,
+  risk: string,
+): { track: string; name: string } | undefined {
+  const channel = (rock["channel-map"] ?? []).find(
+    (item) =>
+      item.revision?.version === version &&
+      (!risk || item.channel?.risk === risk),
+  )?.channel;
+
+  return channel?.track && channel?.name
+    ? { track: channel.track, name: channel.name }
+    : undefined;
 }
 
 export function getVersions(rock: RockInfoResponse): string[] {

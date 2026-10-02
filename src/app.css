@@ -21,6 +21,11 @@
   /* Package icon size in list cards (44px). Matches the charmhub CharmCard in
      store-components; Pragma's dimension scale has no 2.75rem step. */
   --app-package-icon-size: 2.75rem;
+
+  /* Widths a box stops shrinking at before it wraps onto its own row. Pragma's
+     dimension scale tops out at 5.5rem, so it has nothing for layout sizes. */
+  --app-card-min-width: 20rem;
+  --app-code-min-width: 18rem;
 }
 
 /* Centered content column: Pragma token gutter on small screens, symmetric

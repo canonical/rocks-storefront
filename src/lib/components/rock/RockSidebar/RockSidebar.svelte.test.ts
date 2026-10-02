@@ -250,4 +250,181 @@ describe("RockSidebar.svelte discourse", () => {
       .element(page.getByRole("link", { name: "Join the discussion" }))
       .toBeVisible();
   });
+
+  it("prefers a published issues link for submitting a bug", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            upstream: ["https://github.com/canonical/valkey-rock"],
+            issues: ["https://example.com/file-a-bug"],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute("href", "https://example.com/file-a-bug");
+  });
+
+  it("accepts an issues address as well as a link", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: { links: { issues: ["bugs@example.com"] } },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute("href", "mailto:bugs@example.com");
+  });
+
+  it("skips a blocked issues link in favour of a later usable one", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            issues: ["javascript:alert(1)", "https://example.com/file-a-bug"],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute("href", "https://example.com/file-a-bug");
+  });
+
+  it("falls back to the repository when every issues link is blocked", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            issues: ["javascript:alert(1)"],
+            upstream: ["https://github.com/canonical/valkey-rock"],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute(
+        "href",
+        "https://github.com/canonical/valkey-rock/issues/new",
+      );
+  });
+
+  it("falls back to the upstream repository's issues", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: { upstream: ["https://github.com/canonical/valkey-rock"] },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute(
+        "href",
+        "https://github.com/canonical/valkey-rock/issues/new",
+      );
+  });
+
+  it("offers no bug link when there is nowhere to send one", async () => {
+    render(RockSidebar, { rock: makeInfoRock({ metadata: {} }) });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .not.toBeInTheDocument();
+  });
+
+  it("renders a handle as text, since there is nowhere to send it", async () => {
+    const { container } = render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: { links: { contact: ["demo-publisher"] } },
+      }),
+    });
+
+    await expect.element(page.getByText("demo-publisher")).toBeVisible();
+    expect(container.querySelector('a[href="demo-publisher"]')).toBeNull();
+  });
+
+  it.each([
+    ["mailto:maintainers@example.com", "mailto:maintainers@example.com"],
+    ["tel:+441234567890", "tel:+441234567890"],
+    ["https://example.com/support", "https://example.com/support"],
+  ])("keeps %s as a link", async (value, href) => {
+    const { container } = render(RockSidebar, {
+      rock: makeInfoRock({ metadata: { links: { contact: [value] } } }),
+    });
+
+    expect(
+      [...container.querySelectorAll("a")].map((a) => a.getAttribute("href")),
+    ).toContain(href);
+  });
+
+  it("does not mistake a chat handle for an email address", async () => {
+    const { container } = render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: { links: { contact: ["@demo-team:matrix.example.com"] } },
+      }),
+    });
+
+    expect(
+      [...container.querySelectorAll("a")].map((a) => a.getAttribute("href")),
+    ).not.toContain("mailto:@demo-team:matrix.example.com");
+    await expect
+      .element(page.getByText("@demo-team:matrix.example.com"))
+      .toBeVisible();
+  });
+
+  it("labels a phone number without its scheme", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: { links: { contact: ["tel:+441234567890"] } },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "+441234567890" }))
+      .toHaveAttribute("href", "tel:+441234567890");
+  });
+
+  it("files bugs against the launchpad project when there is no github repo", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: {
+            upstream: [
+              "https://launchpad.net/~cloud-images-release-managers/cloud-images/+oci/ubuntu-base/+git/ubuntu-base",
+            ],
+          },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .toHaveAttribute(
+        "href",
+        "https://bugs.launchpad.net/cloud-images/+filebug",
+      );
+  });
+
+  it("offers no bug link for a launchpad repo owned by a person", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        metadata: {
+          links: { upstream: ["https://launchpad.net/~sd-packages/+git/x"] },
+        },
+      }),
+    });
+
+    await expect
+      .element(page.getByRole("link", { name: "Submit a bug" }))
+      .not.toBeInTheDocument();
+  });
 });

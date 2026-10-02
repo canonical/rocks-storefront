@@ -10,17 +10,19 @@
   import {
     DateTime,
     Select,
-    SidePanel,
-    type SidePanelMethods,
   } from "@canonical/svelte-ds-app-launchpad";
   import { CloseIcon } from "@canonical/svelte-icons";
   import { Table } from "@canonical/svelte-ds-app-launchpad";
+  import {
+    SidePanel,
+    type SidePanelMethods,
+  } from "$lib/components/ui/SidePanel";
   import { CopyButton } from "$lib/components/ui/CopyButton";
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
   import { formatFileSize, truncateDigest } from "$lib/utils/format";
-  import { getChannelRevisions } from "$lib/utils/rock";
+  import { getChannelRevisions, getRiskDescription } from "$lib/utils/rock";
   import type { RockChannelPanelProps } from "./types.js";
   import "./styles.css";
 
@@ -35,11 +37,7 @@
     channelTag ? getChannelRevisions(rock, channelTag) : [],
   );
 
-  const description = $derived(
-    revisions[0]?.risk === "stable"
-      ? "Stable channels receive regular updates that are maintained by Canonical."
-      : "This channel's revisions are maintained by Canonical.",
-  );
+  const description = $derived(getRiskDescription(revisions[0]?.risk ?? ""));
   const architectures = $derived(
     [...new Set(revisions.map((r) => r.architecture).filter(Boolean))].sort(),
   );
@@ -59,7 +57,7 @@
   {#snippet children(_commandfor, close)}
     <div class="rock-channel-panel__content">
       <div class="rock-channel-panel__header">
-        <Heading level={4}>{channelTag}</Heading>
+        <Heading level={3}>{channelTag}</Heading>
         <button
           type="button"
           class="rock-channel-panel__close"
@@ -71,7 +69,7 @@
       </div>
 
       <div class="rock-channel-panel__intro-group">
-        <Heading level={5}>Channel information</Heading>
+        <Heading level={4}>Channel information</Heading>
         <p class="rock-channel-panel__intro">{description}</p>
       </div>
 

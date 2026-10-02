@@ -4,9 +4,10 @@
   import { CopyableCode } from "$lib/components/ui/CopyableCode";
   import { Heading } from "$lib/components/ui/Heading";
   import ImageWithFallback from "$lib/components/ui/ImageWithFallback/ImageWithFallback.svelte";
+  import { formatCategory } from "$lib/utils/format";
   import {
-    FALLBACK_ICON,
     getImageReference,
+    getRockFallbackIcon,
     getRockIconUrl,
     getRockPublisher,
     getRockTitle,
@@ -30,7 +31,12 @@
 
 <header class={componentCssClassName}>
   <div class="app-container rock-hero__inner">
-    <ImageWithFallback src={iconUrl} alt="" fallback={FALLBACK_ICON} />
+    <ImageWithFallback
+      class="rock-hero__icon"
+      src={iconUrl}
+      alt=""
+      fallback={getRockFallbackIcon(rock)}
+    />
 
     <div class="rock-hero__body">
       <Heading level={1}>{title}</Heading>
@@ -41,7 +47,7 @@
             <span class="rock-hero__divider" aria-hidden="true"></span>
           {/if}
           {#each categories as category (category.name)}
-            <Chip value={category.name} />
+            <Chip value={formatCategory(category.name)} />
           {/each}
         </p>
       {/if}

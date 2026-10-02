@@ -24,6 +24,7 @@
     grid-area: logo;
     inline-size: var(--app-package-icon-size);
     block-size: var(--app-package-icon-size);
+    border-radius: 50%;
   }
 
   .identity {
