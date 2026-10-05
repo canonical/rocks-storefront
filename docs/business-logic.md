@@ -43,3 +43,16 @@ a link for when it can be restored. `InferInput` (not `InferOutput`) is exported
 so the ergonomic "pass `{}`" contract holds for the remote `query()` wrappers.
 Keeping `ApiClient` under `$lib/server/` guarantees SvelteKit forbids client
 import, since it reads private env.
+
+## Data that does not come from the store API
+
+The rock description comes from `metadata.description` only. Two things do not
+come from the API at all:
+
+- **Recipe link** (Tags table). The API does not say where a track's
+  `rockcraft.yaml` lives, so `src/lib/server/api/rockcraft.ts` guesses the path
+  and sends a `HEAD` request to `raw.githubusercontent.com` or
+  `git.launchpad.net` to check it exists. The body is never read. Cached 1h.
+- **Submit a bug** (sidebar). When a rock publishes no `links.issues`, the URL
+  is built from `links.upstream`: GitHub `/issues/new`, or Launchpad `+filebug`.
+  Nothing is fetched.

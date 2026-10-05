@@ -89,20 +89,14 @@ test.describe("rock detail page", () => {
 });
 
 test.describe("rock description", () => {
-  test("shows the upstream readme when one is reachable", async ({ page }) => {
-    await page.goto("/valkey");
-
-    const body = page.locator(".rock-description__body");
-
-    await expect(body).toContainText("packaging metadata");
-    await expect(body.locator("img")).toHaveCount(0);
-  });
-
-  for (const name of ["go", "ubuntu"]) {
-    test(`falls back to the api description for ${name}`, async ({ page }) => {
+  for (const name of ["valkey", "go", "ubuntu"]) {
+    test(`renders the api description for ${name}`, async ({ page }) => {
       await page.goto(`/${name}`);
 
-      await expect(page.locator(".rock-description__body")).not.toBeEmpty();
+      const body = page.locator(".rock-description__body");
+
+      await expect(body).not.toBeEmpty();
+      await expect(body.locator("img")).toHaveCount(0);
       await expect(
         page.getByText("No description provided."),
       ).not.toBeVisible();
