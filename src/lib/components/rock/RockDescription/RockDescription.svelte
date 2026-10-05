@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Link } from "@canonical/svelte-ds-app-launchpad";
   import { Heading } from "$lib/components/ui/Heading";
-  import { renderMarkdown, renderReadmeMarkdown } from "$lib/utils/markdown";
+  import { renderMarkdown } from "$lib/utils/markdown";
   import type { RockDescriptionProps } from "./types.js";
   import "./styles.css";
 
@@ -9,14 +9,9 @@
 
   const GET_IN_TOUCH_HREF = "https://ubuntu.com/containers#get-in-touch";
 
-  let { rock, readme, upstream }: RockDescriptionProps = $props();
+  let { rock }: RockDescriptionProps = $props();
 
   const bodyHtml = $derived.by(() => {
-    const readmeSource = readme?.trim();
-    if (readmeSource && upstream) {
-      return renderReadmeMarkdown(readmeSource, upstream);
-    }
-
     const source = rock.metadata?.description?.trim();
     return source ? renderMarkdown(source) : "";
   });

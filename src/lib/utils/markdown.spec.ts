@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderMarkdown, renderReadmeMarkdown } from "./markdown";
+import { renderMarkdown } from "./markdown";
 
 describe("renderMarkdown", () => {
   it("renders ordinary markdown", () => {
@@ -74,85 +74,5 @@ describe("renderMarkdown", () => {
 
   it("returns an empty string for empty input", () => {
     expect(renderMarkdown("")).toBe("");
-  });
-});
-
-describe("renderReadmeMarkdown", () => {
-  const REPO = "https://github.com/canonical/valkey-rock";
-
-  it("drops images, which are CI badges we cannot load under our CSP", () => {
-    const html = renderReadmeMarkdown(
-      "[![Release](https://github.com/o/r/badge.svg)](https://github.com/o/r/actions)",
-      REPO,
-    );
-
-    expect(html).not.toContain("<img");
-    expect(html).toContain('href="https://github.com/o/r/actions"');
-  });
-
-  it("drops a bare image too", () => {
-    const html = renderReadmeMarkdown("![logo](docs/logo.png)", REPO);
-
-    expect(html).not.toContain("<img");
-  });
-
-  it("resolves a relative link against the repository", () => {
-    const html = renderReadmeMarkdown("[Contributing](CONTRIBUTING.md)", REPO);
-
-    expect(html).toContain(
-      'href="https://github.com/canonical/valkey-rock/blob/HEAD/CONTRIBUTING.md"',
-    );
-  });
-
-  it("resolves a root-relative link against the repository", () => {
-    const html = renderReadmeMarkdown("[Docs](/docs/usage.md)", REPO);
-
-    expect(html).toContain(
-      'href="https://github.com/canonical/valkey-rock/blob/HEAD/docs/usage.md"',
-    );
-  });
-
-  it("leaves absolute links untouched", () => {
-    const html = renderReadmeMarkdown("[Rockcraft](https://ubuntu.com/)", REPO);
-
-    expect(html).toContain('href="https://ubuntu.com/"');
-  });
-
-  it("leaves in-page anchors untouched", () => {
-    const html = renderReadmeMarkdown("[Usage](#usage)", REPO);
-
-    expect(html).toContain('href="#usage"');
-  });
-
-  it("still escapes raw HTML", () => {
-    const html = renderReadmeMarkdown("<script>alert('xss')</script>", REPO);
-
-    expect(html).not.toContain("<script>");
-  });
-
-  it("keeps the leading title", () => {
-    const html = renderReadmeMarkdown("# Valkey rock\n\nA **rock**.", REPO);
-
-    expect(html).toContain("<h2>Valkey rock</h2>");
-  });
-
-  it("demotes headings so the page keeps a single h1", () => {
-    const html = renderReadmeMarkdown("Intro.\n\n# Section", REPO);
-
-    expect(html).not.toContain("<h1>");
-    expect(html).toContain("<h2>Section</h2>");
-  });
-
-  it("demotes every heading level", () => {
-    const html = renderReadmeMarkdown("## Usage\n\n### Detail", REPO);
-
-    expect(html).toContain("<h3>Usage</h3>");
-    expect(html).toContain("<h4>Detail</h4>");
-  });
-
-  it("does not demote past the deepest heading level", () => {
-    const html = renderReadmeMarkdown("###### Deep", REPO);
-
-    expect(html).toContain("<h6>Deep</h6>");
   });
 });

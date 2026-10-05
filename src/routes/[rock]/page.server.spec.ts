@@ -6,13 +6,10 @@ import {
 } from "$lib/server/api/errors";
 import { load } from "./+page.server";
 
-const { getRockDetails, getReadme, getRockcraftUrls } = vi.hoisted(() => ({
+const { getRockDetails, getRockcraftUrls } = vi.hoisted(() => ({
   getRockDetails: vi.fn(),
-  getReadme: vi.fn(),
   getRockcraftUrls: vi.fn(),
 }));
-
-vi.mock("$lib/server/api/readme", () => ({ getReadme }));
 
 vi.mock("$lib/server/api/rockcraft", () => ({ getRockcraftUrls }));
 
@@ -38,8 +35,6 @@ describe("[rock] page load", () => {
 
     await expect(loadWith("redis")).resolves.toEqual({
       rock,
-      readme: null,
-      upstream: null,
       rockcraftUrls: {},
     });
   });
@@ -58,7 +53,6 @@ describe("[rock] page load", () => {
         { channel: { track: "7.4-26.04" } },
       ],
     });
-    getReadme.mockResolvedValue(null);
     getRockcraftUrls.mockResolvedValue(urls);
 
     const data = await loadWith("redis");
@@ -70,38 +64,12 @@ describe("[rock] page load", () => {
     expect(data).toMatchObject({ rockcraftUrls: urls });
   });
 
-  it("returns the upstream readme alongside the rock", async () => {
-    const upstream = "https://github.com/canonical/redis-rock";
-    getRockDetails.mockResolvedValue({
-      name: "redis",
-      metadata: { links: { upstream: [upstream] } },
-    });
-    getReadme.mockResolvedValue("# Redis rock");
-
-    const data = await loadWith("redis");
-
-    expect(getReadme).toHaveBeenCalledWith(upstream);
-    expect(data).toMatchObject({ readme: "# Redis rock", upstream });
-  });
-
-  it("still returns the rock when the readme cannot be fetched", async () => {
-    getRockDetails.mockResolvedValue({
-      name: "redis",
-      metadata: { links: { upstream: ["https://github.com/canonical/x"] } },
-    });
-    getReadme.mockResolvedValue(null);
-
-    await expect(loadWith("redis")).resolves.toMatchObject({ readme: null });
-  });
-
-  it("does not look for a readme when the rock has no upstream link", async () => {
+  it("looks for no recipes when the rock has no upstream link", async () => {
     getRockDetails.mockResolvedValue({ name: "redis", metadata: {} });
 
     await expect(loadWith("redis")).resolves.toMatchObject({
-      readme: null,
-      upstream: null,
+      rockcraftUrls: {},
     });
-    expect(getReadme).not.toHaveBeenCalled();
     expect(getRockcraftUrls).not.toHaveBeenCalled();
   });
 

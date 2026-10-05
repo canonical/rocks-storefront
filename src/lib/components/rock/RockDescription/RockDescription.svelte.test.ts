@@ -91,66 +91,6 @@ describe("RockDescription.svelte", () => {
       .toBeVisible();
   });
 
-  it("prefers the upstream README over the api description", async () => {
-    render(RockDescription, {
-      rock: makeInfoRock({ metadata: { description: "# Api description" } }),
-      readme: "# Valkey rock\n\nFrom the readme.",
-      upstream: "https://github.com/canonical/valkey-rock",
-    });
-
-    await expect.element(page.getByText("From the readme.")).toBeVisible();
-    await expect
-      .element(page.getByRole("heading", { name: "Api description" }))
-      .not.toBeInTheDocument();
-  });
-
-  it("falls back to the api description when there is no readme", async () => {
-    render(RockDescription, {
-      rock: makeInfoRock({ metadata: { description: "# Api description" } }),
-      readme: null,
-      upstream: "https://github.com/canonical/go-rock",
-    });
-
-    await expect
-      .element(page.getByRole("heading", { name: "Api description" }))
-      .toBeVisible();
-  });
-
-  it("falls back when a readme arrives without a repository to resolve it against", async () => {
-    render(RockDescription, {
-      rock: makeInfoRock({ metadata: { description: "# Api description" } }),
-      readme: "# Valkey rock\n\nFrom the readme.",
-      upstream: null,
-    });
-
-    await expect
-      .element(page.getByRole("heading", { name: "Api description" }))
-      .toBeVisible();
-  });
-
-  it("drops badge images from the readme", async () => {
-    const { container } = render(RockDescription, {
-      rock: makeInfoRock({ metadata: {} }),
-      readme: "![Release](https://github.com/o/r/badge.svg)\n\nReal content.",
-      upstream: "https://github.com/canonical/valkey-rock",
-    });
-
-    expect(container.querySelector(".rock-description__body img")).toBeNull();
-    await expect.element(page.getByText("Real content.")).toBeVisible();
-  });
-
-  it("keeps the readme title, demoted below the page heading", async () => {
-    render(RockDescription, {
-      rock: makeInfoRock({ metadata: { summary: "Valkey ROCK OCI" } }),
-      readme: "# Valkey rock\n\nFrom the readme.",
-      upstream: "https://github.com/canonical/valkey-rock",
-    });
-
-    await expect
-      .element(page.getByRole("heading", { name: "Valkey rock", level: 2 }))
-      .toBeVisible();
-  });
-
   it("closes with the commercial use section", async () => {
     render(RockDescription, {
       rock: makeInfoRock({ metadata: { description: "# Details" } }),
