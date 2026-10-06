@@ -197,7 +197,7 @@
 
   {#if bases.length}
     <div class="rock-sidebar__item">
-      <dt><SmallCaps>Base</SmallCaps></dt>
+      <dt><SmallCaps>OS</SmallCaps></dt>
       <dd>{bases.join(", ")}</dd>
     </div>
   {/if}

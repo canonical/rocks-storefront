@@ -91,6 +91,16 @@ describe("RockDescription.svelte", () => {
       .toBeVisible();
   });
 
+  it("heads the description with its own section title", async () => {
+    render(RockDescription, {
+      rock: makeInfoRock({ metadata: { description: "Some details." } }),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "Description", level: 2 }))
+      .toBeVisible();
+  });
+
   it("closes with the commercial use section", async () => {
     render(RockDescription, {
       rock: makeInfoRock({ metadata: { description: "# Details" } }),

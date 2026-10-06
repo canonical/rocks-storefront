@@ -174,6 +174,30 @@ describe("RockSidebar.svelte architectures", () => {
   });
 });
 
+describe("RockSidebar.svelte os", () => {
+  it("labels the os row and lists the versions", async () => {
+    render(RockSidebar, {
+      rock: makeInfoRock({
+        "channel-map": [
+          makeChannel({ name: "1.0-24.04/stable" }),
+          makeChannel({ name: "2.0-26.04/stable" }),
+        ],
+      }),
+    });
+
+    await expect.element(page.getByText("OS", { exact: true })).toBeVisible();
+    await expect.element(page.getByText("24.04, 26.04")).toBeVisible();
+  });
+
+  it("omits the section when no track names an os", async () => {
+    const { container } = render(RockSidebar, {
+      rock: makeInfoRock({ "channel-map": [makeChannel({ name: "edge" })] }),
+    });
+
+    expect(container.textContent).not.toContain("OS");
+  });
+});
+
 describe("RockSidebar.svelte license", () => {
   it("shows a trimmed license", async () => {
     render(RockSidebar, {
