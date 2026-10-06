@@ -18,14 +18,17 @@
 </script>
 
 <div class={componentCssClassName}>
-  {#if bodyHtml}
-    <!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised by markdown-it -->
-    <div class="rock-description__body editorial content-flow">
-      {@html bodyHtml}
-    </div>
-  {:else}
-    <p class="rock-description__empty">No description provided.</p>
-  {/if}
+  <section>
+    <Heading level={2}>Description</Heading>
+    {#if bodyHtml}
+      <!-- eslint-disable-next-line svelte/no-at-html-tags -- sanitised by markdown-it -->
+      <div class="rock-description__body editorial content-flow">
+        {@html bodyHtml}
+      </div>
+    {:else}
+      <p class="rock-description__empty">No description provided.</p>
+    {/if}
+  </section>
 
   <section class="rock-description__commercial">
     <Heading level={2}>Commercial use</Heading>
