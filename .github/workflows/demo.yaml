@@ -19,11 +19,14 @@ jobs:
       github.event.action != 'closed' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.DEMOS_ENABLED == 'true'
-    uses: ./.github/workflows/demo-deploy-reusable.yaml
+    uses: canonical/webteam-devops/.github/workflows/demo-deploy.yaml@feat/pr-demo-workflows
     with:
       pr-number: ${{ github.event.pull_request.number }}
       commit-sha: ${{ github.event.pull_request.head.sha }}
       api-url: ${{ vars.DEMOS_API_URL }}
+      api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
+      api-insecure: true
+      workflow-client-ref: feat/pr-demo-workflows
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
 
@@ -32,9 +35,12 @@ jobs:
       github.event.action == 'closed' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.DEMOS_ENABLED == 'true'
-    uses: ./.github/workflows/demo-cleanup-reusable.yaml
+    uses: canonical/webteam-devops/.github/workflows/demo-cleanup.yaml@feat/pr-demo-workflows
     with:
       pr-number: ${{ github.event.pull_request.number }}
       api-url: ${{ vars.DEMOS_API_URL }}
+      api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
+      api-insecure: true
+      workflow-client-ref: feat/pr-demo-workflows
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
