@@ -134,6 +134,17 @@ export function getBase(track: string): string | null {
   return /(?:^|-)(\d{2}\.\d{2})$/.exec(track)?.[1] ?? null;
 }
 
+/**
+ * Channel names carry no patch level so this is the actual
+ * version the store actually publishes.
+ */
+export function getTrackVersion(track: string): string {
+  const base = getBase(track);
+  if (!base || track === base) return track;
+
+  return track.slice(0, track.length - base.length - 1);
+}
+
 export function getBases(rock: RockInfoResponse): string[] {
   return collect(rock, (item) => getBase(item.channel?.track ?? ""));
 }
@@ -154,7 +165,7 @@ export function getChannelRows(rock: RockInfoResponse): ChannelRow[] {
     rows.push({
       channelTag: channel.name,
       track: channel.track ?? "",
-      version: item.revision?.version ?? "",
+      version: getTrackVersion(channel.track ?? ""),
       architecture: resolveArchitecture(item),
       lastUpdated: channel["released-at"] ?? null,
     });
@@ -245,7 +256,7 @@ export function getChannelCombinations(
   rock: RockInfoResponse,
 ): ChannelCombination[] {
   return (rock["channel-map"] ?? []).map((item) => ({
-    version: item.revision?.version ?? "",
+    version: getTrackVersion(item.channel?.track ?? ""),
     architecture: resolveArchitecture(item),
     risk: item.channel?.risk ?? "",
   }));
@@ -264,7 +275,7 @@ export function findChannel(
 ): { track: string; name: string } | undefined {
   const channel = (rock["channel-map"] ?? []).find(
     (item) =>
-      item.revision?.version === version &&
+      getTrackVersion(item.channel?.track ?? "") === version &&
       (!risk || item.channel?.risk === risk),
   )?.channel;
 
@@ -274,5 +285,5 @@ export function findChannel(
 }
 
 export function getVersions(rock: RockInfoResponse): string[] {
-  return collect(rock, (item) => item.revision?.version);
+  return collect(rock, (item) => getTrackVersion(item.channel?.track ?? ""));
 }

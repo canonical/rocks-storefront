@@ -16,6 +16,7 @@ import {
   getRockIconUrl,
   getRockPublisher,
   getRockTitle,
+  getTrackVersion,
   getVersions,
   isCanonicalRock,
 } from "./rock";
@@ -234,24 +235,50 @@ describe("getArchitectures", () => {
   });
 });
 
+describe("getTrackVersion", () => {
+  it.each([
+    ["9.0-26.04", "9.0"],
+    ["18-26.04", "18"],
+    ["3.14-26.04", "3.14"],
+    ["26.04", "26.04"],
+    ["latest", "latest"],
+    ["", ""],
+  ])("reads %s as version %s", (track, expected) => {
+    expect(getTrackVersion(track)).toBe(expected);
+  });
+});
+
 describe("getVersions", () => {
-  it("dedupes and sorts revision versions", () => {
+  it("dedupes and sorts the versions the tracks name", () => {
     const rock = makeInfoRock({
       "channel-map": [
-        channel({ revision: { version: "2.0" } }),
-        channel({ revision: { version: "1.0" } }),
-        channel({ revision: { version: "2.0" } }),
+        channel({ channel: { name: "a", track: "2.0-26.04" } }),
+        channel({ channel: { name: "b", track: "1.0-26.04" } }),
+        channel({ channel: { name: "c", track: "2.0-26.04" } }),
       ],
     });
 
     expect(getVersions(rock)).toEqual(["1.0", "2.0"]);
   });
 
-  it("ignores entries with no version", () => {
+  it("ignores the revision's patch level", () => {
     const rock = makeInfoRock({
       "channel-map": [
-        channel({ revision: {} }),
-        channel({ revision: { version: "1.0" } }),
+        channel({
+          channel: { name: "a", track: "9.0-26.04" },
+          revision: { version: "9.0.3" },
+        }),
+      ],
+    });
+
+    expect(getVersions(rock)).toEqual(["9.0"]);
+  });
+
+  it("ignores entries with no track", () => {
+    const rock = makeInfoRock({
+      "channel-map": [
+        channel({ channel: { name: "a" } }),
+        channel({ channel: { name: "b", track: "1.0-26.04" } }),
       ],
     });
 
@@ -280,7 +307,7 @@ describe("getChannelRows", () => {
       {
         channelTag: "1.0/edge",
         track: "1.0",
-        version: "1.0.1",
+        version: "1.0",
         architecture: "arm64",
         lastUpdated: "2026-05-01T00:00:00Z",
       },
@@ -393,12 +420,18 @@ describe("getLatestVersion", () => {
     const rock = makeInfoRock({
       "channel-map": [
         channel({
-          channel: { name: "old", "released-at": "2026-01-01T00:00:00Z" },
-          revision: { version: "1.0" },
+          channel: {
+            name: "old",
+            track: "1.0-26.04",
+            "released-at": "2026-01-01T00:00:00Z",
+          },
         }),
         channel({
-          channel: { name: "new", "released-at": "2026-06-01T00:00:00Z" },
-          revision: { version: "2.0" },
+          channel: {
+            name: "new",
+            track: "2.0-26.04",
+            "released-at": "2026-06-01T00:00:00Z",
+          },
         }),
       ],
     });

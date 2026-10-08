@@ -63,8 +63,8 @@ function osCell(container: HTMLElement): Element {
 
 function twoVersions() {
   return makeRock([
-    entry("v2/stable", { version: "2.0", releasedAt: "2026-06-01T00:00:00Z" }),
-    entry("v1/stable", { version: "1.0", releasedAt: "2026-01-01T00:00:00Z" }),
+    entry("2.0-26.04/stable", { releasedAt: "2026-06-01T00:00:00Z" }),
+    entry("1.0-26.04/stable", { releasedAt: "2026-01-01T00:00:00Z" }),
   ]);
 }
 
@@ -120,10 +120,10 @@ describe("RockChannels.svelte", () => {
     });
 
     await expect
-      .element(page.getByRole("cell", { name: "v2/stable" }))
+      .element(page.getByRole("cell", { name: "2.0-26.04/stable" }))
       .toBeVisible();
     await expect
-      .element(page.getByRole("cell", { name: "v1/stable" }))
+      .element(page.getByRole("cell", { name: "1.0-26.04/stable" }))
       .not.toBeInTheDocument();
   });
 
@@ -142,10 +142,7 @@ describe("RockChannels.svelte", () => {
 
   it("filters rows by the selected version", async () => {
     render(RockChannels, {
-      rock: makeRock([
-        entry("v1/stable", { version: "1.0" }),
-        entry("v2/stable", { version: "2.0" }),
-      ]),
+      rock: makeRock([entry("1.0-26.04/stable"), entry("2.0-26.04/stable")]),
     });
 
     await userEvent.selectOptions(
@@ -154,10 +151,10 @@ describe("RockChannels.svelte", () => {
     );
 
     await expect
-      .element(page.getByRole("cell", { name: "v2/stable" }))
+      .element(page.getByRole("cell", { name: "2.0-26.04/stable" }))
       .toBeVisible();
     await expect
-      .element(page.getByRole("cell", { name: "v1/stable" }))
+      .element(page.getByRole("cell", { name: "1.0-26.04/stable" }))
       .not.toBeInTheDocument();
   });
 
@@ -209,8 +206,11 @@ describe("RockChannels.svelte", () => {
   it("opens the channel panel for the tag that was clicked", async () => {
     render(RockChannels, {
       rock: makeRock([
-        entry("2.0/stable", { revision: 7, digest: "aaaaaaaaaaaaaaaaaaaa" }),
-        entry("1.0/edge", {
+        entry("2.0-26.04/stable", {
+          revision: 7,
+          digest: "aaaaaaaaaaaaaaaaaaaa",
+        }),
+        entry("2.0-26.04/edge", {
           releasedAt: "2025-01-01T00:00:00Z",
           revision: 3,
           digest: "bbbbbbbbbbbbbbbbbbbb",
@@ -218,10 +218,12 @@ describe("RockChannels.svelte", () => {
       ]),
     });
 
-    await userEvent.click(page.getByRole("button", { name: "2.0/stable" }));
+    await userEvent.click(
+      page.getByRole("button", { name: "2.0-26.04/stable" }),
+    );
 
     const panel = page.getByRole("dialog");
-    await expect.element(panel.getByText("2.0/stable")).toBeVisible();
+    await expect.element(panel.getByText("2.0-26.04/stable")).toBeVisible();
     await expect.element(panel.getByText("7")).toBeVisible();
     await expect
       .element(panel.getByText(/Stable channels receive regular updates/))
@@ -230,9 +232,9 @@ describe("RockChannels.svelte", () => {
     await userEvent.click(
       page.getByRole("button", { name: "Close the channel panel" }),
     );
-    await userEvent.click(page.getByRole("button", { name: "1.0/edge" }));
+    await userEvent.click(page.getByRole("button", { name: "2.0-26.04/edge" }));
 
-    await expect.element(panel.getByText("1.0/edge")).toBeVisible();
+    await expect.element(panel.getByText("2.0-26.04/edge")).toBeVisible();
     await expect.element(panel.getByText("3")).toBeVisible();
     await expect
       .element(panel.getByText(/Edge channels include experimental updates/))
@@ -240,10 +242,13 @@ describe("RockChannels.svelte", () => {
   });
 
   it("paginates when there are more rows than the page size", async () => {
-    const channels = Array.from({ length: 12 }, (_, i) =>
-      entry(`c${i}/stable`, {
-        releasedAt: `2026-01-${String(i + 1).padStart(2, "0")}T00:00:00Z`,
-      }),
+    const risks = ["stable", "candidate", "beta", "edge"];
+    const channels = ["26.04", "24.04", "22.04"].flatMap((base, b) =>
+      risks.map((risk, r) =>
+        entry(`1.0-${base}/${risk}`, {
+          releasedAt: `2026-01-${String(b * 4 + r + 1).padStart(2, "0")}T00:00:00Z`,
+        }),
+      ),
     );
     render(RockChannels, { rock: makeRock(channels) });
 

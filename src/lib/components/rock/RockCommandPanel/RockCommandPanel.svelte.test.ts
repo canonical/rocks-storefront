@@ -69,7 +69,7 @@ describe("RockCommandPanel.svelte", () => {
   it("retags the command when the version changes", async () => {
     const { container } = await open();
 
-    await userEvent.selectOptions(page.getByRole("combobox").nth(1), "9.0.3");
+    await userEvent.selectOptions(page.getByRole("combobox").nth(1), "9.0");
 
     expect(commandText(container)).toBe(
       "docker pull rocks.pkg.store/ubuntu/valkey:9.0-26.04_edge",

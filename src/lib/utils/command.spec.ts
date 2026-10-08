@@ -32,15 +32,15 @@ const ROCK: RockInfoResponse = {
   name: "valkey",
   "package-id": "pkg-1",
   "channel-map": [
-    channel("9.1-26.04", "9.1.0"),
-    channel("9.1-26.04", "9.1.0", "stable", "amd64"),
-    channel("9.0-26.04", "9.0.3"),
+    channel("9.1-26.04", "9.1"),
+    channel("9.1-26.04", "9.1", "stable", "amd64"),
+    channel("9.0-26.04", "9.0"),
   ],
 };
 
 const base = {
   tool: "docker",
-  version: "9.1.0",
+  version: "9.1",
   architecture: ANY,
   risk: "edge",
 };
@@ -53,7 +53,7 @@ describe("buildCommand", () => {
   });
 
   it("follows the version to a different track", () => {
-    expect(buildCommand(ROCK, REGISTRY, { ...base, version: "9.0.3" })).toBe(
+    expect(buildCommand(ROCK, REGISTRY, { ...base, version: "9.0" })).toBe(
       "docker pull rocks.pkg.store/ubuntu/valkey:9.0-26.04_edge",
     );
   });
@@ -199,7 +199,7 @@ describe("getCommandOptions", () => {
 
 describe("getChannelTag", () => {
   it("names the channel behind a version and risk", () => {
-    expect(getChannelTag(ROCK, "9.0.3", "edge")).toBe("9.0-26.04/edge");
+    expect(getChannelTag(ROCK, "9.0", "edge")).toBe("9.0-26.04/edge");
   });
 
   it("is empty for a version the rock does not have", () => {
@@ -207,10 +207,10 @@ describe("getChannelTag", () => {
   });
 
   it("is empty without a risk", () => {
-    expect(getChannelTag(ROCK, "9.1.0", "")).toBe("");
+    expect(getChannelTag(ROCK, "9.1", "")).toBe("");
   });
 
   it("is empty for a risk the version was never published on", () => {
-    expect(getChannelTag(ROCK, "9.0.3", "stable")).toBe("");
+    expect(getChannelTag(ROCK, "9.0", "stable")).toBe("");
   });
 });
