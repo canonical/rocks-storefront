@@ -1,3 +1,5 @@
+/* The scrollbar gutter belongs to html and the background has to reach it. */
+html:has(.rock-detail),
 .rock-detail {
   background: var(--color-background-layer2);
 }
