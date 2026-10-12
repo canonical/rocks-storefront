@@ -23,6 +23,12 @@ describe("SearchForm.svelte", () => {
     await expect.element(input).toHaveAttribute("name", "search-term");
   });
 
+  it("submits to the listing", async () => {
+    const { container } = render(SearchForm, { name: "q" });
+
+    expect(container.querySelector("form")?.getAttribute("action")).toBe("/");
+  });
+
   it("associates the label with the input", async () => {
     const { container } = render(SearchForm, { name: "q" });
 
