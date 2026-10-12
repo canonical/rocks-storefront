@@ -26,7 +26,6 @@ jobs:
       api-url: ${{ vars.DEMOS_API_URL }}
       api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
       api-insecure: true
-      workflow-client-ref: feat/pr-demo-workflows
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
 
@@ -41,6 +40,5 @@ jobs:
       api-url: ${{ vars.DEMOS_API_URL }}
       api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
       api-insecure: true
-      workflow-client-ref: feat/pr-demo-workflows
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
