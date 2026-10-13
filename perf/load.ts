@@ -30,10 +30,13 @@ export function setup() {
 export default function ({ paths }: { paths: string[] }) {
   const home = http.get(`${BASE_URL}/`, { tags: { page: "home" } });
   check(home, { "home is 200": (r) => r.status === 200 });
+  // this simulates a user visiting the home page
   sleep(1);
 
+  // select a random rock page to visit
   const path = paths[Math.floor(Math.random() * paths.length)];
   const rock = http.get(`${BASE_URL}${path}`, { tags: { page: "rock" } });
   check(rock, { "rock is 200": (r) => r.status === 200 });
+  // this simulates a user visiting a rock page
   sleep(1);
 }
