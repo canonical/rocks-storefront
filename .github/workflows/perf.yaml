@@ -1,0 +1,22 @@
+name: Performance test
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  load-test:
+    name: Load test (k6)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Run load test
+        run: k6 run perf/load.ts
+        env:
+          BASE_URL: https://staging.rocks.ubuntu.com

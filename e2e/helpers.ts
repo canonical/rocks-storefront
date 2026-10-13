@@ -1,5 +1,6 @@
 import type { APIRequestContext, Page } from "@playwright/test";
 import { expect } from "@playwright/test";
+import { rockPaths } from "./rock-paths";
 
 /**
  * These tests run against the real store API, so rock names are not known ahead
@@ -25,18 +26,15 @@ async function discoverFirstRockPath(
     `home page request failed: ${response.status()} ${response.statusText()}`,
   ).toBe(true);
 
-  const html = await response.text();
-  const match = html.match(
-    /<a[^>]*class="[^"]*\bname\b[^"]*"[^>]*href="([^"]+)"/,
-  );
+  const [path] = rockPaths(await response.text());
 
-  if (!match) {
+  if (!path) {
     throw new Error(
       "expected the home page to list at least one rock in its server-rendered HTML",
     );
   }
 
-  return match[1];
+  return path;
 } /**
  * Set up a listener for "securitypolicyviolation" events; call this *before* the
  * `page.goto(...)` call.
