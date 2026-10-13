@@ -1,0 +1,27 @@
+name: Performance test
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "URL of the environment to load test"
+        required: true
+        type: string
+        default: "https://staging.rocks.ubuntu.com"
+
+permissions:
+  contents: read
+
+jobs:
+  load-test:
+    name: Load test (k6)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: grafana/setup-k6-action@v1
+
+      - name: Run load test
+        run: k6 run perf/load.ts
+        env:
+          BASE_URL: ${{ inputs.base_url }}

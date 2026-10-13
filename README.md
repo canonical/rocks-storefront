@@ -27,6 +27,7 @@ Other useful commands:
 | `npm run check` | Lint and format check (Biome) |
 | `npm run fix` | Apply Biome lint/format fixes |
 | `npm run svelte-check` | Type-check the project |
+| `npm run test:perf` | Load test a running server with [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/) (`BASE_URL` defaults to `http://localhost:3000`) |
 
 If you use [Task](https://taskfile.dev), the same actions are available as `task dev`, `task start`, `task test`, etc. (run `task --list`).
 
