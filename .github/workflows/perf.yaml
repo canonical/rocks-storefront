@@ -6,8 +6,9 @@ on:
       base_url:
         description: "URL of the environment to load test"
         required: true
-        type: string
-        default: "https://staging.rocks.ubuntu.com"
+        type: choice
+        options:
+          - https://staging.rocks.ubuntu.com
 
 permissions:
   contents: read
