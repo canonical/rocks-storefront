@@ -1,14 +1,8 @@
 name: Performance test
 
 on:
-  workflow_dispatch:
-    inputs:
-      base_url:
-        description: "URL of the environment to load test"
-        required: true
-        type: choice
-        options:
-          - https://staging.rocks.ubuntu.com
+  schedule:
+    - cron: "0 3 * * 1"
 
 permissions:
   contents: read
@@ -25,4 +19,4 @@ jobs:
       - name: Run load test
         run: k6 run perf/load.ts
         env:
-          BASE_URL: ${{ inputs.base_url }}
+          BASE_URL: https://staging.rocks.ubuntu.com
