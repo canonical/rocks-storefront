@@ -24,8 +24,6 @@ jobs:
       pr-number: ${{ github.event.pull_request.number }}
       commit-sha: ${{ github.event.pull_request.head.sha }}
       api-url: ${{ vars.DEMOS_API_URL }}
-      api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
-      api-insecure: true
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
 
@@ -38,7 +36,5 @@ jobs:
     with:
       pr-number: ${{ github.event.pull_request.number }}
       api-url: ${{ vars.DEMOS_API_URL }}
-      api-connect-url: ${{ vars.DEMOS_API_CONNECT_URL }}
-      api-insecure: true
     secrets:
       demos-hmac-key: ${{ secrets.DEMOS_HMAC_KEY }}
