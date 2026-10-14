@@ -1,6 +1,7 @@
 import { githubRepo } from "$lib/utils/github";
 import { launchpadPath } from "$lib/utils/launchpad";
 import { memoizedAsync } from "../utils/cache.server";
+import { withoutTracing } from "../utils/tracing.server";
 
 const REQUEST_TIMEOUT_MS = 5_000;
 const CACHE_TTL_MS = 3_600_000;
@@ -79,7 +80,7 @@ function candidatesFor(
  * Whether a file is there to read. A private Launchpad repository redirects to
  * its login page, so a redirect is a miss, not a hit.
  */
-async function exists(url: string): Promise<boolean> {
+const exists = withoutTracing(async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url, {
       method: "HEAD",
@@ -90,7 +91,7 @@ async function exists(url: string): Promise<boolean> {
   } catch {
     return false;
   }
-}
+});
 
 /**
  * Finds the `rockcraft.yaml` that built a given track
