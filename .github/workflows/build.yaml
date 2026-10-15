@@ -1,10 +1,10 @@
 name: Build
 
 on:
+  # Temporary: pushes to main deploy to staging until there is a production environment
   push:
     branches:
       - main
-      - staging
   workflow_dispatch:
     inputs:
       environment:
@@ -33,11 +33,7 @@ jobs:
         id: setup-env
         run: |
           env_from_input="${{ github.event.inputs.environment }}"
-          env_from_branch=""
-          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            env_from_branch="Production"
-          fi;
-          environment="${env_from_input:-${env_from_branch:-Staging}}"
+          environment="${env_from_input:-Staging}"
           echo "environment=$environment" >> $GITHUB_OUTPUT
           echo "force_charm_build=${{ github.event.inputs.force_charm_build || false }}" >> $GITHUB_OUTPUT
 
@@ -71,6 +67,6 @@ jobs:
       channel: ${{ needs.setup.outputs.channel }}
       environment: ${{ needs.setenv.outputs.environment }}
       # Force conversion to boolean
-      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'false' }}
+      force_charm_build: ${{ needs.setenv.outputs.force_charm_build == 'true' }}
     secrets:
       CHARMHUB_TOKEN: ${{ secrets.CHARMHUB_TOKEN }}
