@@ -7,10 +7,11 @@
 import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { NodeSDK } from "@opentelemetry/sdk-node";
-
 // @ts-expect-error this errors out because TS can't resolve the .d.ts file;
 // and yes, this is how the package docs say it should be imported...
 import { register } from "import-in-the-middle/register-hooks.mjs";
+
+import { logger } from "$lib/server/logger";
 
 register();
 
@@ -21,3 +22,13 @@ const sdk = new NodeSDK({
 });
 
 sdk.start();
+logger.info("OpenTelemetry SDK: started successfully");
+
+process.once("sveltekit:shutdown", async () => {
+  try {
+    await sdk.shutdown();
+    logger.info("OpenTelemetry SDK: shut down successfully");
+  } catch (error: unknown) {
+    logger.error(`OpenTelemetry SDK: failed to shut down; ${error}`);
+  }
+});
