@@ -26,8 +26,8 @@ beforeAll(async () => {
   url = `http://127.0.0.1:${(server.address() as AddressInfo).port}/`;
 });
 
-afterAll(() => {
-  server.close();
+afterAll(async () => {
+  await new Promise<void>((resolve) => server.close(resolve));
 });
 
 afterEach(() => {
