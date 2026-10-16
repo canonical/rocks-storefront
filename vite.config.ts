@@ -27,6 +27,15 @@ export default defineConfig({
       adapter: adapter(),
       experimental: {
         remoteFunctions: true,
+        tracing: {
+          server: true,
+        },
+        instrumentation: {
+          server: true,
+          // ^ makes it so that instrumentation.server.ts always runs, but we
+          // check for set OTEL_* env vars in the aforementioned script before
+          // actually enabling OTel
+        },
       },
       csp: {
         directives: {

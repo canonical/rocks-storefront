@@ -1,3 +1,5 @@
+import { INVALID_TRACEID, isSpanContextValid, trace } from "@opentelemetry/api";
+
 export const REQUEST_ID_HEADER = "x-request-id";
 const TRACEPARENT_HEADER = "traceparent";
 
@@ -8,7 +10,6 @@ const TRACEPARENT_HEADER = "traceparent";
  */
 const TRACEPARENT_PATTERN =
   /^[0-9a-f]{2}-([0-9a-f]{32})-[0-9a-f]{16}-[0-9a-f]{2}$/;
-const INVALID_TRACE_ID = "0".repeat(32);
 
 /**
  * Accept an inbound request id only if it is a sane, bounded token. This blocks
@@ -30,16 +31,22 @@ export function resolveRequestId(headers: Headers): string {
 }
 
 /**
- * Derive a trace id from a valid W3C `traceparent` header so logs line up with
- * Tempo traces, falling back to a generated 16-byte (32 hex char) id when the
- * header is absent, malformed, or carries the all-zero invalid trace-id.
+ * Get the trace id for the current request.
+ * Prefer the active OpenTelemetry trace so logs correlate with traces.
+ * Fall back to the value of the incoming `traceparent` header if valid,
+ * otherwise generate a new id.
  */
 export function resolveTraceId(headers: Headers): string {
+  const spanContext = trace.getActiveSpan()?.spanContext();
+  if (spanContext && isSpanContextValid(spanContext)) {
+    return spanContext.traceId;
+  }
+
   const traceparent = headers.get(TRACEPARENT_HEADER)?.trim();
   const match = traceparent?.match(TRACEPARENT_PATTERN);
   const traceId = match?.[1];
 
-  if (traceId && traceId !== INVALID_TRACE_ID) {
+  if (traceId && traceId !== INVALID_TRACEID) {
     return traceId;
   }
 
