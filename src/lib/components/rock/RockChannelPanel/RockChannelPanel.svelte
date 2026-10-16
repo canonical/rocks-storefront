@@ -12,7 +12,6 @@
     Select,
   } from "@canonical/svelte-ds-app-launchpad";
   import { CloseIcon } from "@canonical/svelte-icons";
-  import { Table } from "@canonical/svelte-ds-app-launchpad";
   import {
     SidePanel,
     type SidePanelMethods,
@@ -21,7 +20,8 @@
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
-  import { formatFileSize, truncateDigest } from "$lib/utils/format";
+  import { Table } from "$lib/components/ui/Table";
+  import { formatFileSize } from "$lib/utils/format";
   import { getChannelRevisions, getRiskDescription } from "$lib/utils/rock";
   import type { RockChannelPanelProps } from "./types.js";
   import "./styles.css";
@@ -121,7 +121,7 @@
                     <EmptyCell />
                   {/if}
                 </td>
-                <td>
+                <td class="rock-channel-panel__digest-cell">
                   {#if row.digest}
                     {@render digestCell(row.digest, row.revision)}
                   {:else}
@@ -139,7 +139,7 @@
 
 {#snippet digestCell(digest: string, revision: number | null)}
   <span class="rock-channel-panel__digest">
-    <span>sha:{truncateDigest(digest)}</span>
+    <span class="rock-channel-panel__digest-text">{digest}</span>
     <CopyButton
       value={digest}
       label={`Copy the digest for revision ${revision}`}

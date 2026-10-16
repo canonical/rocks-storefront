@@ -88,10 +88,15 @@ export function getLatestTag(rock: RockInfoResponse): string | null {
   return best ? `${best.track}_${best.risk}` : null;
 }
 
+function parseDownloadUrl(url: string) {
+  const [repository, digest = ""] = url.split("@");
+  return { repository, digest };
+}
+
 export function getRepository(rock: RockInfoResponse): string | null {
   for (const item of rock["channel-map"] ?? []) {
     const url = item.revision?.download?.url;
-    if (url) return url.split("@")[0];
+    if (url) return parseDownloadUrl(url).repository;
   }
   return null;
 }
@@ -236,7 +241,7 @@ export function getChannelRevisions(
       size: item.revision?.download?.size ?? null,
       updated:
         item.revision?.["created-at"] ?? item.channel?.["released-at"] ?? null,
-      digest: item.revision?.download?.["sha-256"] ?? "",
+      digest: parseDownloadUrl(item.revision?.download?.url ?? "").digest,
     });
   }
   return rows.sort((a, b) => (b.revision ?? 0) - (a.revision ?? 0));

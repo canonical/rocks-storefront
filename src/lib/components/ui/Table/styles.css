@@ -1,0 +1,8 @@
+.ds.table-scroll {
+  position: relative;
+  overflow-x: auto;
+}
+
+.ds.table-scroll > .ds.table {
+  width: 100%;
+}
