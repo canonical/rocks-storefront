@@ -6,3 +6,8 @@
 .ds.table-scroll > .ds.table {
   width: 100%;
 }
+
+.ds.table-scroll th > .ds.small-caps,
+.ds.table-scroll th > * > .ds.small-caps {
+  white-space: nowrap;
+}
