@@ -1,7 +1,9 @@
 /* Launchpad's own token, overridden here so 
    the content have more space */
-.ds.side-panel.rock-channel-panel {
-  --dimension-width-modal: 40rem;
+@media (min-width: 768px) {
+  .ds.side-panel.rock-channel-panel {
+    --dimension-width-modal: 40rem;
+  }
 }
 
 .ds.rock-channel-panel .rock-channel-panel__content {
@@ -37,12 +39,23 @@
   gap: var(--space-150);
 }
 
+.ds.rock-channel-panel .rock-channel-panel__digest-cell {
+  width: 100%;
+  min-width: 18ch;
+  max-width: 0;
+  font-family: var(--typography-font-family-monospace);
+}
+
 .ds.rock-channel-panel .rock-channel-panel__digest {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--space-100);
-  font-family: var(--typography-font-family-monospace);
   white-space: nowrap;
+}
+
+.ds.rock-channel-panel .rock-channel-panel__digest-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ds.rock-channel-panel .rock-channel-panel__close {

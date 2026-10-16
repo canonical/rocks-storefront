@@ -1,6 +1,5 @@
 const SIZE_UNITS = ["B", "kB", "MB", "GB", "TB"] as const;
 const SIZE_STEP = 1000;
-const DIGEST_CHARS = 12;
 
 export function formatFileSize(bytes: number): string {
   let value = bytes;
@@ -11,12 +10,6 @@ export function formatFileSize(bytes: number): string {
   }
 
   return `${unit === 0 ? value : value.toFixed(2)} ${SIZE_UNITS[unit]}`;
-}
-
-export function truncateDigest(digest: string): string {
-  return digest.length > DIGEST_CHARS
-    ? `${digest.slice(0, DIGEST_CHARS)}…`
-    : digest;
 }
 
 /** Category names arrive lower-cased, so give each word a capital. */

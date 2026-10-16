@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatCategory, formatFileSize, truncateDigest } from "./format";
+import { formatCategory, formatFileSize } from "./format";
 
 describe("formatCategory", () => {
   it.each([
@@ -26,15 +26,5 @@ describe("formatFileSize", () => {
     [32_432_071, "32.43 MB"],
   ])("formats %i bytes", (bytes, expected) => {
     expect(formatFileSize(bytes)).toBe(expected);
-  });
-});
-
-describe("truncateDigest", () => {
-  it("shortens a long digest", () => {
-    expect(truncateDigest("abcdef0123456789")).toBe("abcdef012345…");
-  });
-
-  it("leaves a short digest alone", () => {
-    expect(truncateDigest("abc")).toBe("abc");
   });
 });

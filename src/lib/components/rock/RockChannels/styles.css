@@ -18,7 +18,7 @@
   display: grid;
   grid-template-columns: repeat(
       auto-fit,
-      minmax(var(--app-card-min-width), 1fr)
+      minmax(min(var(--app-card-min-width), 100%), 1fr)
     );
   gap: var(--space-300);
 }

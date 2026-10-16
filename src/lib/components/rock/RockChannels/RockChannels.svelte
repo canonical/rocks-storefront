@@ -4,7 +4,6 @@
     Link,
     RelativeDateTime,
     Select,
-    Table,
     Tooltip,
   } from "@canonical/svelte-ds-app-launchpad";
   import { ChevronRightIcon, InformationIcon } from "@canonical/svelte-icons";
@@ -14,6 +13,7 @@
   import { EmptyCell } from "$lib/components/ui/EmptyCell";
   import { Heading } from "$lib/components/ui/Heading";
   import { SmallCaps } from "$lib/components/ui/SmallCaps";
+  import { Table } from "$lib/components/ui/Table";
   import {
     getArchitectures,
     getBase,

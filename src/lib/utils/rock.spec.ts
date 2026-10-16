@@ -7,6 +7,7 @@ import {
   getArchitectures,
   getBase,
   getBases,
+  getChannelRevisions,
   getChannelRows,
   getImageReference,
   getLatestTag,
@@ -551,5 +552,31 @@ describe("getRockIconUrl fallbacks", () => {
 
     expect(getRockIconUrl(rock)).toBe("https://example.com/gone.png");
     expect(getRockFallbackIcon(rock)).toBe(CANONICAL_ICON);
+  });
+});
+
+describe("getChannelRevisions", () => {
+  it("takes the digest from the revision download url", () => {
+    const rock = makeInfoRock({
+      "channel-map": [
+        channel({
+          revision: {
+            revision: 1,
+            download: {
+              "sha-256": "d",
+              url: "rocks.pkg.store/ubuntu/test-rock@sha256:d",
+            },
+          },
+        }),
+      ],
+    });
+
+    expect(getChannelRevisions(rock, "1.0/stable")[0].digest).toBe("sha256:d");
+  });
+
+  it("leaves the digest empty without a download url", () => {
+    const rock = makeInfoRock({ "channel-map": [channel()] });
+
+    expect(getChannelRevisions(rock, "1.0/stable")[0].digest).toBe("");
   });
 });
