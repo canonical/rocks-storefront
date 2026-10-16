@@ -1,4 +1,5 @@
 import type { Handle, HandleServerError } from "@sveltejs/kit";
+import { sequence } from "@sveltejs/kit/hooks";
 import type { Logger } from "pino";
 import {
   REQUEST_ID_HEADER,
@@ -43,7 +44,14 @@ export function createHandle(baseLogger: Logger): Handle {
   };
 }
 
-export const handle = createHandle(logger);
+const handleTestFallback: Handle = ({ event, resolve }) => {
+  if (event.url.pathname === "/test-error/fallback") {
+    throw new Error("Fallback test");
+  }
+  return resolve(event);
+};
+
+export const handle = sequence(createHandle(logger), handleTestFallback);
 
 /**
  * Build the `handleError` hook bound to a base logger. Uncaught server errors

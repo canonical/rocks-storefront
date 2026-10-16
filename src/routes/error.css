@@ -1,0 +1,21 @@
+.error-page {
+  display: grid;
+  gap: var(--space-200);
+  margin-block: var(--dimension-500);
+}
+
+.error-page__search {
+  grid-column: span 4;
+}
+
+@media (min-width: 768px) {
+  .error-page__search {
+    grid-column: span 5;
+  }
+}
+
+@media (min-width: 1280px) {
+  .error-page__search {
+    grid-column: span 6;
+  }
+}

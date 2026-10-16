@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Checkbox } from "@canonical/svelte-ds-app-launchpad";
+  import { Button, Checkbox } from "@canonical/svelte-ds-app-launchpad";
   import { array, optional, string } from "valibot";
   import { RockList } from "$lib/components/rock/RockList";
   import { Heading } from "$lib/components/ui/Heading";
@@ -57,6 +57,13 @@
 
 <div class="app-container home-page">
     <Heading class="visually-hidden" level={1}>Rocks store</Heading>
+
+    <div style="display: flex; flex-wrap: wrap; gap: var(--space-200); margin-block-end: var(--space-400)">
+        {#each ["404", "410", "500", "501", "502", "503", "504", "505", "crash"] as status}
+            <Button href="/test-error/{status}">{status}</Button>
+        {/each}
+        <Button href="/test-error/fallback" data-sveltekit-reload>fallback</Button>
+    </div>
 
     <div class="grid responsive">
         <div style="grid-column: span 3"></div>

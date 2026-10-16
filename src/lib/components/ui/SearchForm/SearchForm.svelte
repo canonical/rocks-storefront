@@ -12,7 +12,7 @@
   let { name, value = $bindable(), loading }: Props = $props();
 </script>
 
-<form id="search-form" class="ds search-form" autocomplete="off" data-sveltekit-keepfocus>
+<form id="search-form" class="ds search-form" action="/" autocomplete="off" data-sveltekit-keepfocus>
     <label class="visually-hidden" for={name}>Search rocks</label>
     <SearchBox
         id={name}
