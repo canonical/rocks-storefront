@@ -19,7 +19,7 @@ jobs:
       github.event.action != 'closed' &&
       github.event.pull_request.head.repo.full_name == github.repository &&
       vars.DEMOS_ENABLED == 'true'
-    uses: canonical/webteam-devops/.github/workflows/demo-deploy.yaml@feat/demo-bearer-tokens
+    uses: canonical/webteam-devops/.github/workflows/demo-deploy.yaml@main
     with:
       pr-number: ${{ github.event.pull_request.number }}
       commit-sha: ${{ github.event.pull_request.head.sha }}
