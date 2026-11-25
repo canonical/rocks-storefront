@@ -105,11 +105,19 @@ describe("RockHero.svelte", () => {
     const { container } = render(RockHero, {
       rock: makeInfoRock({
         "default-track": "7.2",
-        "channel-map": [makeChannel({ name: "7.2/edge" })],
+        "channel-map": [
+          makeChannel({
+            name: "7.2/edge",
+            downloadUrl:
+              "rocks.pkg.store/rev/rock/package-id/10@sha256:deadbeef",
+          }),
+        ],
       }),
     });
 
-    expect(container.querySelector("code")?.textContent).toContain("7.2_edge");
+    expect(container.querySelector("code")?.textContent).toBe(
+      "rocks.pkg.store/ubuntu/test-rock:7.2_edge",
+    );
   });
 
   it("uses an available channel when there is no default track", async () => {

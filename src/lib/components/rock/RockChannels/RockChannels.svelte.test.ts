@@ -33,7 +33,7 @@ function entry(
       ...(revision !== undefined ? { revision } : {}),
       download: {
         "sha-256": digest ?? "deadbeef",
-        url: `rocks.pkg.store/ubuntu/test-rock@sha256:${digest ?? "deadbeef"}`,
+        url: `rocks.pkg.store/rev/rock/package-id/10@sha256:${digest ?? "deadbeef"}`,
       },
     },
   };

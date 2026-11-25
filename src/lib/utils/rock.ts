@@ -88,15 +88,22 @@ export function getLatestTag(rock: RockInfoResponse): string | null {
   return best ? `${best.track}_${best.risk}` : null;
 }
 
-function parseDownloadUrl(url: string) {
-  const [repository, digest = ""] = url.split("@");
-  return { repository, digest };
+function getDownloadDigest(url: string): string {
+  return url.split("@")[1] ?? "";
+}
+
+function getDownloadRegistry(url: string): string | undefined {
+  return url.match(/^([^/@\s]+)\/[^@\s]+@sha256:[a-f0-9]+$/i)?.[1];
 }
 
 export function getRepository(rock: RockInfoResponse): string | null {
   for (const item of rock["channel-map"] ?? []) {
     const url = item.revision?.download?.url;
-    if (url) return parseDownloadUrl(url).repository;
+    const registry = url && getDownloadRegistry(url);
+    if (registry && rock.name) {
+      // Temporary: use the API's channel URL once the store provides it.
+      return `${registry}/ubuntu/${rock.name}`;
+    }
   }
   return null;
 }
@@ -241,7 +248,7 @@ export function getChannelRevisions(
       size: item.revision?.download?.size ?? null,
       updated:
         item.revision?.["created-at"] ?? item.channel?.["released-at"] ?? null,
-      digest: parseDownloadUrl(item.revision?.download?.url ?? "").digest,
+      digest: getDownloadDigest(item.revision?.download?.url ?? ""),
     });
   }
   return rows.sort((a, b) => (b.revision ?? 0) - (a.revision ?? 0));
