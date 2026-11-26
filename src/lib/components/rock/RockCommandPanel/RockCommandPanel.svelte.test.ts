@@ -18,7 +18,7 @@ function channel(track: string, version: string, architecture: string) {
       version,
       download: {
         "sha-256": "deadbeef",
-        url: "rocks.pkg.store/ubuntu/valkey@sha256:deadbeef",
+        url: "rocks.pkg.store/rev/rock/package-id/10@sha256:deadbeef",
       },
     },
   } satisfies ChannelMapItem;

@@ -56,3 +56,12 @@ come from the API at all:
 - **Submit a bug** (sidebar). When a rock publishes no `links.issues`, the URL
   is built from `links.upstream`: GitHub `/issues/new`, or Launchpad `+filebug`.
   Nothing is fetched.
+
+## Temporary rock pull references
+
+The header, get-started card, and command builder construct channel references
+as `<registry>/ubuntu/<rock-name>:<track>_<risk>`, using the registry from a
+revision's download URL. Revision-specific download URLs cannot be used as
+channel repositories. This tag format is temporary and intended for internal
+testing; replace the construction with the store API's channel URLs when they
+are available and their format is final.

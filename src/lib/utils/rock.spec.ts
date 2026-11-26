@@ -165,11 +165,11 @@ describe("getImageReference", () => {
       revision: { version: "1.0.0", download: { "sha-256": "d", url } },
     });
 
-  it("derives the repository from the revision download url", () => {
+  it("builds a channel reference from a revision download url", () => {
     const rock = makeInfoRock({
       "default-track": "1.0",
       "channel-map": [
-        withDownload("rocks.pkg.store/ubuntu/test-rock@sha256:d"),
+        withDownload("rocks.pkg.store/rev/rock/package-id/14@sha256:d"),
       ],
     });
 
@@ -197,6 +197,14 @@ describe("getImageReference", () => {
     expect(
       getImageReference(makeInfoRock({ "channel-map": [channel()] })),
     ).toBeNull();
+  });
+
+  it("does not construct a reference from an invalid download url", () => {
+    const rock = makeInfoRock({
+      "channel-map": [withDownload("not-a-registry-url")],
+    });
+
+    expect(getImageReference(rock)).toBeNull();
   });
 });
 
